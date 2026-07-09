@@ -1,4 +1,12 @@
-## 🚀 Como Executar o Projeto
+## Pré-requisitos
+
+- PHP >= 8.x
+- Composer
+- Node.js (versão LTS)
+- NPM
+- MySQL/PostgreSQL
+
+## Como Executar o Projeto
 
 ### 1. Clonar o repositório
 
