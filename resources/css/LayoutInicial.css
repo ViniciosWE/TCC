@@ -1,0 +1,50 @@
+/*definição da cor de fundo do header*/
+.layout-bg-nav {
+    background-color: #1D4ED8;
+}
+
+/*define a cor amarela do textos*/
+.cor-texto-amarelo {
+    color: #FACC15;
+    transform: none !important; /*remove a transformação aplicada, pós o botão já esta selecionado*/
+}
+
+/*fundo amarelo com bordas aredondas do painel ADM*/
+.cor-fundo-amarelo {
+    background-color: #FACC15;
+    border-radius: 50px;
+}
+
+/*define a cor azul para textos*/
+.cor-texto-azul {
+    color: #1D4ED8;
+}
+
+/*configuração do botão hamburguer no mobile, remove o efeito de borda/sombra que o Bootstrap coloca*/
+.menu-inicial-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/*define uma transição suave para os links do menu quando alguma propriedade mudar*/
+.menu-header-link {
+    transition: 0.3s;
+}
+
+/*efeito aplicado quando o mouse passa por cima dos links, muda a cor para amarelo e movimenta o item levemente para cima */
+.navbar .menu-header-link:hover {
+    color: #FACC15 !important;
+    transform: translateY(-2px);
+}
+
+/*define uma transição suave para o botão Painel ADM */
+.painel-adm {
+    transition: 0.3s;
+}
+
+
+/*efeito ao passar o mouse no botão Painel ADM, mantém a identidade visual e cria uma pequena animação */
+.painel-adm:hover {
+    color: #1D4ED8;
+    transform: translateY(-2px);
+}
