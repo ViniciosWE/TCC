@@ -10,14 +10,14 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <header class="layout-bg-nav">
+    <header class="cor-fundo-header-inicial">
         {{--navbar do Bootstrap responsável pela navegação do site--}}
         <nav class="navbar navbar-expand-lg ">
             {{-- container responsivo ocupando toda a largura disponível, com espaçamento lateral usando px-4--}}
             <div class="container-fluid px-4">
                 {{--nome do site que recebe o link da página incial--}}
                 <a class="navbar-brand fw-bold text-uppercase text-white fs-1" href="{{ route('PaginaInicial') }}">
-                    Esporte <span class="cor-texto-amarelo">Total</span>
+                    Esporte <span class="textos-navegacao-inicial">Total</span>
                 </a>
                 {{--botão hamburguer exibido em telas menores, o Bootstrap controla a abertura e fechamento do menu
                 através do collapse abaixo--}}
@@ -31,20 +31,20 @@
                     {{--lista das opções--}}
                     <ul class="navbar-nav ms-auto fw-bold gap-2 text-end">
                         <li class="nav-item">
-                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaInicial') ? 'cor-texto-amarelo' : 'text-white' }}"
+                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaInicial') ? 'textos-navegacao-inicial' : 'text-white' }}"
                                 href="{{ route('PaginaInicial') }}">Início</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaCampeonatos') ? 'cor-texto-amarelo' : 'text-white' }}"
+                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaCampeonatos') ? 'textos-navegacao-inicial' : 'text-white' }}"
                                 href="{{ route('PaginaCampeonatos') }}">Campeonatos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaNoticias') ? 'cor-texto-amarelo' : 'text-white' }}"
+                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaNoticias') ? 'textos-navegacao-inicial' : 'text-white' }}"
                                 href="{{ route('PaginaNoticias') }}">Notícias</a>
                         </li>
                         {{-- Botão de acesso administrativo--}}
                         <li class="nav-item">
-                            <a class="nav-link painel-adm cor-fundo-amarelo cor-texto-azul px-3 py-2 d-inline-flex"
+                            <a class="nav-link botao-painel-adm px-3 py-2 d-inline-flex"
                                 href="{{ route('login') }}">
                                 <i class="bi bi-lock me-2"></i>
                                 Painel ADM
@@ -57,7 +57,7 @@
     </header>
 
     {{--banner--}}
-    <div class="cor-banner text-center text-white py-5">
+    <div class="cor-banner-inicial text-center text-white py-5">
         <h2 class="text-uppercase fw-bold display-4 banner-titulo">Nossa Cidade entra em jogo</h2>
         <p class="banner-subtitulo">Resultados, tabelas e emoção</p>
     </div>
@@ -67,10 +67,10 @@
     </main>
 
     {{--rodapé--}}
-    <footer class="cor-rodape cor-texto-cinza text-center p-4">
-        <h2 class="cor-texto-amarelo text-uppercase rodape-titulo">Esporte Total Municipal</h2>
+    <footer class="cor-rodape-inicial text-center p-4">
+        <h2 class="cor-texto-rodape-amarelo-inicial text-uppercase rodape-titulo">Esporte Total Municipal</h2>
         <h5 class="text-uppercase rodape-sub">Desenvolvido para incentivar o talento local</h5>
-        <hr class="cor-texto-cinza fw-bold">
+        <hr>
         <p>&copy; {{ date('Y') }} - Vinicios Weide Ebling</p>
     </footer>
 </body>

@@ -1,0 +1,32 @@
+/*define as cores do projeto*/
+:root {
+    --cor-primaria: #1D4ED8;
+    --cor-secundaria: #2563EB;
+    --cor-destaque: #FACC15;
+    --cor-texto: #A0A3A9;
+    --fundo-escuro: #111827;
+}
+
+.fundo-login{
+    background-color: var(--cor-secundaria);
+}
+
+.cor-logo-login{
+    color: var(--cor-destaque);
+}
+
+.cor-h1-login{
+    color: var(--cor-primaria);
+}
+
+.botao-voltar-login{
+    background-color: var(--cor-destaque);
+    transition: 0.3s;
+    border-radius: 50px;
+    color: var(--cor-primaria);
+}
+
+.botao-voltar-login:hover {
+    color: var(--cor-primaria) !important;
+    transform: translateY(-2px);
+}
