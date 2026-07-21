@@ -6,7 +6,8 @@
 /*define a cor amarela do textos*/
 .cor-texto-amarelo {
     color: #FACC15;
-    transform: none !important; /*remove a transformação aplicada, pós o botão já esta selecionado*/
+    transform: none !important;
+    /*remove a transformação aplicada, pós o botão já esta selecionado*/
 }
 
 /*fundo amarelo com bordas aredondas do painel ADM*/
@@ -47,4 +48,39 @@
 .painel-adm:hover {
     color: #1D4ED8;
     transform: translateY(-2px);
+}
+
+/*define a cor do banner*/
+.cor-banner {
+    background-color: #2563EB;
+}
+
+/*define a cor do rodapé*/
+.cor-rodape {
+    background-color: #111827;
+}
+
+/*define a cor cinza do texto*/
+.cor-texto-cinza {
+    color: #A0A3A9;
+}
+
+/*responsivo para diminuir as letras do banner e rodapé quando estiver em telas menores*/
+@media (max-width: 992px) {
+    .banner-titulo {
+        font-size: 1.4rem;
+    }
+
+    .banner-subtitulo {
+        font-size: 0.9rem;
+    }
+
+    .rodape-titulo {
+        font-size: 1.4rem;
+    }
+
+    .rodape-sub {
+        font-size: 0.8rem;
+    }
+    
 }
