@@ -13,19 +13,36 @@
     <main class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="text-center">
             {{-- Logo --}}
-            <h1 class="fw-bold text-uppercase text-white display-3">
+            <h1 class="fw-bold text-uppercase text-white display-3 mb-4">
                 Esporte <span class="cor-logo-login">Total</span>
             </h1>
-            {{-- Card Login --}}
-            <div class="bg-white p-5 rounded-4 mt-4">
-                <h1 class="fw-bold cor-h1-login mb-4 text-uppercase">
+            {{-- Card de Login --}}
+            <div class="bg-white p-5 rounded-4">
+                <h2 class="fw-bold cor-h1-login text-uppercase mb-4">
                     Página de Login
-                </h1>
-                <a class="botao-voltar-login px-4 py-2 fw-bold text-decoration-none d-inline-block"
+                </h2>
+                <form action="" method="POST">
+                    @csrf
+                    {{-- E-mail --}}
+                    <div class="mb-3 text-start">
+                        <label for="email" class="fw-semibold">E-mail</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                            placeholder="Digite seu e-mail">
+                    </div>
+                    {{-- Senha --}}
+                    <div class="mb-3 text-start">
+                        <label for="password" class="fw-semibold">Senha</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Digite sua senha">
+                    </div>
+                    {{-- Botão Entrar --}}
+                    <button type="submit" class="btn botoes-login mb-3 fw-bold py-2 px-4">Entrar</button>
+                </form>
+                {{-- Voltar --}}
+                <a class="botoes-login px-4 py-2 fw-bold text-decoration-none d-inline-block"
                     href="{{ route('PaginaInicial') }}">
                     Voltar
                 </a>
-
             </div>
         </div>
     </main>
