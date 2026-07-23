@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('campeonato_id')->nullable()->constrained('campeonatos')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();
             $table->string('titulo', 255);
-            $table->string('descricao', 255);
+            $table->string('descricao', 1000);
             $table->string('imagem', 255)->nullable();
             $table->timestamps();
         });
