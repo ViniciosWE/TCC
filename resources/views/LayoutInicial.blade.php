@@ -45,7 +45,7 @@
                         {{-- Botão de acesso administrativo--}}
                         <li class="nav-item">
                             <a class="nav-link botao-painel-adm px-3 py-2 d-inline-flex"
-                                href="{{ route('login') }}">
+                                href="{{ route('Login') }}">
                                 <i class="bi bi-lock me-2"></i>
                                 Painel ADM
                             </a>

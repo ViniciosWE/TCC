@@ -25,6 +25,6 @@ Route::get('/PaginaNoticias', function () {
     return view('PaginaNoticias');
 })->name('PaginaNoticias');
 
-Route::get('/login', function () {
+Route::get('/Login', function () {
     return view('login');
-})->name('login');
+})->name('Login');
