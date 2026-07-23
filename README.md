@@ -109,3 +109,18 @@ Acesse:
 ```text
 http://127.0.0.1:8000
 ```
+---
+
+## 🔐 Usuário Padrão
+
+Após executar os seeders:
+
+### Super Administrador
+Email: superadministrador@gmail.com
+
+Senha: 12345678
+
+### Administrador
+Email: administrador@gmail.com
+
+Senha: 12345678
