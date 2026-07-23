@@ -17,13 +17,11 @@ class Participante extends Model
         'status',
     ];
 
-
     /* Um participante pode possuir vários contratos com equipes */
     public function contratos()
     {
         return $this->hasMany(Contrato::class);
     }
-
 
     /* Um participante pode possuir vários eventos registrados em partidas */
     public function eventosPartidas()
