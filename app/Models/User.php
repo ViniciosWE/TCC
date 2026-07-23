@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'tipo',
     ];
 
     /**
@@ -42,4 +43,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /* O usuário pode criar vários campeonatos */
+    public function campeonatos()
+    {
+        return $this->hasMany(Campeonato::class);
+    }
+
+    /* O usuário pode criar várias notícias */
+    public function noticias()
+    {
+        return $this->hasMany(Noticia::class);
+    }
+
+    /* O usuário pode registrar vários eventos nas partidas */
+    public function eventosPartidas()
+    {
+        return $this->hasMany(EventoPartida::class);
+    }
 }

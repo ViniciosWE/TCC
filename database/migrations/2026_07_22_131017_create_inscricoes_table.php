@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('evento_partidas', function (Blueprint $table) {
+        Schema::create('inscricoes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('campeonato_id')->constrained('campeonatos')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();
-            $table->foreignId('participante_id')->constrained('participantes')->restrictOnUpdate()->restrictOnDelete();
-            $table->foreignId('partida_id')->constrained('partidas')->restrictOnUpdate()->restrictOnDelete();
-            $table->enum('tipo', ['GOL', 'CARTAO_AMARELO', 'CARTAO_VERMELHO', 'ASSISTENCIA', 'GOL_CONTRA', 'GOLS_SOFRIDOS']);
-            $table->time('tempo');
+            $table->foreignId('equipe_id')->constrained('equipes')->restrictOnUpdate()->restrictOnDelete();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('evento_partidas');
+        Schema::dropIfExists('inscricoes');
     }
 };
