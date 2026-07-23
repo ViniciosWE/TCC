@@ -38,7 +38,7 @@
                     {{-- Botão Entrar --}}
                     <button type="submit" class="btn botoes-login mb-3 fw-bold py-2 px-4">Entrar</button>
                 </form>
-                {{-- Voltar --}}
+                {{-- Botão de voltar --}}
                 <a class="botoes-login px-4 py-2 fw-bold text-decoration-none d-inline-block"
                     href="{{ route('PaginaInicial') }}">
                     Voltar

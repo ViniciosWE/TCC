@@ -7,18 +7,22 @@
     --fundo-escuro: #111827;
 }
 
+/*define a cor de fundo da página de login*/
 .fundo-login {
     background-color: var(--cor-secundaria);
 }
 
+/*Cor da logo*/
 .cor-logo-login {
     color: var(--cor-destaque);
 }
 
+/*cor do texto de login*/
 .cor-h1-login {
     color: var(--cor-secundaria);
 }
 
+/*layout dos botões de entar e voltar*/
 .botoes-login {
     background-color: var(--cor-destaque);
     color: var(--cor-primaria);
@@ -26,7 +30,7 @@
     transition: 0.3s;
 }
 
-
+/*Efeito quando mouse passa em cima nos botões*/
 .botoes-login:hover {
     color: var(--cor-primaria);
     background-color: var(--cor-destaque);
