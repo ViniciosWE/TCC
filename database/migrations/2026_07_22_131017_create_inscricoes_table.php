@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('inscricaos', function (Blueprint $table) {
+        Schema::create('inscricoes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('campeonato_id')->constrained('campeonatos')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();

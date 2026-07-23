@@ -12,10 +12,10 @@ return new class extends Migration {
     {
         Schema::create('participantes', function (Blueprint $table) {
             $table->id();
-            $table->integer('numero')->nullable();
+            $table->unsignedTinyInteger('numero')->nullable();
             $table->enum('funcao', ['GOLEIRO','FIXO','ALA_DIREITO','ALA_ESQUERDO','PIVO','GOLEIRO_LINHA',
                 'TECNICO','AUXILIAR_TECNICO','PREPARADOR_FISICO'])->nullable();
-            $table->string('nome', 255);
+            $table->string('nome');
             $table->char('cpf', 11)->unique();
             $table->enum('status', ['ATIVO', 'SEM_EQUIPE', 'APOSENTADO', 'SUSPENSO']);
             $table->timestamps();

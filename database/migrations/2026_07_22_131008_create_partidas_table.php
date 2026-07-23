@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->foreignId('campeonato_id')->constrained('campeonatos')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('mandante_id')->constrained('equipes')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('visitante_id')->constrained('equipes')->restrictOnUpdate()->restrictOnDelete();
-            $table->integer('gols_mandante')->default(0);
-            $table->integer('gols_visitante')->default(0);
+            $table->unsignedTinyInteger('gols_mandante')->default(0);
+            $table->unsignedTinyInteger('gols_visitante')->default(0);
             $table->dateTime('data_hora');
             $table->enum('status', ['AGENDADA', 'FINALIZADA']);
             $table->timestamps();

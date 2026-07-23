@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();
             $table->integer('minimo_jogadores_equipes');
             $table->integer('maximo_equipes');
-            $table->string('nome', 255);
-            $table->string('categoria', 255);
+            $table->string('nome');
+            $table->string('categoria');
             $table->date('data_inicio');
             $table->date('data_fim');
             $table->enum('status', ['INSCRICOES', 'EM_ANDAMENTO', 'FINALIZADO']);
