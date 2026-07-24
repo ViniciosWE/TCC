@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+/*Rotas públicas*/
 Route::get('/', function () {
     return view('PaginaInicial');
 })->name('PaginaInicial');
@@ -28,3 +29,15 @@ Route::get('/PaginaNoticias', function () {
 Route::get('/Login', function () {
     return view('login');
 })->name('Login');
+
+/*Rotas Administrativas*/
+Route::get('/Dashboard', function (){
+    return view('areaAdministrativa.dashboard');
+})->name('Dashboard')->middleware('auth');
+
+
+
+/*Rotas de login e Logout*/
+Route::post('/Login', [AuthController::class, 'login'])->name('LoginSubmit');
+
+Route::post('/Logout', [AuthController::class, 'logout'])->middleware('auth')->name('Logout');
