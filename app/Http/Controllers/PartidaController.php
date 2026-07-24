@@ -12,7 +12,7 @@ class PartidaController extends Controller
      */
     public function index()
     {
-        //
+        return view('areaAdministrativa.partidas.index');
     }
 
     /**

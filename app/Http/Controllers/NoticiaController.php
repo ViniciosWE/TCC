@@ -12,7 +12,7 @@ class NoticiaController extends Controller
      */
     public function index()
     {
-        //
+        return view('areaAdministrativa.noticias.index');
     }
 
     /**

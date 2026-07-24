@@ -12,7 +12,7 @@ class InscricaoController extends Controller
      */
     public function index()
     {
-        //
+        return view('areaAdministrativa.inscricoes.index');
     }
 
     /**

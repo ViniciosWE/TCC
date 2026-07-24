@@ -12,7 +12,7 @@ class ParticipanteController extends Controller
      */
     public function index()
     {
-        //
+        return view('areaAdministrativa.participantes.index');
     }
 
     /**

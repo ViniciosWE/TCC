@@ -2,6 +2,14 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampeonatoController;
+use App\Http\Controllers\ContratoController;
+use App\Http\Controllers\EquipeController;
+use App\Http\Controllers\EventoPartidaController;
+use App\Http\Controllers\InscricaoController;
+use App\Http\Controllers\NoticiaController;
+use App\Http\Controllers\ParticipanteController;
+use App\Http\Controllers\PartidaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,7 +46,21 @@ Route::get('/Dashboard', function (){
 
 Route::resource('campeonatos', CampeonatoController::class)->middleware('auth');
 
+Route::resource('contratos', ContratoController::class)->middleware('auth');
 
+Route::resource('equipes', EquipeController::class)->middleware('auth');
+
+Route::resource('eventoPartidas', EventoPartidaController::class)->middleware('auth');
+
+Route::resource('inscricoes', InscricaoController::class)->middleware('auth');
+
+Route::resource('noticas', NoticiaController::class)->middleware('auth');
+
+Route::resource('participantes', ParticipanteController::class)->middleware('auth');
+
+Route::resource('partidas', PartidaController::class)->middleware('auth');
+
+Route::resource('user', UserController::class)->middleware('auth');
 
 /*Rotas de login e Logout*/
 Route::post('/Login', [AuthController::class, 'login'])->name('LoginSubmit');
