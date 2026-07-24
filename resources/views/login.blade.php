@@ -21,19 +21,27 @@
                 <h2 class="fw-bold cor-h1-login text-uppercase mb-4">
                     Página de Login
                 </h2>
-                <form action="" method="POST">
+
+                {{-- Mensagem de erro --}}
+                @error('login')
+                    <div id="mensagemErro" class="alert alert-danger mb-3">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+                <form action="{{ route('LoginSubmit') }}" method="POST">
                     @csrf
                     {{-- E-mail --}}
                     <div class="mb-3 text-start">
                         <label for="email" class="fw-semibold">E-mail</label>
-                        <input type="email" class="form-control" id="email" name="email"
-                            placeholder="Digite seu e-mail">
+                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}"
+                            placeholder="Digite seu e-mail" required>
                     </div>
                     {{-- Senha --}}
                     <div class="mb-3 text-start">
                         <label for="password" class="fw-semibold">Senha</label>
                         <input type="password" class="form-control" id="password" name="password"
-                            placeholder="Digite sua senha">
+                            placeholder="Digite sua senha" required>
                     </div>
                     {{-- Botão Entrar --}}
                     <button type="submit" class="btn botoes-login mb-3 fw-bold py-2 px-4">Entrar</button>
