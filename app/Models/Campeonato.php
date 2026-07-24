@@ -14,6 +14,7 @@ class Campeonato extends Model
         'minimo_jogadores_equipes',
         'maximo_equipes',
         'nome',
+        'tipo',
         'categoria',
         'data_inicio',
         'data_fim',
