@@ -1,0 +1,13 @@
+/*define as cores do projeto*/
+:root {
+    --cor-primaria: #1D4ED8;
+    --cor-secundaria: #2563EB;
+    --cor-destaque: #FACC15;
+    --cor-texto: #A0A3A9;
+    --fundo-escuro: #111827;
+    --fundo-claro: #F3F4F6;
+}
+
+.cor-fundo-header-sidebar{
+    background-color: var(--cor-primaria);
+}

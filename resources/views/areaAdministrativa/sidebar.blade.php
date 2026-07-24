@@ -10,7 +10,16 @@
 </head>
 
 <body>
-    <h1>sidebar</h1>
+    <header class="cor-fundo-header-sidebar">
+        {{--navbar do Bootstrap responsável pela navegação do site--}}
+        <nav class="navbar navbar-expand-lg ">
+            {{-- container responsivo ocupando toda a largura disponível, com espaçamento lateral usando px-4--}}
+            <div class="container-fluid px-4">
+                {{--nome do site que recebe o link da página incial--}}
+                <a class="navbar-brand fw-bold text-uppercase text-white fs-1" href="{{ route('PaginaInicial') }}">
+                    Esporte <span class="textos-navegacao-inicial">Total</span>
+                </a>
+    </header>
     <main>
         @yield('content')
     </main>
