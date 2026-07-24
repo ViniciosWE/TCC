@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CampeonatoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,9 +36,11 @@ Route::get('/Dashboard', function (){
     return view('areaAdministrativa.dashboard');
 })->name('Dashboard')->middleware('auth');
 
+Route::resource('campeonatos', CampeonatoController::class)->middleware('auth');
+
 
 
 /*Rotas de login e Logout*/
 Route::post('/Login', [AuthController::class, 'login'])->name('LoginSubmit');
 
-Route::post('/Logout', [AuthController::class, 'logout'])->middleware('auth')->name('Logout');
+Route::post('/Logout', [AuthController::class, 'logout'])->name('Logout')->middleware('auth');
