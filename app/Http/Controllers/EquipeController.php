@@ -12,7 +12,7 @@ class EquipeController extends Controller
      */
     public function index()
     {
-        return view('areaAdministrativa.equipes.index');
+        return view('areaAdministrativa.equipes.index'); //Retorna o index das página de equipes 
     }
 
     /**
@@ -20,7 +20,7 @@ class EquipeController extends Controller
      */
     public function create()
     {
-         return view('areaAdministrativa.equipes.create');
+        return view('areaAdministrativa.equipes.create'); //Retorna a página de cadastro de equipes
     }
 
     /**
@@ -28,7 +28,24 @@ class EquipeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Realiza a validação dos dados enviados pelo formulário
+        $equipe = $request->validate([
+            'nome' => 'required',
+            'sigla' => 'required|max:3',
+            'escudo' => 'nullable|image',
+            'status' => 'required',
+        ]);
+
+        // Verifica se foi enviado um arquivo de escudo
+        if ($request->hasFile('escudo')) {
+            //Armazena a imagem no storage público dentro da pasta escudo-equipes e retorna o caminho da imagem
+            $path = $request->file('escudo')->store('escudo-equipes', 'public');
+            $equipe['escudo'] = $path;
+        }
+        //Cria o registro no banco
+        Equipe::create($equipe);
+        //Retorna para o index retornando a mensagem de sucesso
+        return redirect()->route('areaAdministrativa.equipes.index')->with('success', 'Equipe cadastrada com sucesso!');
     }
 
     /**
