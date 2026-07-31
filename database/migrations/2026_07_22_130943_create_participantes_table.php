@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->enum('funcao', ['GOLEIRO','FIXO','ALA_DIREITO','ALA_ESQUERDO','PIVO','GOLEIRO_LINHA',
                 'TECNICO','AUXILIAR_TECNICO','PREPARADOR_FISICO'])->nullable();
             $table->string('nome');
-            $table->char('cpf', 11)->unique();
+            $table->string('cpf', 11)->unique();
             $table->enum('status', ['ATIVO', 'SEM_EQUIPE', 'APOSENTADO', 'SUSPENSO']);
             $table->timestamps();
         });
