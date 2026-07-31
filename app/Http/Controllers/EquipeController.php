@@ -20,7 +20,7 @@ class EquipeController extends Controller
      */
     public function create()
     {
-        //
+         return view('areaAdministrativa.equipes.create');
     }
 
     /**

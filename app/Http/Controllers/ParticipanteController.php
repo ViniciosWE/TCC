@@ -20,7 +20,7 @@ class ParticipanteController extends Controller
      */
     public function create()
     {
-        //
+        return view('areaAdministrativa.participantes.create');
     }
 
     /**
