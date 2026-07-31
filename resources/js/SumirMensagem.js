@@ -9,4 +9,4 @@ function removerMensagem(id, tempo) {
 }
 
 
-removerMensagem('mensagemErro', 3000);
+removerMensagem('sumirMensagem', 3000);

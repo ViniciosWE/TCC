@@ -13,7 +13,7 @@
     @php $user = auth()->user();@endphp
 
     <header class="cor-fundo-header-sidebar">
-        <nav class="navbar px-4 py-3">
+        <nav class="navbar px-1 px-lg-4 py-3">
             {{-- Logo --}}
             <h1 class="navbar-brand fw-bold text-uppercase text-white fs-2">
                 Esporte<span class="cor-logo-sidebar">Total</span>

@@ -24,7 +24,7 @@
 
                 {{-- Mensagem de erro --}}
                 @error('login')
-                    <div id="mensagemErro" class="alert alert-danger mb-3">
+                    <div id="sumirMensagem" class="alert alert-danger mb-3">
                         {{ $message }}
                     </div>
                 @enderror

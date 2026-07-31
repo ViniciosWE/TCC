@@ -7,18 +7,29 @@
     <div class="container">
         <h1 class="mb-4">Cadastrar Equipe</h1>
 
+        @if ($errors->any())
+            <div class="alert alert-danger mb-3" id="sumirMensagem">
+                <ul class="mb-0 list-unstyled">
+                    @foreach ($errors->all() as $erro)
+                        <li>{{ $erro }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('equipes.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             {{-- Nome --}}
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome da Equipe</label>
-                <input type="text" class="form-control text-uppercase" id="nome" name="nome" value="{{ old('nome') }}" required>
+                <input type="text" class="form-control text-uppercase" id="nome" name="nome" value="{{ old('nome') }}"
+                    required>
             </div>
             {{-- Sigla --}}
             <div class="mb-3">
                 <label for="sigla" class="form-label">Sigla da Equipe</label>
-                <input type="text" class="form-control text-uppercase" id="sigla" name="sigla" value="{{ old('sigla') }}" maxlength="3"
-                    placeholder="Ex: GRE" required>
+                <input type="text" class="form-control text-uppercase" id="sigla" name="sigla" value="{{ old('sigla') }}"
+                    maxlength="3" placeholder="Ex: GRE" required>
             </div>
             {{-- Escudo --}}
             <div class="mb-3">
@@ -34,7 +45,7 @@
                     <option value="SUSPENSA" {{ old('status') == 'SUSPENSA' ? 'selected' : '' }}>SUSPENSA</option>
                 </select>
             </div>
-            {{--Botões de cadastrar e de voltar  --}}
+            {{--Botões de cadastrar e de voltar --}}
             <button type="submit" class="btn btn-primary">Cadastrar Equipe</button>
             <a href="{{ route('equipes.index') }}" class="btn btn-secondary">
                 Voltar
