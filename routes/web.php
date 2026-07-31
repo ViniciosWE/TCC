@@ -39,30 +39,32 @@ Route::get('/Login', function () {
     return view('login');
 })->name('Login');
 
-/*Rotas Administrativas*/
-Route::get('/Dashboard', function (){
-    return view('areaAdministrativa.dashboard');
-})->name('Dashboard')->middleware('auth');
+/* Rotas Administrativas */
+Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
+    Route::resource('campeonatos', CampeonatoController::class);
+    Route::resource('contratos', ContratoController::class);
+    Route::resource('equipes', EquipeController::class);
+    Route::resource('eventoPartidas', EventoPartidaController::class);
+    Route::resource('inscricoes', InscricaoController::class);
+    Route::resource('noticas', NoticiaController::class);
+    Route::resource('participantes', ParticipanteController::class);
+    Route::resource('partidas', PartidaController::class);
+});
 
-Route::resource('campeonatos', CampeonatoController::class)->middleware('auth');
+/* Rotas exclusivas do Super Administrador */
+Route::middleware(['auth', 'tipo:SUPER_ADMINISTRADOR'])->group(function () {
+    Route::resource('user', UserController::class)->except(['edit', 'update']);
+});
 
-Route::resource('contratos', ContratoController::class)->middleware('auth');
-
-Route::resource('equipes', EquipeController::class)->middleware('auth');
-
-Route::resource('eventoPartidas', EventoPartidaController::class)->middleware('auth');
-
-Route::resource('inscricoes', InscricaoController::class)->middleware('auth');
-
-Route::resource('noticas', NoticiaController::class)->middleware('auth');
-
-Route::resource('participantes', ParticipanteController::class)->middleware('auth');
-
-Route::resource('partidas', PartidaController::class)->middleware('auth');
-
-Route::resource('user', UserController::class)->middleware('auth');
+/* Rotas compartilhadas entre Administrador e Super Administrador */
+Route::middleware(['auth', 'tipo:ADMINISTRADOR,SUPER_ADMINISTRADOR'])->group(function () {
+    Route::get('/Dashboard', function () {
+        return view('areaAdministrativa.dashboard');
+    })->name('Dashboard');
+    Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('user/{user}', [UserController::class, 'update'])->name('user.update');
+});
 
 /*Rotas de login e Logout*/
 Route::post('/Login', [AuthController::class, 'login'])->name('LoginSubmit');
-
 Route::post('/Logout', [AuthController::class, 'logout'])->name('Logout')->middleware('auth');

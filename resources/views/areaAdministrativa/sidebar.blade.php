@@ -64,50 +64,54 @@
                 class="{{ request()->routeIs('Dashboard') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
                 <i class="bi bi-house me-2"></i>Dashboard
             </a>
-            <a href="{{ route('campeonatos.index') }}"
-                class="{{ request()->routeIs('campeonatos.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Campeonatos
-            </a>
+            @if($user->tipo == 'ADMINISTRADOR')
+                <a href="{{ route('campeonatos.index') }}"
+                    class="{{ request()->routeIs('campeonatos.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-trophy me-2"></i>Campeonatos
+                </a>
 
-            <a href="{{ route('contratos.index') }}"
-                class="{{ request()->routeIs('contratos.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Contratos
-            </a>
+                <a href="{{ route('contratos.index') }}"
+                    class="{{ request()->routeIs('contratos.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-file-earmark-text me-2"></i>Contratos
+                </a>
 
-            <a href="{{ route('equipes.index') }}"
-                class="{{ request()->routeIs('equipes.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Equipes
-            </a>
+                <a href="{{ route('equipes.index') }}"
+                    class="{{ request()->routeIs('equipes.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-people me-2"></i>Equipes
+                </a>
 
-            <a href="{{ route('eventoPartidas.index') }}"
-                class="{{ request()->routeIs('eventoPartidas.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Eventos das Partidas
-            </a>
+                <a href="{{ route('eventoPartidas.index') }}"
+                    class="{{ request()->routeIs('eventoPartidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-clipboard2-pulse me-2"></i>Eventos das Partidas
+                </a>
 
-            <a href="{{ route('inscricoes.index') }}"
-                class="{{ request()->routeIs('inscricoes.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Inscrições
-            </a>
+                <a href="{{ route('inscricoes.index') }}"
+                    class="{{ request()->routeIs('inscricoes.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-pencil-square me-2"></i>Inscrições
+                </a>
 
-            <a href="{{ route('noticas.index') }}"
-                class="{{ request()->routeIs('noticas.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Notícias
-            </a>
+                <a href="{{ route('noticas.index') }}"
+                    class="{{ request()->routeIs('noticas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-newspaper me-2"></i>Notícias
+                </a>
 
-            <a href="{{ route('participantes.index') }}"
-                class="{{ request()->routeIs('participantes.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Participantes
-            </a>
+                <a href="{{ route('participantes.index') }}"
+                    class="{{ request()->routeIs('participantes.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-person-badge me-2"></i>Participantes
+                </a>
 
-            <a href="{{ route('partidas.index') }}"
-                class="{{ request()->routeIs('Partidas.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Partidas
-            </a>
+                <a href="{{ route('partidas.index') }}"
+                    class="{{ request()->routeIs('Partidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-controller me-2"></i>Partidas
+                </a>
+            @endif
 
-            <a href="{{ route('user.index') }}"
-                class="{{ request()->routeIs('user.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Usuários
-            </a>
+            @if($user->tipo == 'SUPER_ADMINISTRADOR')
+                <a href="{{ route('user.index') }}"
+                    class="{{ request()->routeIs('user.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <i class="bi bi-person-gear me-2"></i>Usuários
+                </a>
+            @endif
         </aside>
 
         {{-- menu lateral exibido apenas no mobile --}}
@@ -122,53 +126,57 @@
             {{-- opções de navegação do menu mobile --}}
             <div class="offcanvas-body">
                 <a href="{{ route('Dashboard') }}"
-                    class="links-sidebar p-2 mb-2 {{ request()->routeIs('Dashboard') ? 'links-ativos-sidebar' : 'text-black' }}">
+                    class="{{ request()->routeIs('Dashboard') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
                     <i class="bi bi-house me-2"></i>Dashboard
                 </a>
-                <a href="{{ route('campeonatos.index') }}"
-                    class="links-sidebar p-2 mb-2 {{ request()->routeIs('campeonatos.index') ? 'links-ativos-sidebar' : 'text-black' }}">
-                    <i class="bi bi-trophy-fill me-2"></i>Campeonatos
-                </a>
+                @if($user->tipo == 'ADMINISTRADOR')
+                    <a href="{{ route('campeonatos.index') }}"
+                        class="{{ request()->routeIs('campeonatos.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-trophy me-2"></i>Campeonatos
+                    </a>
 
-                <a href="{{ route('contratos.index') }}"
-                    class="{{ request()->routeIs('contratos.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Contratos
-                </a>
+                    <a href="{{ route('contratos.index') }}"
+                        class="{{ request()->routeIs('contratos.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-file-earmark-text me-2"></i>Contratos
+                    </a>
 
-                <a href="{{ route('equipes.index') }}"
-                    class="{{ request()->routeIs('equipes.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Equipes
-                </a>
+                    <a href="{{ route('equipes.index') }}"
+                        class="{{ request()->routeIs('equipes.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-people me-2"></i>Equipes
+                    </a>
 
-                <a href="{{ route('eventoPartidas.index') }}"
-                    class="{{ request()->routeIs('eventoPartidas.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Eventos das Partidas
-                </a>
+                    <a href="{{ route('eventoPartidas.index') }}"
+                        class="{{ request()->routeIs('eventoPartidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-clipboard2-pulse me-2"></i>Eventos das Partidas
+                    </a>
 
-                <a href="{{ route('inscricoes.index') }}"
-                    class="{{ request()->routeIs('inscricoes.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Inscrições
-                </a>
+                    <a href="{{ route('inscricoes.index') }}"
+                        class="{{ request()->routeIs('inscricoes.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-pencil-square me-2"></i>Inscrições
+                    </a>
 
-                <a href="{{ route('noticas.index') }}"
-                    class="{{ request()->routeIs('noticas.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Notícias
-                </a>
+                    <a href="{{ route('noticas.index') }}"
+                        class="{{ request()->routeIs('noticas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-newspaper me-2"></i>Notícias
+                    </a>
 
-                <a href="{{ route('participantes.index') }}"
-                    class="{{ request()->routeIs('participantes.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Participantes
-                </a>
+                    <a href="{{ route('participantes.index') }}"
+                        class="{{ request()->routeIs('participantes.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-person-badge me-2"></i>Participantes
+                    </a>
 
-                <a href="{{ route('partidas.index') }}"
-                    class="{{ request()->routeIs('Partidas.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Partidas
-                </a>
+                    <a href="{{ route('partidas.index') }}"
+                        class="{{ request()->routeIs('Partidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-controller me-2"></i>Partidas
+                    </a>
+                @endif
 
-                <a href="{{ route('user.index') }}"
-                    class="{{ request()->routeIs('user.index') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
-                    <i class="bi bi-trophy-fill me-2"></i>Usuários
-                </a>
+                @if($user->tipo == 'SUPER_ADMINISTRADOR')
+                    <a href="{{ route('user.index') }}"
+                        class="{{ request()->routeIs('user.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        <i class="bi bi-person-gear me-2"></i>Usuários
+                    </a>
+                @endif
             </div>
         </div>
 
