@@ -14,8 +14,8 @@ class EquipeController extends Controller
     public function index()
     {
 
-        $equipes = Equipe::all();// Busca todas as equipes cadastradas
-        return view('areaAdministrativa.equipes.index', compact('equipes'));// Retorna a view com a lista de equipes
+        $equipes = Equipe::latest()->get(); // Busca os participantes começando pelos mais recentes
+        return view('areaAdministrativa.equipes.index', compact('equipes'));// Retorna a view com a lista de todas as equipes
     }
 
     /**

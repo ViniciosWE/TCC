@@ -12,7 +12,9 @@ class ParticipanteController extends Controller
      */
     public function index()
     {
-        return view('areaAdministrativa.participantes.index');
+       
+        $participantes = Participante::latest()->get(); // Busca os participantes começando pelos mais recentes
+        return view('areaAdministrativa.participantes.index', compact('participantes')); // Retorna a view com as lista de todos os participantes
     }
 
     /**
@@ -20,7 +22,7 @@ class ParticipanteController extends Controller
      */
     public function create()
     {
-        return view('areaAdministrativa.participantes.create');
+        return view('areaAdministrativa.participantes.create'); // Retorna a página de cadastro dos participantes
     }
 
     /**
@@ -28,7 +30,24 @@ class ParticipanteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Realiza a validação dos dados enviados pelo formulário
+        $participante = $request->validate(
+            [
+                'nome' => 'required',
+                'cpf' => 'required|max:11|unique:participantes,cpf',
+                'status' => 'required',
+                'numero' => 'nullable',
+                'funcao' => 'nullable',
+            ],
+            [
+                'cpf.unique' => 'já existe um participante cadastrado com esse CPF',
+            ]
+        );
+
+        //Cria o registro no banco
+        Participante::create($participante);
+        //Retorna para o index retornando a mensagem de sucesso
+        return redirect()->route('participantes.index')->with('success', 'Participante cadastrado com sucesso!');
     }
 
     /**
@@ -44,7 +63,7 @@ class ParticipanteController extends Controller
      */
     public function edit(Participante $participante)
     {
-        //
+        return view('areaAdministrativa.participantes.edit', compact('participante')); //Retorna a página de editar com os dados do participante selecionado
     }
 
     /**
@@ -52,7 +71,24 @@ class ParticipanteController extends Controller
      */
     public function update(Request $request, Participante $participante)
     {
-        //
+        // Valida os dados enviados pelo formulário
+        $dados = $request->validate(
+            [
+                'nome' => 'required',
+                'cpf' => 'required|max:11|unique:participantes,cpf,' . $participante->id,
+                'status' => 'required',
+                'numero' => 'nullable',
+                'funcao' => 'nullable',
+            ],
+            [
+                'cpf.unique' => 'já existe um participante cadastrado com esse CPF',
+            ]
+        );
+
+        // Atualiza os dados da equipe
+        $participante->update($dados);
+        // Retorna para a listagem
+        return redirect()->route('participantes.index')->with('success', 'Participante atualizado com sucesso!');
     }
 
     /**
@@ -60,6 +96,10 @@ class ParticipanteController extends Controller
      */
     public function destroy(Participante $participante)
     {
-        //
+        // Remove a equipe do banco de dados
+        $participante->delete();
+        //Retorna para o index retornando a mensagem de sucesso
+        return redirect()->route('participantes.index')
+            ->with('success', 'Participante excluído com sucesso!');
     }
 }

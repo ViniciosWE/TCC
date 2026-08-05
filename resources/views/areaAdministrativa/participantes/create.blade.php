@@ -1,11 +1,11 @@
 @extends('areaAdministrativa.sidebar')
 
-@section('title', 'Cadastrar Participantes')
+@section('title', 'Cadastrar Participante')
 
 @section('content')
 
     <div class="container">
-        <h1 class="mb-4">Cadastrar Participantes</h1>
+        <h1 class="mb-4">Cadastrar Participante</h1>
 
         <form action="{{ route('participantes.store') }}" method="POST">
             @csrf
@@ -23,7 +23,7 @@
             {{-- Número --}}
             <div class="mb-3">
                 <label for="numero" class="form-label">Número do Participante</label>
-                <input type="text" class="form-control" id="numero" name="numero" value="{{ old('numero') }} " inputmode="numeric">
+                <input type="number" class="form-control" id="numero" name="numero" value="{{ old('numero') }} " inputmode="numeric">
             </div>
             {{-- Função --}}
             <div class="mb-3">
