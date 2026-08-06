@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Contrato;
+use App\Models\Equipe;
 use App\Models\Participante;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class ParticipanteController extends Controller
      */
     public function index()
     {
-       
+
         $participantes = Participante::latest()->get(); // Busca os participantes começando pelos mais recentes
         return view('areaAdministrativa.participantes.index', compact('participantes')); // Retorna a view com as lista de todos os participantes
     }
@@ -22,7 +23,8 @@ class ParticipanteController extends Controller
      */
     public function create()
     {
-        return view('areaAdministrativa.participantes.create'); // Retorna a página de cadastro dos participantes
+        $equipes = Equipe::latest()->get(); // busca todas as equipes
+        return view('areaAdministrativa.participantes.create', compact('equipes')); // Retorna a página de cadastro dos participantes
     }
 
     /**
@@ -63,7 +65,8 @@ class ParticipanteController extends Controller
      */
     public function edit(Participante $participante)
     {
-        return view('areaAdministrativa.participantes.edit', compact('participante')); //Retorna a página de editar com os dados do participante selecionado
+        $equipes = Equipe::latest()->get(); // busca todas as equipes
+        return view('areaAdministrativa.participantes.edit', compact('participante', 'equipes')); //Retorna a página de editar com os dados do participante selecionado
     }
 
     /**

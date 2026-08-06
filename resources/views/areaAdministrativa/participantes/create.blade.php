@@ -23,7 +23,8 @@
             {{-- Número --}}
             <div class="mb-3">
                 <label for="numero" class="form-label">Número do Participante</label>
-                <input type="number" class="form-control" id="numero" name="numero" value="{{ old('numero') }} " inputmode="numeric">
+                <input type="number" class="form-control" id="numero" name="numero" value="{{ old('numero') }} "
+                    inputmode="numeric">
             </div>
             {{-- Função --}}
             <div class="mb-3">
@@ -54,6 +55,21 @@
                     <option value="SUSPENSO" {{ old('status') == 'SUSPENSO' ? 'selected' : '' }}>Suspenso</option>
                 </select>
             </div>
+
+            {{-- Equipes --}}
+            <div class="mb-3" id="divEquipe">
+                <label for="equipes" class="form-label">Selecione uma Equipe</label>
+                <select class="form-select" name="equipes" id="equipes">
+                    <option value="">Selecione</option>
+                    @foreach ($equipes as $equipe)
+                        <option value="{{ $equipe->id }}" {{ old('equipes') == $equipe->id ? 'selected' : '' }}>
+                            {{ $equipe->nome }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+
             <button type="submit" class="btn btn-primary">Cadastrar Equipe</button>
 
             <a href="{{ route('participantes.index') }}" class="btn btn-secondary">
