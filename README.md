@@ -85,8 +85,14 @@ php artisan migrate:fresh --seed
 ```
 
 ---
+### 9. Configurar o Storage
 
-### 9. Iniciar o servidor do Vite
+Para permitir que os arquivos armazenados pelo sistema sejam acessados publicamente, execute:
+```bash
+php artisan storage:link
+```
+---
+### 10. Iniciar o servidor do Vite
 
 Durante o desenvolvimento é necessário executar:
 
@@ -98,7 +104,7 @@ Esse comando é responsável por carregar e atualizar automaticamente os arquivo
 
 ---
 
-### 10. Iniciar o servidor Laravel
+### 11. Iniciar o servidor Laravel
 
 ```bash
 php artisan serve
