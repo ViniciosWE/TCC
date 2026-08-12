@@ -1,12 +1,7 @@
-function removerMensagem(id, tempo) {
-    /*Buca o elemento pelo o id*/
-    const elemento = document.getElementById(id);
-
-    /*Verifica se o elemento existe e remove */
-    if (elemento) {
-        setTimeout(() => elemento.remove(), tempo);
+function removerMensagem(id, tempo) { 
+    const elemento = document.getElementById(id); // Busca o elemento pelo ID
+    if (elemento) { // Verifica se o elemento existe
+        setTimeout(() => elemento.remove(), tempo); // Remove o elemento depois do tempo informado
     }
 }
-
-
-removerMensagem('sumirMensagem', 3000);
+export { removerMensagem }; // Permite usar a função em outro arquivo

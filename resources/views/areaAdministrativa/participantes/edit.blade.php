@@ -32,7 +32,7 @@
             {{-- Número --}}
             <div class="mb-3">
                 <label for="numero" class="form-label">Número do Participante</label>
-                <input type="text" class="form-control" id="numero" name="numero"
+                <input type="text" class="form-control" id="numero" name="numero" maxlength="2"
                     value="{{ old('numero', $participante->numero) }} " inputmode="numeric">
             </div>
             {{-- Função --}}
@@ -72,17 +72,18 @@
                 </select>
             </div>
 
-            {{-- Equipes --}}
+            {{-- Equipe --}}
             <div class="mb-3" id="divEquipe">
-                <label for="equipes" class="form-label">Selecione uma Equipe</label>
-                <select class="form-select" name="equipes" id="equipes">
-                    <option value="">Selecione</option>
+                <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
+                <input list="lista-equipes" class="form-control" id="equipe_nome" placeholder="Digite para pesquisar..."
+                    value="{{ old('equipe_id') ? $equipes->find(old('equipe_id'))?->nome : $contrato?->equipe?->nome }}">
+                <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id', $contrato?->equipe_id) }}">
+                <datalist id="lista-equipes">
                     @foreach ($equipes as $equipe)
-                        <option value="{{ $equipe->id }}" {{ old('equipes') == $equipe->id ? 'selected' : '' }}>
-                            {{ $equipe->nome }}
+                        <option value="{{ $equipe->nome }}" data-id="{{ $equipe->id }}">
                         </option>
                     @endforeach
-                </select>
+                </datalist>
             </div>
             {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Salvar Alterações </button>

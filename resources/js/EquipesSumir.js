@@ -1,21 +1,18 @@
-function EquipesSumir(idStatus, idEquipe) {
-    const status = document.getElementById(idStatus); // pega o elemento pelo ID
-    const equipe = document.getElementById(idEquipe); // pega o elemento pelo ID
-
-    // Verifica se o valor do status é ATIVO e deixa o campo de selecionar equipe visível
-    if (status.value === 'ATIVO') {
-        equipe.style.display = 'block';
-    } else { // Senão, esconde
-        equipe.style.display = 'none';
-        document.getElementById('equipe').value = '';
+function EquipesSumir(idStatus, idEquipe) { 
+    const status = document.getElementById(idStatus); // Busca o campo de status
+    const equipe = document.getElementById(idEquipe); // Busca o campo da equipe
+    if (!status || !equipe) { // Verifica se algum campo não existe
+        return; // Encerra a função
+    }
+    if (status.value === 'ATIVO') { // Verifica se o status é ATIVO
+        equipe.style.display = 'block'; // Mostra o campo da equipe
+    } else { // Caso o status não seja ATIVO
+        equipe.style.display = 'none'; // Esconde o campo da equipe
+        const campoEquipe = document.getElementById('equipe'); // Busca o campo equipe
+        if (campoEquipe) { // Verifica se o campo equipe existe
+            campoEquipe.value = ''; // Limpa o valor do campo
+        }
     }
 }
 
-
-// Verifica se o combo foi alterado. Se houver alguma alteração, o campo de selecionar equipe pode aparecer ou desaparecer
-document.getElementById('status').addEventListener('change', function () {
-    EquipesSumir('status', 'divEquipe');
-});
-
-//chama a função em casos de edição que já carrega a página
-EquipesSumir('status', 'divEquipe');
+export { EquipesSumir }; // Permite usar a função em outro arquivo

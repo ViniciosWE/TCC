@@ -6,6 +6,15 @@
 
     <div class="container">
         <h1 class="mb-4">Cadastrar Participante</h1>
+        @if ($errors->any())
+            <div class="alert alert-danger mb-3" id="sumirMensagem">
+                <ul class="mb-0 list-unstyled">
+                    @foreach ($errors->all() as $erro)
+                        <li>{{ $erro }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form action="{{ route('participantes.store') }}" method="POST">
             @csrf
@@ -23,7 +32,7 @@
             {{-- Número --}}
             <div class="mb-3">
                 <label for="numero" class="form-label">Número do Participante</label>
-                <input type="number" class="form-control" id="numero" name="numero" value="{{ old('numero') }} "
+                <input type="text" class="form-control" id="numero" name="numero" value="{{ old('numero') }}" maxlength="2"
                     inputmode="numeric">
             </div>
             {{-- Função --}}
@@ -58,17 +67,16 @@
 
             {{-- Equipes --}}
             <div class="mb-3" id="divEquipe">
-                <label for="equipes" class="form-label">Selecione uma Equipe</label>
-                <select class="form-select" name="equipes" id="equipes">
-                    <option value="">Selecione</option>
+                <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
+                <input list="lista-equipes" class="form-control" id="equipe_nome" placeholder="Digite para pesquisar..." >
+                <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id') }}">
+                <datalist id="lista-equipes">
                     @foreach ($equipes as $equipe)
-                        <option value="{{ $equipe->id }}" {{ old('equipes') == $equipe->id ? 'selected' : '' }}>
-                            {{ $equipe->nome }}
+                        <option value="{{ $equipe->nome }}" data-id="{{ $equipe->id }}">
                         </option>
                     @endforeach
-                </select>
+                </datalist>
             </div>
-
 
             <button type="submit" class="btn btn-primary">Cadastrar Equipe</button>
 

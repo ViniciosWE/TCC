@@ -13,9 +13,13 @@ class EquipeController extends Controller
      */
     public function index()
     {
-
-        $equipes = Equipe::latest()->get(); // Busca os participantes começando pelos mais recentes
-        return view('areaAdministrativa.equipes.index', compact('equipes'));// Retorna a view com a lista de todas as equipes
+        //busca o total de participantes ativos nas equipes
+        $equipes = Equipe::withCount([
+            'contratos as participantes_ativos_count' => function ($query) {
+                $query->where('status', 'ATIVO');
+            }
+        ])->latest()->get();
+        return view('areaAdministrativa.equipes.index', compact('equipes')); //Retorna a página de index
     }
 
     /**
@@ -52,10 +56,8 @@ class EquipeController extends Controller
             $path = $request->file('escudo')->store('escudo-equipes', 'public');
             $equipe['escudo'] = $path;
         }
-        //Cria o registro no banco
-        Equipe::create($equipe);
-        //Retorna para o index retornando a mensagem de sucesso
-        return redirect()->route('equipes.index')->with('success', 'Equipe cadastrada com sucesso!');
+        Equipe::create($equipe);//Cria o registro no banco 
+        return redirect()->route('equipes.index')->with('success', 'Equipe cadastrada com sucesso!');//Retorna para o index retornando a mensagem de sucesso
     }
 
     /**
@@ -102,24 +104,25 @@ class EquipeController extends Controller
             // Salva o novo escudo
             $dados['escudo'] = $request->file('escudo')->store('escudo-equipes', 'public');
         }
-        // Atualiza os dados da equipe
-        $equipe->update($dados);
-        // Retorna para a listagem
-        return redirect()->route('equipes.index')->with('success', 'Equipe atualizada com sucesso!');
+        $equipe->update($dados); // Atualiza os dados da equipe
+        return redirect()->route('equipes.index')->with('success', 'Equipe atualizada com sucesso!');// Retorna para o index
     }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Equipe $equipe)
     {
-        // Verifica se a equipe possui um escudo cadastrado e se o arquivo existe no storage
+
+        $possuiContrato = $equipe->contratos()->exists();// Verifica se a equipe possui algum contrato
+        // Se possuir contratos, não permite a exclusão
+        if ($possuiContrato) {
+            return redirect()->route('equipes.index')->with('error', 'A equipe possui contratos e não pode ser excluída. Dessa maneira, ela deverá ser encerrada.');
+        }
+        // Se nunca teve contratos, remove o escudo
         if ($equipe->escudo && Storage::disk('public')->exists($equipe->escudo)) {
             Storage::disk('public')->delete($equipe->escudo);
         }
-        // Remove a equipe do banco de dados
-        $equipe->delete();
-        //Retorna para o index retornando a mensagem de sucesso
-        return redirect()->route('equipes.index')
-            ->with('success', 'Equipe excluída com sucesso!');
+        $equipe->delete(); // Remove a equipe do banco
+        return redirect()->route('equipes.index')->with('success', 'Equipe excluída com sucesso!');
     }
 }
