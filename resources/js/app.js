@@ -11,6 +11,8 @@ import { pesquisar } from './Pesquisa';
 document.addEventListener('DOMContentLoaded', function () {
     apenasNumeros('cpf');
     apenasNumeros('numero');
+    apenasNumeros('minimo_jogadores_equipes');
+    apenasNumeros('maximo_equipes');
 
 
     const status = document.getElementById('status'); // Busca o campo de status pelo ID
@@ -28,4 +30,5 @@ document.addEventListener('DOMContentLoaded', function () {
     pesquisar('pesquisaEquipe', 'equipe-card');
     pesquisar('pesquisaParticipantes', 'participantes-card');
     pesquisar('pesquisaContrato', 'contrato-card');
+     pesquisar('pesquisaCampeonato', 'campeonato-card');
 });
