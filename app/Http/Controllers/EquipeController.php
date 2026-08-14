@@ -36,7 +36,7 @@ class EquipeController extends Controller
     public function store(Request $request)
     {
         // Realiza a validação dos dados enviados pelo formulário
-        $equipe = $request->validate(
+        $dados = $request->validate(
             [
                 'nome' => 'required|unique:equipes,nome',
                 'sigla' => 'required|max:3|unique:equipes,sigla',
@@ -54,9 +54,9 @@ class EquipeController extends Controller
         if ($request->hasFile('escudo')) {
             //Armazena a imagem no storage público dentro da pasta escudo-equipes e retorna o caminho da imagem
             $path = $request->file('escudo')->store('escudo-equipes', 'public');
-            $equipe['escudo'] = $path;
+            $dados['escudo'] = $path;
         }
-        Equipe::create($equipe);//Cria o registro no banco 
+        Equipe::create($dados);//Cria o registro no banco 
         return redirect()->route('equipes.index')->with('success', 'Equipe cadastrada com sucesso!');//Retorna para o index retornando a mensagem de sucesso
     }
 

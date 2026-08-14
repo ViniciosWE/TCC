@@ -34,7 +34,7 @@
             {{-- Escudo --}}
             <div class="mb-3">
                 <label for="escudo" class="form-label">Escudo da Equipe</label>
-                <input type="file" class="form-control" id="escudo" name="escudo" accept="image/*" required>
+                <input type="file" class="form-control" id="escudo" name="escudo" accept="image/*">
             </div>
             {{-- Status --}}
             <div class="mb-3">

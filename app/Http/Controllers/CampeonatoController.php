@@ -71,7 +71,25 @@ class CampeonatoController extends Controller
      */
     public function update(Request $request, Campeonato $campeonato)
     {
-        //
+        // Valida os dados enviados pelo formulário
+        $dados = $request->validate([
+            'nome' => 'required|string|max:255',
+            'minimo_jogadores_equipes' => 'required|integer|min:5',
+            'maximo_equipes' => 'required|integer|min:2',
+            'tipo' => 'required|in:MATA_MATA,GRUPOS_MATA_MATA,PONTOS_CORRIDOS',
+            'categoria' => 'required|string|max:255',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'required|date|after_or_equal:data_inicio',
+            'status' => 'required|in:INSCRICOES,EM_ANDAMENTO,FINALIZADO',
+        ], [
+            'minimo_jogadores_equipes.min' => 'O número mínimo de jogadores por equipe deve ser de pelo menos 5.',
+            'maximo_equipes.min' => 'A quantidade máxima de equipes deve ser de pelo menos 2.',
+            'data_fim.after_or_equal' => 'A data de término não pode ser anterior à data de início.',
+        ]);
+
+        $dados['user_id'] = auth()->id(); //pega o id de quem criou 
+        $campeonato->update($dados); // edita
+        return redirect()->route('campeonatos.index')->with('success', 'Campeonato atualizado com sucesso!');
     }
 
     /**

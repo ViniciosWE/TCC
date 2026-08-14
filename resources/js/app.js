@@ -25,10 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     configurarDatalist('equipe_nome', 'equipe_id', 'lista-equipes');
     configurarDatalist('participante_nome', 'participante_id', 'lista-participantes');
+    configurarDatalist('campeonato_nome', 'campeonato_id', 'lista-campeonatos');
 
     removerMensagem('sumirMensagem', 3000);
     pesquisar('pesquisaEquipe', 'equipe-card');
     pesquisar('pesquisaParticipantes', 'participantes-card');
     pesquisar('pesquisaContrato', 'contrato-card');
-     pesquisar('pesquisaCampeonato', 'campeonato-card');
+    pesquisar('pesquisaCampeonato', 'campeonato-card');
+    pesquisar('pesquisaNoticia', 'noticia-card');
 });

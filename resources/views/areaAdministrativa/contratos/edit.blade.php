@@ -41,7 +41,7 @@
                 </select>
             </div>
             {{--Botões--}}
-            <button type="submit" class="btn btn-primary">Editar Equipe</button>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
             <a href="{{ route('contratos.index') }}" class="btn btn-secondary">
                 Voltar
             </a>

@@ -14,8 +14,7 @@ class ContratoController extends Controller
      */
     public function index()
     {
-        // Busca os contratos junto com a equipe e o participante
-        $contratos = Contrato::with(['equipe', 'participante'])->latest()->get();
+        $contratos = Contrato::with(['equipe', 'participante'])->latest()->get();  // Busca os contratos junto com a equipe e o participante
         return view('areaAdministrativa.contratos.index', compact('contratos'));
     }
 

@@ -90,8 +90,8 @@
                     <i class="bi bi-pencil-square me-2"></i>Inscrições
                 </a>
 
-                <a href="{{ route('noticas.index') }}"
-                    class="{{ request()->routeIs('noticas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                <a href="{{ route('noticias.index') }}"
+                    class="{{ request()->routeIs('noticias.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
                     <i class="bi bi-newspaper me-2"></i>Notícias
                 </a>
 
@@ -155,8 +155,8 @@
                         <i class="bi bi-pencil-square me-2"></i>Inscrições
                     </a>
 
-                    <a href="{{ route('noticas.index') }}"
-                        class="{{ request()->routeIs('noticas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    <a href="{{ route('noticias.index') }}"
+                        class="{{ request()->routeIs('noticias.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
                         <i class="bi bi-newspaper me-2"></i>Notícias
                     </a>
 
