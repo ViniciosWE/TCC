@@ -45,7 +45,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
     Route::resource('contratos', ContratoController::class);
     Route::resource('equipes', EquipeController::class);
     Route::resource('eventoPartidas', EventoPartidaController::class);
-    Route::resource('inscricoes', InscricaoController::class);
+    Route::resource('inscricoes', InscricaoController::class)->parameters(['inscricoes' => 'inscricao']);
     Route::resource('noticias', NoticiaController::class);
     Route::resource('participantes', ParticipanteController::class);
     Route::resource('partidas', PartidaController::class);

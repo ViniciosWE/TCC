@@ -46,7 +46,7 @@
                 </datalist>
             </div>
             {{--Botões--}}
-            <button type="submit" class="btn btn-primary">Cadastrar Equipe</button>
+            <button type="submit" class="btn btn-primary">Cadastrar Inscrição</button>
             <a href="{{ route('inscricoes.index') }}" class="btn btn-secondary">
                 Voltar
             </a>

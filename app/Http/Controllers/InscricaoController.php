@@ -6,6 +6,7 @@ use App\Models\Campeonato;
 use App\Models\Contrato;
 use App\Models\Equipe;
 use App\Models\Inscricao;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class InscricaoController extends Controller
@@ -40,37 +41,34 @@ class InscricaoController extends Controller
         ]);
         $campeonato = Campeonato::findOrFail($dados['campeonato_id']); // Busca o campeonato
 
-        // Verifica se o campeonato ainda está aceitando inscrições
-        if ($campeonato->status !== 'INSCRICOES') {
-            return back()->withInput()->with('error', 'Este campeonato não está aceitando inscrições.');
-        }
-
         // Verifica se a equipe já está inscrita
         if (Inscricao::where('campeonato_id', $campeonato->id)->where('equipe_id', $dados['equipe_id'])->exists()) {
-            return back()->withInput()->with('error', 'Esta equipe já está inscrita neste campeonato.');
+            return back()->withInput()->withErrors(['equipe_id' => 'Esta equipe já está inscrita neste campeonato.']);
         }
-
-        $totalEquipes = Inscricao::where('campeonato_id', $campeonato->id)->count();  // Conta quantas equipes já estão inscritas
-
-        // Verifica se atingiu o limite de equipes
+        $totalEquipes = Inscricao::where('campeonato_id', $campeonato->id)->count();// Conta as equipes inscritas
+        // Verifica limite de equipes
         if ($totalEquipes >= $campeonato->maximo_equipes) {
-            return back()->withInput()->with('error', 'Este campeonato já atingiu o número máximo de equipes.');
+            return back()->withInput()->withErrors(['campeonato_id' => 'Este campeonato já atingiu o número máximo de equipes.']);
         }
-        $equipe = Equipe::findOrFail($dados['equipe_id']); // Busca a equipe
 
-        $totalJogadores = Contrato::where('equipe_id', $equipe->id)->where('status', 'ATIVO')
+        $equipe = Equipe::findOrFail($dados['equipe_id']);
+
+        // Conta somente jogadores
+        $totalJogadores = Contrato::where('equipe_id', $equipe->id)
+            ->where('status', 'ATIVO')
             ->whereHas('participante', function ($query) {
                 $query->whereNotIn('funcao', ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO',]);
             })->count();
 
-        // Verifica o mínimo de jogadores
+        // Verifica mínimo de jogadores
         if ($totalJogadores < $campeonato->minimo_jogadores_equipes) {
-            return back()->withInput()->with('error', "A equipe precisa ter pelo menos {$campeonato->minimo_jogadores_equipes} jogadores para participar deste campeonato. Atualmente possui {$totalJogadores}.");
+            return back()->withInput()->withErrors(['equipe_id' => "A equipe precisa ter pelo menos {$campeonato->minimo_jogadores_equipes} jogadores para participar deste campeonato. Atualmente possui {$totalJogadores}."]);
         }
-
-        $dados['user_id'] = auth()->id(); // Adiciona o usuário responsável pela inscrição
-        Inscricao::create($dados); // Cria a inscrição
-        return redirect()->route('inscricoes.index')->with('success', 'Inscrição cadastrada com sucesso!');
+        $dados['user_id'] = auth()->id();
+        $inscricao = Inscricao::create($dados);
+        $inscricao->load(['equipe', 'campeonato']);// Busca a inscrição novamente com os relacionamentos
+        $pdf = Pdf::loadView('areaAdministrativa.inscricoes.comprovante', compact('inscricao')); // Gera o PDF
+        return $pdf->stream('comprovante-inscricao-' . $inscricao->id . '.pdf');// Retorna o PDF para o navegador
     }
 
     /**
@@ -102,6 +100,7 @@ class InscricaoController extends Controller
      */
     public function destroy(Inscricao $inscricao)
     {
-        //
+        $inscricao->delete();
+        return redirect()->route('inscricoes.index')->with('success', 'Inscrição excluída com sucesso!');
     }
-}
+}                                                   

@@ -41,8 +41,8 @@
                         <div class="card-body">
                             {{-- Informações da Incrição --}}
                             <div class="mb-4">
-                                <h5 class="fw-bold text-uppercase mb-2 text-break">{{ $inscricao->campeonato->nome }} </h5>
-                                <p class="mb-2 text-break"><strong>Equipe:</strong>{{ $inscricao->equipe->nome }}</p>
+                                <p class="mb-2 text-break">{{ $inscricao->campeonato->nome }}</p>
+                                <p class="mb-2 text-break">{{ $inscricao->equipe->nome }}</p>
                             </div>
                             {{-- Botões --}}
                             <div class="d-flex gap-2">
@@ -53,7 +53,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger w-100"
-                                        onclick="return confirm('Deseja realmente excluir este contrato? Esta ação excluirá o registro do vínculo do jogador com a equipe e removerá seu histórico neste time.')">
+                                        onclick="return confirm('Deseja realmente excluir esta inscrição?')">
                                         <i class="bi bi-trash me-1"></i>Excluir
                                     </button>
                                 </form>
@@ -63,10 +63,10 @@
                     </div>
                 </div>
             @empty
-                {{-- Mensagem exibida quando não houver contratos --}}
+                {{-- Mensagem exibida quando não houver inscrições --}}
                 <div class="col-12">
                     <div class="alert alert-info text-center">
-                        Nenhuma inscrição cadastrado.
+                        Nenhuma inscrição cadastrada.
                     </div>
                 </div>
             @endforelse
