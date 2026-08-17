@@ -12,7 +12,7 @@ class CampeonatoController extends Controller
      */
     public function index()
     {
-        $campeonatos = Campeonato::latest()->get();
+        $campeonatos = Campeonato::withCount('inscricoes')->latest()->get();
         return view('areaAdministrativa.campeonatos.index', compact('campeonatos'));
     }
 
@@ -97,7 +97,11 @@ class CampeonatoController extends Controller
      */
     public function destroy(Campeonato $campeonato)
     {
+        $possuiInscricoes = $campeonato->inscricoes()->exists();
+        if ($possuiInscricoes) {
+            return redirect()->route('campeonatos.index')->with('error', 'O campeonato possui inscrições e não pode ser excluído.');
+        }
         $campeonato->delete();
-         return redirect()->route('campeonatos.index')->with('success', 'Campeonato excluído com sucesso!');
+        return redirect()->route('campeonatos.index')->with('success', 'Campeonato excluído com sucesso!');
     }
 }

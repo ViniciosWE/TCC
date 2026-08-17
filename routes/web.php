@@ -49,6 +49,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
     Route::resource('noticias', NoticiaController::class);
     Route::resource('participantes', ParticipanteController::class);
     Route::resource('partidas', PartidaController::class);
+    Route::get('inscricoes/{inscricao}/comprovante', [InscricaoController::class, 'comprovante'])->name('inscricoes.comprovante');
 });
 
 /* Rotas exclusivas do Super Administrador */

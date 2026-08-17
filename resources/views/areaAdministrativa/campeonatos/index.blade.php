@@ -63,6 +63,8 @@
                                     @elseif($campeonato->status == 'FINALIZADO')
                                         <span class="badge bg-danger">Finalizado</span>
                                     @endif
+
+                                    <span class="badge bg-primary">{{ $campeonato->inscricoes_count }} / {{ $campeonato->maximo_equipes }} equipes</span>
                                 </div>
                             </div>
                             {{-- Botões --}}
@@ -86,7 +88,7 @@
                 {{-- Mensagem exibida quando não houver nenhuma equipe cadastrada --}}
                 <div class="col-12">
                     <div class="alert alert-info text-center">
-                        Nenhuma equipe cadastrada.
+                        Nenhum campeonato cadastrada.
                     </div>
                 </div>
             @endforelse

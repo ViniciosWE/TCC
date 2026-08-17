@@ -68,7 +68,8 @@
             {{-- Equipes --}}
             <div class="mb-3" id="divEquipe">
                 <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
-                <input list="lista-equipes" class="form-control" id="equipe_nome" placeholder="Digite para pesquisar..." >
+                <input list="lista-equipes" class="form-control" id="equipe_nome" name="equipe_nome"
+                    placeholder="Digite para pesquisar..." value="{{ old('equipe_nome') }}">
                 <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id') }}">
                 <datalist id="lista-equipes">
                     @foreach ($equipes as $equipe)

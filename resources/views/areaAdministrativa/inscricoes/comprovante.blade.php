@@ -64,6 +64,10 @@
 
         <div class="subtitulo">
             Sistema de Gerenciamento Esportivo
+
+        </div>
+        <div class="subtitulo">
+            {{ $inscricao->created_at->format('d/m/Y H:i') }}
         </div>
     </div>
 
@@ -74,7 +78,6 @@
     <div class="dados">
 
         <div class="linha">
-            <span class="label">Campeonato:</span>
             {{ $inscricao->campeonato->nome }}
         </div>
 
@@ -90,29 +93,24 @@
 
         <div class="linha">
             <span class="label">Tipo do campeonato:</span>
-            {{ $inscricao->campeonato->tipo }}
+            @if ($inscricao->campeonato->tipo == 'MATA_MATA')
+                Mata-mata
+            @elseif($inscricao->campeonato->tipo == 'MATA_MATA')
+                Grupos + Mata-mata
+            @else
+                Pontos corridos
+            @endif
         </div>
 
         <div class="linha">
             <span class="label">Data de início:</span>
-            {{ \Carbon\Carbon::parse($inscricao->campeonato->data_inicio)->format('d/m/Y') }}
+            {{ date('d/m/Y', strtotime($inscricao->campeonato->data_inicio))}}
         </div>
 
         <div class="linha">
             <span class="label">Data de término:</span>
-            {{ \Carbon\Carbon::parse($inscricao->campeonato->data_fim)->format('d/m/Y') }}
+            {{ date('d/m/Y', strtotime($inscricao->campeonato->data_fim))}}
         </div>
-
-        <div class="linha">
-            <span class="label">Data da inscrição:</span>
-            {{ $inscricao->created_at->format('d/m/Y H:i') }}
-        </div>
-
-        <div class="linha">
-            <span class="label">Número da inscrição:</span>
-            {{ $inscricao->id }}
-        </div>
-
     </div>
 
     <div class="rodape">

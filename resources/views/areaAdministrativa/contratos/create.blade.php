@@ -22,11 +22,12 @@
             {{-- Nome da Equipe --}}
             <div class="mb-3">
                 <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
-                <input list="lista-equipes" class="form-control" id="equipe_nome" placeholder="Digite para pesquisar..." required>
-                <input type="hidden" name="equipe_id" id="equipe_id"  value="{{ old('equipe_id') }}">
+                <input list="lista-equipes" class="form-control" id="equipe_nome" name="equipe_nome"
+                    placeholder="Digite para pesquisar..." value="{{ old('equipe_nome') }}" required>
+                <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id') }}">
                 <datalist id="lista-equipes">
                     @foreach ($equipes as $equipe)
-                        <option value="{{ $equipe->nome }}" data-id="{{ $equipe->id }}" >
+                        <option value="{{ $equipe->nome }}" data-id="{{ $equipe->id }}">
                         </option>
                     @endforeach
                 </datalist>
@@ -34,7 +35,8 @@
             {{-- Nome do participante --}}
             <div class="mb-3">
                 <label for="participante_nome" class="form-label">Selecione um Participante</label>
-                <input list="lista-participantes" class="form-control" id="participante_nome" placeholder="Digite para pesquisar..." required>
+                <input list="lista-participantes" class="form-control" id="participante_nome" name="participante_nome"
+                    placeholder="Digite para pesquisar..." required value="{{ old('participante_nome') }}">
                 <input type="hidden" name="participante_id" id="participante_id" value="{{ old('participante_id') }}">
                 <datalist id="lista-participantes">
                     @foreach ($participantes as $participante)

@@ -36,7 +36,7 @@
         {{-- Cards das Inscrições--}}
         <div class="row g-4">
             @forelse($inscricoes as $inscricao)
-                <div class="col-12 col-md-6 col-xl-4 contrato-card">
+                <div class="col-12 col-md-6 col-xl-4 inscricao-card">
                     <div class="card shadow-sm border-0 rounded-4 h-100 overflow-hidden">
                         <div class="card-body">
                             {{-- Informações da Incrição --}}
@@ -45,10 +45,17 @@
                                 <p class="mb-2 text-break">{{ $inscricao->equipe->nome }}</p>
                             </div>
                             {{-- Botões --}}
-                            <div class="d-flex gap-2">
+                            <div class="d-flex flex-wrap gap-2">
+                                {{-- Comprovante --}}
+                                <a href="{{ route('inscricoes.comprovante', $inscricao) }}" class="btn btn-primary flex-fill"
+                                    target="_blank">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Comprovante
+                                </a>
+                                {{-- Editar --}}
                                 <a href="{{ route('inscricoes.edit', $inscricao) }}" class="btn btn-warning flex-fill">
                                     <i class="bi bi-pencil-square me-1"></i>Editar
                                 </a>
+                                {{-- Excluir --}}
                                 <form action="{{ route('inscricoes.destroy', $inscricao) }}" method="POST" class="flex-fill">
                                     @csrf
                                     @method('DELETE')
@@ -58,7 +65,6 @@
                                     </button>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>

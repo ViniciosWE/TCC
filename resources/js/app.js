@@ -33,4 +33,5 @@ document.addEventListener('DOMContentLoaded', function () {
     pesquisar('pesquisaContrato', 'contrato-card');
     pesquisar('pesquisaCampeonato', 'campeonato-card');
     pesquisar('pesquisaNoticia', 'noticia-card');
+    pesquisar('pesquisaInscricao', 'inscricao-card');
 });
