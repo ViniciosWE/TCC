@@ -17,9 +17,10 @@ return new class extends Migration {
             $table->foreignId('visitante_id')->constrained('equipes')->restrictOnUpdate()->restrictOnDelete();
             $table->unsignedTinyInteger('gols_mandante')->default(0);
             $table->unsignedTinyInteger('gols_visitante')->default(0);
-            $table->dateTime('data_hora');
+            $table->dateTime('data_hora')->nullable();
             $table->enum('status', ['AGENDADA', 'FINALIZADA']);
             $table->string('fase')->nullable();
+            $table->string('local')->nullable();
             $table->timestamps();
         });
     }
