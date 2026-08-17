@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->unsignedTinyInteger('gols_visitante')->default(0);
             $table->dateTime('data_hora');
             $table->enum('status', ['AGENDADA', 'FINALIZADA']);
+            $table->string('fase')->nullable();
             $table->timestamps();
         });
     }
