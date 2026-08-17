@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campeonato;
+use App\Models\Partida;
 use Illuminate\Http\Request;
 
 class CampeonatoController extends Controller
@@ -87,6 +88,17 @@ class CampeonatoController extends Controller
             'data_fim.after_or_equal' => 'A data de término não pode ser anterior à data de início.',
         ]);
 
+        $totalInscricoes = $campeonato->inscricoes()->count(); // Conta quantas equipes já estão inscritas
+        // Impede diminuir o limite abaixo do número de inscrições existentes
+        if ($dados['maximo_equipes'] < $totalInscricoes) {
+            return back()->withInput()->withErrors(['maximo_equipes' => "Não é possível definir menos de {$totalInscricoes} equipes, pois já existem {$totalInscricoes} inscrições neste campeonato."]);
+        }
+
+        // Se o campeonato estava em andamento e voltar para inscrições,exclui as partidas que foram geradas
+        if ($campeonato->status === 'EM_ANDAMENTO' && $dados['status'] === 'INSCRICOES') {
+            $campeonato->partidas()->delete();
+        }
+
         $dados['user_id'] = auth()->id(); //pega o id de quem criou 
         $campeonato->update($dados); // edita
         return redirect()->route('campeonatos.index')->with('success', 'Campeonato atualizado com sucesso!');
@@ -103,5 +115,56 @@ class CampeonatoController extends Controller
         }
         $campeonato->delete();
         return redirect()->route('campeonatos.index')->with('success', 'Campeonato excluído com sucesso!');
+    }
+
+    public function gerarConfrontos(Campeonato $campeonato)
+    {
+        // Verifica se o campeonato está pronto para o sorteio
+        if ($campeonato->status !== 'INSCRICOES') {
+            return back()->with('error', 'Este campeonato não está disponível para sorteio.');
+        }
+        // Busca as equipes inscritas
+        $campeonato->load('inscricoes.equipe');
+        $equipes = $campeonato->inscricoes->pluck('equipe');
+        // Verifica se atingiu o limite de equipes
+        if ($equipes->count() != $campeonato->maximo_equipes) {
+            return back()->with('error', 'O campeonato ainda não possui o número necessário de equipes.');
+        }
+        // Verifica o tipo do campeonato
+        switch ($campeonato->tipo) {
+            case 'MATA_MATA':
+                $this->gerarMataMata($campeonato, $equipes);
+                break;
+            case 'GRUPOS_MATA_MATA':
+                $this->gerarGruposMataMata($campeonato, $equipes);
+                break;
+            case 'PONTOS_CORRIDOS':
+                $this->gerarPontosCorridos($campeonato, $equipes);
+                break;
+        }
+
+        $campeonato->update(['status' => 'EM_ANDAMENTO']); // Coloca o campeonato em andamento
+        return redirect()->route('campeonatos.index')->with('success', 'Partidas geradas com sucesso!');
+    }
+
+    private function gerarPontosCorridos($campeonato, $equipes)
+    {
+        // Cada equipe enfrenta todas as outras uma vez
+        for ($i = 0; $i < $equipes->count(); $i++) {
+
+            for ($j = $i + 1; $j < $equipes->count(); $j++) {
+
+                Partida::create([
+                    'campeonato_id' => $campeonato->id,
+                    'mandante_id' => $equipes[$i]->id,
+                    'visitante_id' => $equipes[$j]->id,
+                    'gols_mandante' => 0,
+                    'gols_visitante' => 0,
+                    'data_hora' => now(),
+                    'status' => 'AGENDADA',
+                    'fase' => 'FASE_1',
+                ]);
+            }
+        }
     }
 }

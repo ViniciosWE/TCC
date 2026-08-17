@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Campeonato;
 use App\Models\Partida;
 use Illuminate\Http\Request;
 
@@ -10,9 +11,29 @@ class PartidaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('areaAdministrativa.partidas.index');
+        // Busca os campeonatos que estão em andamento
+        $campeonatos = Campeonato::where('status', 'EM_ANDAMENTO')
+            ->latest()
+            ->get();
+
+        // Começa sem nenhuma partida selecionada
+        $partidas = collect();
+
+        // Verifica se foi selecionado um campeonato
+        if ($request->filled('campeonato_id')) {
+
+            $partidas = Partida::with(['mandante', 'visitante'])
+                ->where('campeonato_id', $request->campeonato_id)
+                ->orderBy('data_hora')
+                ->get();
+        }
+
+        return view('areaAdministrativa.partidas.index', compact(
+            'campeonatos',
+            'partidas'
+        ));
     }
 
     /**

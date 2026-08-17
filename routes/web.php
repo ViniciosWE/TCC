@@ -50,6 +50,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
     Route::resource('participantes', ParticipanteController::class);
     Route::resource('partidas', PartidaController::class);
     Route::get('inscricoes/{inscricao}/comprovante', [InscricaoController::class, 'comprovante'])->name('inscricoes.comprovante');
+    Route::post('campeonatos/{campeonato}/gerar-confrontos', [CampeonatoController::class, 'gerarConfrontos'])->name('campeonatos.gerarConfrontos');
 });
 
 /* Rotas exclusivas do Super Administrador */

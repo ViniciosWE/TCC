@@ -47,7 +47,7 @@
                                     <p> {{ date('d/m/Y', strtotime($campeonato->data_inicio))}} até
                                         {{date('d/m/Y', strtotime($campeonato->data_fim))}}
                                     </p>
-                                    <p>{{ $campeonato->categoria }}</p>
+                                    <p><span class="fw-bold">Categoria: </span>{{ $campeonato->categoria }}</p>
                                     @if ($campeonato->tipo == 'MATA_MATA')
                                         <span class="badge bg-success">Mata-mata </span>
                                     @elseif($campeonato->tipo == 'GRUPOS_MATA_MATA')
@@ -64,14 +64,35 @@
                                         <span class="badge bg-danger">Finalizado</span>
                                     @endif
 
-                                    <span class="badge bg-primary">{{ $campeonato->inscricoes_count }} / {{ $campeonato->maximo_equipes }} equipes</span>
+                                    <span class="badge bg-primary">{{ $campeonato->inscricoes_count }} /
+                                        {{ $campeonato->maximo_equipes }} equipes</span>
                                 </div>
                             </div>
                             {{-- Botões --}}
-                            <div class="d-flex gap-2">
+                            <div class="d-flex flex-wrap gap-2">
+                                {{-- Gerar Partidas --}}
+                                @if ($campeonato->status == 'INSCRICOES' && $campeonato->inscricoes_count == $campeonato->maximo_equipes)
+                                    <form action="{{ route('campeonatos.gerarConfrontos', $campeonato) }}" method="POST"
+                                        class="flex-fill">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary w-100"
+                                            onclick="return confirm('Deseja realizar o sorteio das partidas?')">
+                                            <i class="bi bi-shuffle me-1"></i>Gerar Partidas
+                                        </button>
+                                    </form>
+                                @endif
+                                {{-- Ver Partidas --}}
+                                @if ($campeonato->status == 'EM_ANDAMENTO')
+                                    <a href="{{ route('partidas.index', ['campeonato_id' => $campeonato->id]) }}"
+                                        class="btn btn-primary flex-fill">
+                                        <i class="bi bi-eye me-1"></i>Ver Partidas
+                                    </a>
+                                @endif
+                                {{-- Editar --}}
                                 <a href="{{ route('campeonatos.edit', $campeonato) }}" class="btn btn-warning flex-fill">
                                     <i class="bi bi-pencil-square me-1"></i>Editar
                                 </a>
+                                {{-- Excluir --}}
                                 <form action="{{ route('campeonatos.destroy', $campeonato) }}" method="POST" class="flex-fill">
                                     @csrf
                                     @method('DELETE')

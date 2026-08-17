@@ -101,7 +101,7 @@
                 </a>
 
                 <a href="{{ route('partidas.index') }}"
-                    class="{{ request()->routeIs('Partidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                    class="{{ request()->routeIs('partidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
                     <i class="bi bi-controller me-2"></i>Partidas
                 </a>
             @endif
@@ -166,7 +166,7 @@
                     </a>
 
                     <a href="{{ route('partidas.index') }}"
-                        class="{{ request()->routeIs('Partidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
+                        class="{{ request()->routeIs('partidas.*') ? 'links-ativos-sidebar' : 'text-black' }} links-sidebar mb-2 p-2">
                         <i class="bi bi-controller me-2"></i>Partidas
                     </a>
                 @endif
