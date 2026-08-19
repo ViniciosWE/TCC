@@ -17,6 +17,8 @@ class Partida extends Model
         'gols_visitante',
         'data_hora',
         'status',
+        'fase',
+        'local',
     ];
 
     /* Uma partida pertence a um campeonato */
