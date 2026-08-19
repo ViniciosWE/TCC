@@ -17,6 +17,9 @@
         <form action="{{ route('partidas.update', $partida) }}" method="POST">
             @csrf
             @method('PUT')
+            {{-- Mantém o campeonato pesquisado após salvar --}}
+            <input type="hidden" name="campeonato_id" value="{{ request('campeonato_id') }}">
+            <input type="hidden" name="campeonato_nome" value="{{ request('campeonato_nome') }}">
             {{--Data--}}
             <div class="mb-3">
                 <label for="nome" class="form-label">Data</label>

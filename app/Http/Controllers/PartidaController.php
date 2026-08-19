@@ -87,7 +87,7 @@ class PartidaController extends Controller
             'local' => $local,
             'status' => 'AGENDADA',
         ]);
-        return redirect()->route('partidas.index')->with('success', 'Data, hora e local da partida definidos com sucesso!');
+        return redirect()->route('partidas.index', ['campeonato_id' => $request->campeonato_id, 'campeonato_nome' => $request->campeonato_nome,])->with('success', 'Data, hora e local da partida definidos com sucesso!');
     }
 
     /**
