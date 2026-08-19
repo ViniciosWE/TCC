@@ -47,7 +47,7 @@
                 <label for="campeonato_nome" class="form-label">Selecione um Campaonato(Se a notícia houver relação)</label>
                 <input list="lista-campeonatos" class="form-control" id="campeonato_nome"
                     placeholder="Digite para pesquisar..."
-                    value=" {{ old('campeonato_id') ? $campeonatos->firstWhere('id', old('campeonato_id'))?->nome : $noticia->campeonato->nome }}">
+                    value=" {{ old('campeonato_id') ? $campeonatos->firstWhere('id', old('campeonato_id'))?->nome : $noticia->campeonato->nome }}" autocomplete="off">
                 <input type="hidden" name="campeonato_id" id="campeonato_id"
                     value="{{ old('campeonato_id', $noticia->campeonato_id) }}">
                 <datalist id="lista-campeonatos">

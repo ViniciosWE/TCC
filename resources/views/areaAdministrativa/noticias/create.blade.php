@@ -38,7 +38,7 @@
             <div class="mb-3">
                 <label for="campeonato_nome" class="form-label">Selecione um Campaonato(Se a notícia houver relação)</label>
                 <input list="lista-campeonatos" class="form-control" id="campeonato_nome" name="campeonato_nome"
-                    placeholder="Digite para pesquisar..." value="{{ old('campeonato_nome') }}">
+                    placeholder="Digite para pesquisar..." value="{{ old('campeonato_nome') }}" autocomplete="off">
                 <input type="hidden" name="campeonato_id" id="campeonato_id" value="{{ old('campeonato_id') }}">
                 <datalist id="lista-campeonatos">
                     @foreach ($campeonatos as $campeonato)

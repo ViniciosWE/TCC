@@ -160,9 +160,10 @@ class CampeonatoController extends Controller
                     'visitante_id' => $equipes[$j]->id,
                     'gols_mandante' => 0,
                     'gols_visitante' => 0,
-                    'data_hora' => now(),
-                    'status' => 'AGENDADA',
+                    'data_hora' => null,
+                    'status' => 'PENDENTE',
                     'fase' => 'FASE_1',
+                    'local' => null,
                 ]);
             }
         }

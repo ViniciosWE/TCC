@@ -23,7 +23,7 @@
             <div class="mb-3">
                 <label for="campeonato_nome" class="form-label">Selecione um Campaonato</label>
                 <input list="lista-campeonatos" class="form-control" id="campeonato_nome" name="campeonato_nome"
-                    placeholder="Digite para pesquisar..." value="{{ old('campeonato_nome') }}" required>
+                    placeholder="Digite para pesquisar..." value="{{ old('campeonato_nome') }}" autocomplete="off" required >
                 <input type="hidden" name="campeonato_id" id="campeonato_id" value="{{ old('campeonato_id') }}">
                 <datalist id="lista-campeonatos">
                     @foreach ($campeonatos as $campeonato)
@@ -36,7 +36,7 @@
             <div class="mb-3">
                 <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
                 <input list="lista-equipes" class="form-control" id="equipe_nome" name="equipe_nome"
-                    placeholder="Digite para pesquisar..." value="{{ old('equipe_nome') }}" required>
+                    placeholder="Digite para pesquisar..." value="{{ old('equipe_nome') }}" autocomplete="off" required>
                 <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id') }}">
                 <datalist id="lista-equipes">
                     @foreach ($equipes as $equipe)

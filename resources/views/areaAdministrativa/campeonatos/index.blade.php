@@ -83,7 +83,7 @@
                                 @endif
                                 {{-- Ver Partidas --}}
                                 @if ($campeonato->status == 'EM_ANDAMENTO')
-                                    <a href="{{ route('partidas.index', ['campeonato_id' => $campeonato->id]) }}"
+                                    <a href="{{ route('partidas.index', ['campeonato_id' => $campeonato->id, 'campeonato_nome' => $campeonato->nome]) }}"
                                         class="btn btn-primary flex-fill">
                                         <i class="bi bi-eye me-1"></i>Ver Partidas
                                     </a>
