@@ -149,23 +149,42 @@ class CampeonatoController extends Controller
 
     private function gerarPontosCorridos($campeonato, $equipes)
     {
-        // Cada equipe enfrenta todas as outras uma vez
-        for ($i = 0; $i < $equipes->count(); $i++) {
-
-            for ($j = $i + 1; $j < $equipes->count(); $j++) {
-
+        $equipes = $equipes->values(); // Organiza os índices das equipes
+        // Adiciona uma folga se houver número ímpar de equipes
+        if ($equipes->count() % 2 != 0) {
+            $equipes->push(null);
+        }
+        $quantidadeEquipes = $equipes->count();
+        $numeroRodadas = $quantidadeEquipes - 1;
+        $partidasPorRodada = $quantidadeEquipes / 2;
+        // Gera as rodadas
+        for ($rodada = 1; $rodada <= $numeroRodadas; $rodada++) {
+            // Gera os jogos da rodada
+            for ($jogo = 0; $jogo < $partidasPorRodada; $jogo++) {
+                $mandante = $equipes[$jogo];
+                $visitante = $equipes[$quantidadeEquipes - 1 - $jogo];
+                // Ignora a folga
+                if ($mandante === null || $visitante === null) {
+                    continue;
+                }
+                // Cria a partida
                 Partida::create([
                     'campeonato_id' => $campeonato->id,
-                    'mandante_id' => $equipes[$i]->id,
-                    'visitante_id' => $equipes[$j]->id,
+                    'mandante_id' => $mandante->id,
+                    'visitante_id' => $visitante->id,
                     'gols_mandante' => 0,
                     'gols_visitante' => 0,
                     'data_hora' => null,
                     'status' => 'PENDENTE',
-                    'fase' => 'FASE_1',
+                    'fase' => 'RODADA_' . $rodada,
                     'local' => null,
                 ]);
             }
+            // Mantém a primeira equipe fixa e gira as outras
+            $primeira = $equipes->shift();
+            $ultimo = $equipes->pop();
+            $equipes->prepend($ultimo);
+            $equipes->prepend($primeira);
         }
     }
 }

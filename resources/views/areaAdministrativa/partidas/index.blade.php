@@ -131,7 +131,7 @@
                                 {{-- Pode cadastrar eventos caso seja com status agendada e pode ver os eventos se
                                 estiver com status Finalizada --}}
                                 @if ($partida->status != 'PENDENTE')
-                                    <a href="{{ route('eventoPartidas.index', ['partida_id' => $partida->id]) }}"
+                                    <a href="{{ route('eventoPartidas.create', ['partida_id' => $partida->id]) }}"
                                         class="btn btn-primary btn-sm">
                                         <i class="bi bi-clipboard2-pulse me-1"></i>
                                         {{ $partida->status == 'FINALIZADA' ? 'Ver eventos' : 'Cadastrar eventos'}}

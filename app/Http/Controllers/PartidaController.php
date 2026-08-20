@@ -18,10 +18,10 @@ class PartidaController extends Controller
         $partidas = collect();// Começa sem partidas
         // Se um campeonato foi selecionado
         if ($request->filled('campeonato_id')) {
-            $partidas = Partida::with([
-                'mandante',
-                'visitante'
-            ])->where('campeonato_id', $request->campeonato_id)->orderBy('data_hora')->get();
+            $partidas = Partida::with(['mandante', 'visitante'])->where('campeonato_id', $request->campeonato_id)
+                ->orderByRaw("CASE WHEN status = 'PENDENTE' THEN 0 ELSE 1 END")
+                ->orderByRaw(" CASE  WHEN status = 'PENDENTE' THEN CAST(REPLACE(fase, 'RODADA_', '') AS UNSIGNED) ELSE NULL END")
+                ->orderBy('data_hora')->get();
         }
         return view('areaAdministrativa.partidas.index', compact('campeonatos', 'partidas'));
     }

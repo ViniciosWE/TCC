@@ -20,7 +20,7 @@ class EventoPartidaController extends Controller
      */
     public function create()
     {
-        //
+        return view('areaAdministrativa.eventoPartidas.create');
     }
 
     /**
