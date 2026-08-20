@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EventoPartida;
+use App\Models\Participante;
 use Illuminate\Http\Request;
 
 class EventoPartidaController extends Controller
@@ -20,7 +21,8 @@ class EventoPartidaController extends Controller
      */
     public function create()
     {
-        return view('areaAdministrativa.eventoPartidas.create');
+        $participantes = Participante::Where('status', 'ATIVO')->orderBy('nome')->get();
+        return view('areaAdministrativa.eventoPartidas.create', compact('participantes'));
     }
 
     /**
