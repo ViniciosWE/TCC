@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('equipes', function (Blueprint $table) {
             $table->id();
+            $table->string('nome')->unique();
+            $table->string('escudo');
+            $table->char('sigla',3)->unique();
+            $table->enum('status',['ATIVA','ENCERRADA', 'SUSPENSA']);
             $table->timestamps();
         });
     }

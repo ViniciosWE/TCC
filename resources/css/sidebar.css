@@ -1,0 +1,70 @@
+/*define as cores do projeto*/
+:root {
+    --cor-primaria: #1D4ED8;
+    --cor-secundaria: #2563EB;
+    --cor-destaque: #FACC15;
+    --cor-texto: #A0A3A9;
+    --fundo-escuro: #111827;
+    --fundo-claro: #F3F4F6;
+}
+
+/*defini a cor amarela para os textos*/
+.cor-logo-sidebar{
+    color: var(--cor-destaque);
+}
+
+/*define a cor de fundo da área de conteúdo da página administrativa*/
+.cor-fundo-sidebar {
+    background-color: var(--fundo-claro);
+}
+
+
+/*define a cor de fundo do cabeçalho da área administrativa*/
+.cor-fundo-header-sidebar {
+    background-color: var(--cor-primaria);
+}
+
+
+/*define a largura da sidebar e garante que ela ocupe no mínimo toda a altura da tela, aumentando conforme o conteúdo*/
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+}
+
+
+/*configura o avatar do usuário, deixando circular e centralizando a letra inicial do nome*/
+.avatar {
+    width: 45px;
+    height: 45px;
+    background-color: white;
+    color: var(--cor-primaria);
+    border-radius: 50%;
+}
+
+
+/*define o estilo padrão dos links da sidebar, removendo o sublinhado e adicionando uma transição suave*/
+.links-sidebar {
+    text-decoration: none;
+    display: block;
+    border-radius: 5px;
+    transition: .3s;
+}
+
+
+/*efeito aplicado quando o mouse passa por cima dos links*/
+.links-sidebar:hover {
+    background-color: var(--cor-primaria);
+    color: white !important;
+}
+
+
+/*efeito para o link que esta ativo*/
+.links-ativos-sidebar {
+    background-color: var(--cor-primaria);
+    color: white !important;
+}
+
+/*define uma largura personalizada para o menu lateral exibido no mobile*/
+.menu-lateral-sidebar{
+    width: 230px !important;
+}

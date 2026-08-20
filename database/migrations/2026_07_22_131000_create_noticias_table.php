@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('noticias', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('campeonato_id')->nullable()->constrained('campeonatos')->restrictOnUpdate()->restrictOnDelete();
+            $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();
+            $table->string('titulo');
+            $table->text('descricao');
+            $table->string('imagem')->nullable();
             $table->timestamps();
         });
     }

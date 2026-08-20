@@ -1,5 +1,15 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CampeonatoController;
+use App\Http\Controllers\ContratoController;
+use App\Http\Controllers\EquipeController;
+use App\Http\Controllers\EventoPartidaController;
+use App\Http\Controllers\InscricaoController;
+use App\Http\Controllers\NoticiaController;
+use App\Http\Controllers\ParticipanteController;
+use App\Http\Controllers\PartidaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+/*Rotas públicas*/
 Route::get('/', function () {
     return view('PaginaInicial');
 })->name('PaginaInicial');
@@ -25,6 +35,38 @@ Route::get('/PaginaNoticias', function () {
     return view('PaginaNoticias');
 })->name('PaginaNoticias');
 
-Route::get('/login', function () {
+Route::get('/Login', function () {
     return view('login');
-})->name('login');
+})->name('Login');
+
+/* Rotas Administrativas */
+Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
+    Route::resource('campeonatos', CampeonatoController::class);
+    Route::resource('contratos', ContratoController::class);
+    Route::resource('equipes', EquipeController::class);
+    Route::resource('eventoPartidas', EventoPartidaController::class);
+    Route::resource('inscricoes', InscricaoController::class)->parameters(['inscricoes' => 'inscricao']);
+    Route::resource('noticias', NoticiaController::class);
+    Route::resource('participantes', ParticipanteController::class);
+    Route::resource('partidas', PartidaController::class);
+    Route::get('inscricoes/{inscricao}/comprovante', [InscricaoController::class, 'comprovante'])->name('inscricoes.comprovante');
+    Route::post('campeonatos/{campeonato}/gerar-confrontos', [CampeonatoController::class, 'gerarConfrontos'])->name('campeonatos.gerarConfrontos');
+});
+
+/* Rotas exclusivas do Super Administrador */
+Route::middleware(['auth', 'tipo:SUPER_ADMINISTRADOR'])->group(function () {
+    Route::resource('user', UserController::class)->except(['edit', 'update']);
+});
+
+/* Rotas compartilhadas entre Administrador e Super Administrador */
+Route::middleware(['auth', 'tipo:ADMINISTRADOR,SUPER_ADMINISTRADOR'])->group(function () {
+    Route::get('/Dashboard', function () {
+        return view('areaAdministrativa.dashboard');
+    })->name('Dashboard');
+    Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('user/{user}', [UserController::class, 'update'])->name('user.update');
+});
+
+/*Rotas de login e Logout*/
+Route::post('/Login', [AuthController::class, 'login'])->name('LoginSubmit');
+Route::post('/Logout', [AuthController::class, 'logout'])->name('Logout')->middleware('auth');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contrato;
+use App\Models\Equipe;
+use App\Models\Participante;
 use Illuminate\Http\Request;
 
 class ContratoController extends Controller
@@ -12,15 +14,19 @@ class ContratoController extends Controller
      */
     public function index()
     {
-        //
+        $contratos = Contrato::with(['equipe', 'participante'])->latest()->get();  // Busca os contratos junto com a equipe e o participante
+        return view('areaAdministrativa.contratos.index', compact('contratos'));
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        $equipes = Equipe::where('status', 'ATIVA')->orderBy('nome')->get();// Busca somente equipes que estão ativas e suspensas
+        $participantes = Participante::Where('status', 'SEM_EQUIPE')->orderBy('nome')->get();//Busca somente equipes sem equipes e suspensos
+        return view('areaAdministrativa.contratos.create', compact('equipes', 'participantes')); //Retorna a view de cadastro
     }
 
     /**
@@ -28,7 +34,21 @@ class ContratoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dados = $request->validate([
+            'equipe_id' => 'required|exists:equipes,id',
+            'participante_id' => 'required|exists:participantes,id',
+            'status' => 'required|in:ATIVO,ENCERRADO',
+        ]);
+
+        // Cria o contrato
+        $contrato = Contrato::create($dados);
+
+        // Se o contrato estiver ativo, atualiza o participante
+        if ($dados['status'] === 'ATIVO') {
+            $contrato->participante->update(['status' => 'ATIVO',]);
+        }
+
+        return redirect()->route('contratos.index')->with('success', 'Contrato cadastrado com sucesso!');
     }
 
     /**
@@ -44,7 +64,8 @@ class ContratoController extends Controller
      */
     public function edit(Contrato $contrato)
     {
-        //
+        $equipes = Equipe::where('status', 'ATIVA')->orderBy('nome')->get();// Busca somente equipes ativas
+        return view('areaAdministrativa.contratos.edit', compact('equipes', 'contrato'));
     }
 
     /**
@@ -52,7 +73,24 @@ class ContratoController extends Controller
      */
     public function update(Request $request, Contrato $contrato)
     {
-        //
+        $dados = $request->validate([
+            'equipe_id' => 'required|exists:equipes,id',
+            'status' => 'required|in:ATIVO,ENCERRADO',
+        ]);
+        // Atualiza o contrato
+        $contrato->update([
+            'equipe_id' => $dados['equipe_id'],
+            'status' => $dados['status'],
+        ]);
+        // Se o contrato estiver ativo, o participante fica ativo
+        if ($dados['status'] === 'ATIVO') {
+            $contrato->participante->update(['status' => 'ATIVO',]);
+        }
+        // Se o contrato for encerrado, o participante fica sem equipe
+        else {
+            $contrato->participante->update(['status' => 'SEM_EQUIPE',]);
+        }
+        return redirect()->route('contratos.index')->with('success', 'Contrato atualizado com sucesso!');
     }
 
     /**
@@ -60,6 +98,9 @@ class ContratoController extends Controller
      */
     public function destroy(Contrato $contrato)
     {
-        //
+        
+        $contrato->participante->update(['status' => 'SEM_EQUIPE',]);// Deixa o participante sem equipe
+        $contrato->delete();// Exclui o contrato
+        return redirect()->route('contratos.index')->with('success', 'Contrato excluído com sucesso!');
     }
 }

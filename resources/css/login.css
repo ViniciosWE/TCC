@@ -1,0 +1,39 @@
+/*define as cores do projeto*/
+:root {
+    --cor-primaria: #1D4ED8;
+    --cor-secundaria: #2563EB;
+    --cor-destaque: #FACC15;
+    --cor-texto: #A0A3A9;
+    --fundo-escuro: #111827;
+    --fundo-claro: #F3F4F6;
+}
+
+/*define a cor de fundo da página de login*/
+.fundo-login {
+    background-color: var(--cor-secundaria);
+}
+
+/*Cor da logo*/
+.cor-logo-login {
+    color: var(--cor-destaque);
+}
+
+/*cor do texto de login*/
+.cor-h1-login {
+    color: var(--cor-secundaria);
+}
+
+/*layout dos botões de entar e voltar*/
+.botoes-login {
+    background-color: var(--cor-destaque);
+    color: var(--cor-primaria);
+    border-radius: 50px;
+    transition: 0.3s;
+}
+
+/*Efeito quando mouse passa em cima nos botões*/
+.botoes-login:hover {
+    color: var(--cor-primaria);
+    background-color: var(--cor-destaque);
+    transform: translateY(-2px);
+}

@@ -1,0 +1,100 @@
+/*define as cores do projeto*/
+:root {
+    --cor-primaria: #1D4ED8;
+    --cor-secundaria: #2563EB;
+    --cor-destaque: #FACC15;
+    --cor-texto: #A0A3A9;
+    --fundo-escuro: #111827;
+    --fundo-claro: #F3F4F6;
+}
+
+/*definição da cor de fundo do header*/
+.cor-fundo-header-inicial {
+    background-color: var(--cor-primaria);
+}
+
+/*define a cor amarela do textos*/
+.textos-navegacao-inicial {
+    color: var(--cor-destaque);
+    transform: none !important;
+    /*remove a transformação aplicada, pós o botão já esta selecionado*/
+}
+
+/*configuração do botão hamburguer no mobile, remove o efeito de borda/sombra que o Bootstrap coloca*/
+.menu-inicial-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/*define uma transição suave para os links do menu quando alguma propriedade mudar*/
+.menu-header-link {
+    transition: 0.3s;
+}
+
+/*efeito aplicado quando o mouse passa por cima dos links, muda a cor para amarelo e movimenta o item levemente para cima */
+.navbar .menu-header-link:hover {
+    color: var(--cor-destaque) !important;
+    transform: translateY(-2px);
+}
+
+/*efeito aplicado quando o mouse passa por cima dos links, muda a cor para amarelo e movimenta o item levemente para cima */
+.offcanvas .menu-header-link:hover {
+    color: var(--cor-destaque) !important;
+    transform: translateY(-2px);
+}
+
+/*define uma transição suave para o botão Painel ADM, cor de fundo, cor da letra e arredonda o fundo  */
+.botao-painel-adm {
+    transition: 0.3s;
+    background-color: var(--cor-destaque);
+    border-radius: 50px;
+    color: var(--cor-primaria);
+}
+
+
+/*efeito ao passar o mouse no botão Painel ADM, mantém a identidade visual e cria uma pequena animação */
+.botao-painel-adm:hover {
+    color: var(--cor-primaria) !important;
+    transform: translateY(-2px);
+}
+
+/*define a cor do banner*/
+.cor-banner-inicial {
+    background-color: var(--cor-secundaria);
+}
+
+/*define a cor de fundo do rodapé e a cor da letra*/
+.cor-rodape-inicial {
+    background-color: var(--fundo-escuro);
+    color: var(--cor-texto);
+}
+
+/*define a cor do texto em amarelo do rodapé*/
+.cor-texto-rodape-amarelo-inicial{
+    color: var(--cor-destaque);
+}
+
+/*tamanho do menu mobiel */
+.menu-lateral-inicial {
+    width: 230px !important;
+}
+
+/*responsivo para diminuir as letras do banner e rodapé quando estiver em telas menores*/
+@media (max-width: 992px) {
+    .banner-titulo {
+        font-size: 1.4rem;
+    }
+
+    .banner-subtitulo {
+        font-size: 0.9rem;
+    }
+
+    .rodape-titulo {
+        font-size: 1.4rem;
+    }
+
+    .rodape-sub {
+        font-size: 0.8rem;
+    }
+    
+}
