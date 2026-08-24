@@ -40,7 +40,7 @@
                 <input type="hidden" name="participante_id" id="participante_id" value="{{ old('participante_id') }}">
                 <datalist id="lista-participantes">
                     @foreach ($participantes as $participante)
-                        <option value="{{ $participante->nome }}" data-id="{{ $participante->id }}">
+                        <option value="{{ $participante->nome }} - {{ $participante->cpf }}" data-id="{{ $participante->id }}">
                         </option>
                     @endforeach
                 </datalist>

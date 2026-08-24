@@ -51,7 +51,7 @@
                                 @elseif($contrato->participante->status == 'SUSPENSO')
                                     <span class="badge bg-warning text-dark">Suspenso</span>
                                 @endif
-                                <p class="mb-2 text-break text-uppercase"><strong>Equipe:</strong> {{ $contrato->equipe->nome }}</p>
+                                <p class="mb-2 text-break text-uppercase "><strong>Equipe:</strong> {{ $contrato->equipe->nome }}</p>
 
                                 <p class="mb-0">
                                     <strong>Status:</strong>

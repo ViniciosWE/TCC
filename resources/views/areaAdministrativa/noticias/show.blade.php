@@ -1,0 +1,42 @@
+@extends('areaAdministrativa.sidebar')
+
+@section('title', 'Notícia completa')
+
+@section('content')
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1 text-break">Notícia completa</h2>
+            </div>
+            <a href="{{ route('noticias.index') }}" class="btn btn-secondary"></i>Voltar</a>
+        </div>
+        {{-- Noticia completa --}}
+        <div class="p-2">
+            {{-- título --}}
+            <h5 class="text-break">{{ $noticia->titulo }}</h5>
+            {{-- Imagem --}}
+            <div class="row g-4 mb-4">
+                @if ($noticia->imagem)
+                    <img src="{{ asset('storage/' . $noticia->imagem) }}" alt="Imagem Notícia {{ $noticia->titulo }}"
+                        class="img-fluid rounded object-fit-cover">
+                @else
+                    <div class="text-muted d-flex flex-column justify-content-center align-items-center border rounded">
+                        <i class="bi bi-image fs-1 mb-3"></i>
+                        <span>Notícia sem imagem</span>
+                    </div>
+                @endif
+            </div>
+            {{-- descrição --}}
+            <p class="text-break mb-2">{{ $noticia->descricao }}</p>
+            {{-- relação --}}
+            @if ($noticia->campeonato)
+                <span class="text-break descricao-noticia">
+                    Esta notícia está relacionada ao <b>{{ $noticia->campeonato->nome }}</b>.
+                </span>
+            @else
+                <span class="text-break descricao-noticia">Esta notícia não está relacionada a um
+                    campeonato.</span>
+            @endif
+        </div>
+    </div>
+@endsection

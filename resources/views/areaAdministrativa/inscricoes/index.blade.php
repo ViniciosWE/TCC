@@ -42,7 +42,7 @@
                             {{-- Informações da Incrição --}}
                             <div class="mb-4">
                                 <p class="mb-2 text-break">{{ $inscricao->campeonato->nome }}</p>
-                                <p class="mb-2 text-break">{{ $inscricao->equipe->nome }}</p>
+                                <p class="mb-2 text-break text-capitalize">{{ $inscricao->equipe->nome }}</p>
                             </div>
                             {{-- Botões --}}
                             <div class="d-flex flex-wrap gap-2">

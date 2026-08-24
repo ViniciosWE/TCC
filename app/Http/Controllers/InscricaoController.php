@@ -130,17 +130,18 @@ class InscricaoController extends Controller
      */
     public function destroy(Inscricao $inscricao)
     {
+        //só pode excluir a inscrição se o campeonato esta no status de inscrições, senão não é possivel
+        if ($inscricao->campeonato->status != 'INSCRICOES') {
+            return redirect()->route('inscricoes.index')->with('error', 'Não é possível excluir a inscrição. O campeonato não está na fase de inscrições.');
+        }
         $inscricao->delete();
         return redirect()->route('inscricoes.index')->with('success', 'Inscrição excluída com sucesso!');
     }
 
     public function comprovante(Inscricao $inscricao)
     {
-        // Carrega os relacionamentos da inscrição
-        $inscricao->load(['equipe', 'campeonato']);
-        // Gera o PDF novamente
-        $pdf = Pdf::loadView('areaAdministrativa.inscricoes.comprovante', compact('inscricao'));
-        // Abre o PDF no navegador
-        return $pdf->stream('comprovante-inscricao-' . $inscricao->id . '.pdf');
+        $inscricao->load(['equipe', 'campeonato']);// Carrega os relacionamentos da inscrição
+        $pdf = Pdf::loadView('areaAdministrativa.inscricoes.comprovante', compact('inscricao'));// Gera o PDF novamente
+        return $pdf->stream('comprovante-inscricao-' . $inscricao->id . '.pdf');// Abre o PDF no navegador
     }
 }

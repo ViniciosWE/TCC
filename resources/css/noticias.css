@@ -1,0 +1,7 @@
+/* Limita a descrição a uma linha e oculta o restante do texto. */
+.descricao-noticia {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

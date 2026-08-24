@@ -54,8 +54,11 @@
     min-width: 0;
     font-size: 1rem;
     overflow: hidden;
+    /* Esconde o texto que passar do limite */
     text-overflow: ellipsis;
+    /* Mostra "..." quando o texto for muito grande */
     white-space: nowrap;
+    /* Mantém o nome em apenas uma linha */
 }
 
 /* Define o tamanho do placar */
@@ -67,38 +70,6 @@
 .partida-acoes {
     flex-wrap: wrap;
 }
-
-/*reduz os elementos para telas menores */
-@media (max-width: 992px) {
-
-    /* Reduz o tamanho dos escudos */
-    .partida-escudo {
-        width: 55px;
-        height: 55px;
-        min-width: 55px;
-        max-width: 55px;
-    }
-
-    /* Aproxima a logo do nome */
-    .partida-mandante .partida-escudo {
-        margin-right: 0.5rem;
-    }
-
-    .partida-visitante .partida-escudo {
-        margin-left: 0.5rem;
-    }
-
-    /* Reduz o tamanho dos nomes */
-    .partida-nome {
-        font-size: 0.8rem;
-    }
-
-    /* Reduz o placar */
-    .partida-placar {
-        font-size: 1.4rem;
-    }
-}
-
 
 /*reduz os elementos para telas pequenas */
 @media (max-width: 576px) {
@@ -165,7 +136,7 @@
         line-height: 1;
     }
 
-    /* Reduz o espaço do símbolo de multiplicação */
+    /* Reduz o espaço do símbolo X */
     .partida-placar span {
         margin-left: 0.05rem;
         margin-right: 0.05rem;

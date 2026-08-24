@@ -87,6 +87,7 @@ class PartidaController extends Controller
             'local' => $local,
             'status' => 'AGENDADA',
         ]);
+        //manda para tela de partidas com o nome e o id do campeonato selecionado, para que não precise fazer a pesquisa novamente 
         return redirect()->route('partidas.index', ['campeonato_id' => $request->campeonato_id, 'campeonato_nome' => $request->campeonato_nome,])->with('success', 'Data, hora e local da partida definidos com sucesso!');
     }
 
@@ -96,5 +97,13 @@ class PartidaController extends Controller
     public function destroy(Partida $partida)
     {
         //
+    }
+
+    public function finalizar(Partida $partida)
+    {
+        $partida->status = 'FINALIZADA'; // Altera o status da partida para finalizada
+        $partida->save();// Salva a alteração no banco de dados
+        // Retorna para a tela de partidas mantendo o campeonato pesquisado
+        return redirect()->route('partidas.index', ['campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')])->with('success', 'Partida finalizada com sucesso.');
     }
 }

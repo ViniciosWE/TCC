@@ -70,6 +70,11 @@
                             </div>
                             {{-- Botões --}}
                             <div class="d-flex flex-wrap gap-2">
+                                {{-- Detalhes --}}
+                                <a href="{{ route('campeonatos.show', $campeonato) }}" class="btn btn-secondary w-100">
+                                    <i class=" bi bi-eye me-1"></i>
+                                    Detalhes
+                                </a>
                                 {{-- Gerar Partidas --}}
                                 @if ($campeonato->status == 'INSCRICOES' && $campeonato->inscricoes_count == $campeonato->maximo_equipes)
                                     <form action="{{ route('campeonatos.gerarConfrontos', $campeonato) }}" method="POST"
@@ -83,9 +88,9 @@
                                 @endif
                                 {{-- Ver Partidas --}}
                                 @if ($campeonato->status == 'EM_ANDAMENTO')
+                                    {{-- Redireciona para a tela de partidas, enviando o ID e o nome do campeonato --}}
                                     <a href="{{ route('partidas.index', ['campeonato_id' => $campeonato->id, 'campeonato_nome' => $campeonato->nome]) }}"
-                                        class="btn btn-primary flex-fill">
-                                        <i class="bi bi-eye me-1"></i>Ver Partidas
+                                        class="btn btn-primary w-100"> <i class="bi bi-eye me-1"></i>Ver Partidas
                                     </a>
                                 @endif
                                 {{-- Editar --}}

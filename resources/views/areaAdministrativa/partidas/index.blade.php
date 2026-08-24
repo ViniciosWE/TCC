@@ -131,10 +131,10 @@
                                 {{-- Pode cadastrar eventos caso seja com status agendada e pode ver os eventos se
                                 estiver com status Finalizada --}}
                                 @if ($partida->status != 'PENDENTE')
-                                    <a href="{{ route('eventoPartidas.create', ['partida_id' => $partida->id]) }}"
+                                    <a href="{{ $partida->status == 'FINALIZADA' ? route('eventoPartidas.index', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) : route('eventoPartidas.create', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
                                         class="btn btn-primary btn-sm">
                                         <i class="bi bi-clipboard2-pulse me-1"></i>
-                                        {{ $partida->status == 'FINALIZADA' ? 'Ver eventos' : 'Cadastrar eventos'}}
+                                        {{ $partida->status == 'FINALIZADA' ? 'Ver eventos' : 'Cadastrar eventos' }}
                                     </a>
                                 @endif
                                 {{-- Pode gerar a sumula quando estiver com status de agendada --}}
@@ -142,6 +142,19 @@
                                     <a href="#" class="btn btn-secondary btn-sm">
                                         <i class="bi bi-file-earmark-text me-1"></i>Gerar súmula
                                     </a>
+                                @endif
+                                {{-- Pode finalizar a partida caso esteja agendada --}}
+                                @if ($partida->status == 'AGENDADA')
+                                    <form
+                                        action="{{ route('partidas.finalizar', ['partida' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                        method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Finalizar partida
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </div>

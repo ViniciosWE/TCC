@@ -56,16 +56,23 @@
                                         @endif
                                     </div>
                                 </div>
-                                <h5 class="fw-bold mb-1 mt-3">{{ $noticia->titulo}}</h5>
-                                <p>{{ $noticia->descricao }}</p>
+                                <h5 class="fw-bold mb-1 mt-3 text-break descricao-noticia">{{ $noticia->titulo}}</h5>
+                                <p class="text-break descricao-noticia">{{ $noticia->descricao }}</p>
                                 @if ($noticia->campeonato)
-                                    <span class="text-muted">
+                                    <span class="text-break descricao-noticia">
                                         Esta notícia está relacionada ao <b>{{ $noticia->campeonato->nome }}</b>.
                                     </span>
+                                @else
+                                    <span class="text-break descricao-noticia">Esta notícia não está relacionada a um
+                                        campeonato.</span>
                                 @endif
                             </div>
                             {{-- Botões --}}
-                            <div class="d-flex gap-2">
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{{ route('noticias.show', $noticia) }}" class="btn btn-secondary w-100">
+                                    <i class=" bi bi-eye me-1"></i>
+                                    Detalhes
+                                </a>
                                 <a href="{{ route('noticias.edit', $noticia) }}" class="btn btn-warning flex-fill">
                                     <i class="bi bi-pencil-square me-1"></i>Editar
                                 </a>

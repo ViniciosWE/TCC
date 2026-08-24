@@ -43,6 +43,7 @@
             </div>
             {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Salvar Alterações </button>
+              {{-- Redireciona para a tela de partidas, enviando o ID e o nome do campeonato --}}
             <a href="{{ route('partidas.index', ['campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
                 class="btn btn-secondary">
                 Voltar

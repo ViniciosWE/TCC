@@ -56,7 +56,7 @@ class CampeonatoController extends Controller
      */
     public function show(Campeonato $campeonato)
     {
-        //
+        return view('areaAdministrativa.campeonatos.show', compact('campeonato'));
     }
 
     /**
@@ -91,14 +91,27 @@ class CampeonatoController extends Controller
         $totalInscricoes = $campeonato->inscricoes()->count(); // Conta quantas equipes já estão inscritas
         // Impede diminuir o limite abaixo do número de inscrições existentes
         if ($dados['maximo_equipes'] < $totalInscricoes) {
-            return back()->withInput()->withErrors(['maximo_equipes' => "Não é possível definir menos de {$totalInscricoes} equipes, pois já existem {$totalInscricoes} inscrições neste campeonato."]);
+            return back()->withInput()->withErrors(['maximo_equipes' => "Não é possível definir menos de {$totalInscricoes} equipes, pois já existem {$totalInscricoes} inscrições neste campeonato"]);
         }
 
-        // Se o campeonato estava em andamento e voltar para inscrições,exclui as partidas que foram geradas
         if ($campeonato->status === 'EM_ANDAMENTO' && $dados['status'] === 'INSCRICOES') {
+            $partidaComEvento = $campeonato->partidas()->whereHas('eventos')->exists();
+            if ($partidaComEvento) {
+                return back()->withInput()->withErrors(['status' => 'Não é possível voltar o campeonato para inscrições, pois já existem eventos cadastrados em uma ou mais partidas']);
+            }
+            // Se não existem eventos, pode apagar as partidas
             $campeonato->partidas()->delete();
         }
-
+        if ($dados['status'] === 'FINALIZADO' && $campeonato->status !== 'FINALIZADO') {
+            $totalPartidas = $campeonato->partidas()->count();
+            $partidasFinalizadas = $campeonato->partidas()->where('status', 'FINALIZADA')->count();
+            if ($totalPartidas === 0) {
+                return back()->withInput()->withErrors(['status' => 'Não é possível finalizar um campeonato que não possui partidas']);
+            }
+            if ($totalPartidas !== $partidasFinalizadas) {
+                return back()->withInput()->withErrors(['status' => 'Não é possível finalizar o campeonato enquanto existirem partidas não finalizadas']);
+            }
+        }
         $dados['user_id'] = auth()->id(); //pega o id de quem criou 
         $campeonato->update($dados); // edita
         return redirect()->route('campeonatos.index')->with('success', 'Campeonato atualizado com sucesso!');
@@ -109,9 +122,14 @@ class CampeonatoController extends Controller
      */
     public function destroy(Campeonato $campeonato)
     {
-        $possuiInscricoes = $campeonato->inscricoes()->exists();
-        if ($possuiInscricoes) {
+        $possuiNoticia = $campeonato->noticias()->exists(); // verifica se existe notíca
+        $possuiInscricoes = $campeonato->inscricoes()->exists();//verifica se existe incrição no campeonato
+        if ($possuiInscricoes || $possuiNoticia) {
+            return redirect()->route('campeonatos.index')->with('error', 'O campeonato possui inscrições e notícias relacionados e não pode ser excluído.');
+        } elseif ($possuiInscricoes) {
             return redirect()->route('campeonatos.index')->with('error', 'O campeonato possui inscrições e não pode ser excluído.');
+        } elseif ($possuiNoticia) {
+            return redirect()->route('campeonatos.index')->with('error', 'O campeonato possui Notícias relacionadas e não pode ser excluído.');
         }
         $campeonato->delete();
         return redirect()->route('campeonatos.index')->with('success', 'Campeonato excluído com sucesso!');

@@ -58,7 +58,7 @@ class NoticiaController extends Controller
      */
     public function show(Noticia $noticia)
     {
-        //
+        return view('areaAdministrativa.noticias.show', compact('noticia'));
     }
 
     /**

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampeonatoController;
 use App\Http\Controllers\ContratoController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquipeController;
 use App\Http\Controllers\EventoPartidaController;
 use App\Http\Controllers\InscricaoController;
@@ -35,7 +36,11 @@ Route::get('/PaginaNoticias', function () {
     return view('PaginaNoticias');
 })->name('PaginaNoticias');
 
-Route::get('/Login', function () {
+//rota de login ele verifica se o usuário esta logado, se ele esta logado entra no dashboard direto.
+Route::get('/login', function () {
+    if (Auth::check()) {
+        return redirect()->route('Dashboard');
+    }
     return view('login');
 })->name('Login');
 
@@ -51,6 +56,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
     Route::resource('partidas', PartidaController::class);
     Route::get('inscricoes/{inscricao}/comprovante', [InscricaoController::class, 'comprovante'])->name('inscricoes.comprovante');
     Route::post('campeonatos/{campeonato}/gerar-confrontos', [CampeonatoController::class, 'gerarConfrontos'])->name('campeonatos.gerarConfrontos');
+    Route::patch('/partidas/{partida}/finalizar', [PartidaController::class, 'finalizar'])->name('partidas.finalizar');
 });
 
 /* Rotas exclusivas do Super Administrador */
@@ -60,9 +66,7 @@ Route::middleware(['auth', 'tipo:SUPER_ADMINISTRADOR'])->group(function () {
 
 /* Rotas compartilhadas entre Administrador e Super Administrador */
 Route::middleware(['auth', 'tipo:ADMINISTRADOR,SUPER_ADMINISTRADOR'])->group(function () {
-    Route::get('/Dashboard', function () {
-        return view('areaAdministrativa.dashboard');
-    })->name('Dashboard');
+    Route::get('/Dashboard', [DashboardController::class, 'index'])->name('Dashboard');
     Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('user/{user}', [UserController::class, 'update'])->name('user.update');
 });

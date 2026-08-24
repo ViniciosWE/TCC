@@ -33,8 +33,12 @@
             <div class="mb-3">
                 <label class="form-label">Imagem atual</label>
                 <br>
-                <img src="{{ asset('storage/' . $noticia->imagem) }}" alt="imagem da notícia {{ $noticia->titulo }}"
-                    width="80" height="80">
+                @if ($noticia->imagem)
+                    <img src="{{ asset('storage/' . $noticia->imagem) }}" alt="Imagem da notícia {{ $noticia->titulo }}"
+                        width="80" height="80">
+                @else
+                    <span class="text-muted">Esta notícia não possui imagem.</span>
+                @endif
             </div>
             {{-- Imagem --}}
             <div class="mb-3">
@@ -47,7 +51,8 @@
                 <label for="campeonato_nome" class="form-label">Selecione um Campaonato(Se a notícia houver relação)</label>
                 <input list="lista-campeonatos" class="form-control" id="campeonato_nome"
                     placeholder="Digite para pesquisar..."
-                    value=" {{ old('campeonato_id') ? $campeonatos->firstWhere('id', old('campeonato_id'))?->nome : $noticia->campeonato->nome }}" autocomplete="off">
+                    value="{{ old('campeonato_id') ? $campeonatos->firstWhere('id', old('campeonato_id'))?->nome : $noticia->campeonato?->nome }}"
+                    autocomplete="off">
                 <input type="hidden" name="campeonato_id" id="campeonato_id"
                     value="{{ old('campeonato_id', $noticia->campeonato_id) }}">
                 <datalist id="lista-campeonatos">

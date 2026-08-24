@@ -39,15 +39,11 @@ class ContratoController extends Controller
             'participante_id' => 'required|exists:participantes,id',
             'status' => 'required|in:ATIVO,ENCERRADO',
         ]);
-
-        // Cria o contrato
-        $contrato = Contrato::create($dados);
-
+        $contrato = Contrato::create($dados);// Cria o contrato
         // Se o contrato estiver ativo, atualiza o participante
         if ($dados['status'] === 'ATIVO') {
             $contrato->participante->update(['status' => 'ATIVO',]);
         }
-
         return redirect()->route('contratos.index')->with('success', 'Contrato cadastrado com sucesso!');
     }
 
@@ -98,9 +94,16 @@ class ContratoController extends Controller
      */
     public function destroy(Contrato $contrato)
     {
-        
-        $contrato->participante->update(['status' => 'SEM_EQUIPE',]);// Deixa o participante sem equipe
-        $contrato->delete();// Exclui o contrato
+        $participante = $contrato->participante;
+
+        // Verifica se o participante já possui eventos em partidas
+        if ($participante->eventos()->exists()) {
+            return back()->withErrors(['error' => 'Não é possível excluir este contrato, pois o participante já possui eventos registrados em partidas.']);
+        }
+        $participante->update([
+            'status' => 'SEM_EQUIPE',
+        ]);
+        $contrato->delete();
         return redirect()->route('contratos.index')->with('success', 'Contrato excluído com sucesso!');
     }
 }
