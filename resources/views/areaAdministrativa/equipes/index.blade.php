@@ -42,9 +42,9 @@
                             {{-- Informações da equipe --}}
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <img src="{{ asset('storage/' . $equipe->escudo) }}" alt="Escudo {{ $equipe->nome }}"
-                                    width="100" height="100" class="rounded-circle border p-1">
+                                    width="70" height="70" class="rounded-circle border p-1">
                                 <div>
-                                    <h5 class="fw-bold mb-1 text-uppercase">{{ $equipe->nome }}</h5>
+                                    <h6 class="fw-bold mb-1 text-uppercase text-break">{{ $equipe->nome }}</h6>
                                     <span class="text-muted text-uppercase">{{ $equipe->sigla }}</span>
                                 </div>
                             </div>

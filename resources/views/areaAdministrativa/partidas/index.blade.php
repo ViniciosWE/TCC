@@ -114,7 +114,8 @@
                                 </div>
                             </div>
                             {{-- Ações da partida --}}
-                            <div class="d-flex flex-wrap justify-content-center gap-2 mt-3 partida-acoes">
+                            <div
+                                class="d-flex flex-column flex-md-row flex-wrap justify-content-center gap-2 mt-3 partida-acoes">
                                 {{-- Definir data, hora e local, aparece caso a partida esta com status pendente --}}
                                 @if ($partida->status == 'PENDENTE')
                                     <a href="{{ route('partidas.edit', ['partida' => $partida, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
@@ -150,7 +151,7 @@
                                         method="POST" class="d-inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="btn btn-success btn-sm">
+                                        <button type="submit" class="btn btn-success btn-sm w-100">
                                             <i class="bi bi-check-circle me-1"></i>
                                             Finalizar partida
                                         </button>

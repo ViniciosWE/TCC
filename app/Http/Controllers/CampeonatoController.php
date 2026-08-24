@@ -124,7 +124,7 @@ class CampeonatoController extends Controller
     {
         $possuiNoticia = $campeonato->noticias()->exists(); // verifica se existe notíca
         $possuiInscricoes = $campeonato->inscricoes()->exists();//verifica se existe incrição no campeonato
-        if ($possuiInscricoes || $possuiNoticia) {
+        if ($possuiInscricoes && $possuiNoticia) {
             return redirect()->route('campeonatos.index')->with('error', 'O campeonato possui inscrições e notícias relacionados e não pode ser excluído.');
         } elseif ($possuiInscricoes) {
             return redirect()->route('campeonatos.index')->with('error', 'O campeonato possui inscrições e não pode ser excluído.');

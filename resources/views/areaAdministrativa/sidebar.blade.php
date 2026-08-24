@@ -31,7 +31,7 @@
                 {{-- opções do usuário --}}
                 <ul class="dropdown-menu dropdown-menu-end shadow">
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{ route('user.perfil') }}">
                             <i class="bi bi-person me-2"></i>
                             Meu perfil
                         </a>

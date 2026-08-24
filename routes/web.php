@@ -67,8 +67,8 @@ Route::middleware(['auth', 'tipo:SUPER_ADMINISTRADOR'])->group(function () {
 /* Rotas compartilhadas entre Administrador e Super Administrador */
 Route::middleware(['auth', 'tipo:ADMINISTRADOR,SUPER_ADMINISTRADOR'])->group(function () {
     Route::get('/Dashboard', [DashboardController::class, 'index'])->name('Dashboard');
-    Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
-    Route::put('user/{user}', [UserController::class, 'update'])->name('user.update');
+    Route::get('/perfil', [UserController::class, 'perfil'])->name('user.perfil');
+    Route::put('/perfil', [UserController::class, 'atualizarPerfil'])->name('user.atualizarPerfil');
 });
 
 /*Rotas de login e Logout*/
