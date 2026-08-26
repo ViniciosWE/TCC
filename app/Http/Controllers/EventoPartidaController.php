@@ -95,8 +95,8 @@ class EventoPartidaController extends Controller
         }
         //salva o placar
         $partida->save();
-        //manda para tela de partidas com o nome e o id do campeonato selecionado, para que não precise fazer a pesquisa novamente 
-        return redirect()->route('partidas.index', ['campeonato_id' => $request->campeonato_id, 'campeonato_nome' => $request->campeonato_nome])->with('success', 'Evento cadastrado com sucesso.');
+        //fica na mesma tela porque pode ter mais de um evento para cadastrar
+        return redirect()->route('eventoPartidas.create', ['partida_id' => $partida->id,'campeonato_id' => $request->campeonato_id,'campeonato_nome' => $request->campeonato_nome,])->with('success', 'Evento cadastrado com sucesso.');
     }
 
     /**
@@ -131,7 +131,8 @@ class EventoPartidaController extends Controller
         $partida = $eventoPartida->partida;// Busca a partida relacionada ao evento
         // Verifica se o novo participante pertence a uma das equipes da partida e possui contrato ativo
         $participante = Participante::where('id', $dados['participante_id'])->where('status', 'ATIVO')->whereHas('contratos', function ($query) use ($partida) {
-            $query->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->where('status', 'ATIVO'); })->first();
+            $query->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->where('status', 'ATIVO');
+        })->first();
         // Se o participante não pertence à partida, impede a alteração
         if (!$participante) {
             return back()->withInput()->withErrors(['participante_id' => 'O participante não pertence a uma das equipes desta partida.']);

@@ -78,7 +78,7 @@
                                 {{-- Gerar Partidas --}}
                                 @if ($campeonato->status == 'INSCRICOES' && $campeonato->inscricoes_count == $campeonato->maximo_equipes)
                                     <form action="{{ route('campeonatos.gerarConfrontos', $campeonato) }}" method="POST"
-                                        class="flex-fill">
+                                        class="flex-fill w-100">
                                         @csrf
                                         <button type="submit" class="btn btn-primary w-100"
                                             onclick="return confirm('Deseja realizar o sorteio das partidas?')">

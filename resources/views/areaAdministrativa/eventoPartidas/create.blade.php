@@ -16,6 +16,11 @@
                 </ul>
             </div>
         @endif
+        @if(session('success'))
+            <div class="alert alert-success" id="sumirMensagem">
+                {{ session('success') }}
+            </div>
+        @endif
 
         <div class="alert alert-info">
             <strong>Partida:</strong>
@@ -39,7 +44,8 @@
                 <input type="hidden" name="participante_id" id="participante_id" value="{{ old('participante_id') }}">
                 <datalist id="lista-participantes">
                     @foreach ($participantes as $participante)
-                        <option value="{{ $participante->nome }} - {{ $participante->cpf }}" data-id="{{ $participante->id }}">
+                        <option value="{{ $participante->nome }} - {{ $participante->cpf }} - {{ $participante->funcao }}"
+                            data-id="{{ $participante->id }}">
                         </option>
                     @endforeach
                 </datalist>

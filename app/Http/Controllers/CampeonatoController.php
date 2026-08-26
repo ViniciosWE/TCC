@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campeonato;
+use App\Models\Contrato;
 use App\Models\Partida;
 use Illuminate\Http\Request;
 
@@ -56,9 +57,20 @@ class CampeonatoController extends Controller
      */
     public function show(Campeonato $campeonato)
     {
-        return view('areaAdministrativa.campeonatos.show', compact('campeonato'));
-    }
+        $classificacao = collect();
 
+        if ($campeonato->tipo === 'PONTOS_CORRIDOS') {
+            $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato);
+        }
+
+        return view(
+            'areaAdministrativa.campeonatos.show',
+            compact(
+                'campeonato',
+                'classificacao'
+            )
+        );
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -167,42 +179,140 @@ class CampeonatoController extends Controller
 
     private function gerarPontosCorridos($campeonato, $equipes)
     {
-        $equipes = $equipes->values(); // Organiza os índices das equipes
-        // Adiciona uma folga se houver número ímpar de equipes
+       
+        $equipes = $equipes->values(); // Organiza os índices começando pelo 0
+        // Se a quantidade for ímpar, adiciona uma folga
         if ($equipes->count() % 2 != 0) {
             $equipes->push(null);
         }
-        $quantidadeEquipes = $equipes->count();
-        $numeroRodadas = $quantidadeEquipes - 1;
-        $partidasPorRodada = $quantidadeEquipes / 2;
-        // Gera as rodadas
-        for ($rodada = 1; $rodada <= $numeroRodadas; $rodada++) {
-            // Gera os jogos da rodada
-            for ($jogo = 0; $jogo < $partidasPorRodada; $jogo++) {
-                $mandante = $equipes[$jogo];
-                $visitante = $equipes[$quantidadeEquipes - 1 - $jogo];
-                // Ignora a folga
-                if ($mandante === null || $visitante === null) {
-                    continue;
+        $quantidadeEquipes = $equipes->count();// Quantidade de equipes
+        $numeroRodadas = $quantidadeEquipes - 1;// Quantidade de rodadas em um turno
+        $partidasPorRodada = $quantidadeEquipes / 2; // Quantidade de partidas por rodada
+        $equipesOriginais = $equipes->values();// Guarda a configuração inicial
+        //gera os turnos
+        for ($turno = 1; $turno <= 2; $turno++) {
+            $equipes = $equipesOriginais->values();// Começa novamente com as equipes na posição inicial
+            // Percorre as rodadas
+            for ($rodada = 1; $rodada <= $numeroRodadas; $rodada++) {
+                // Percorre as partidas da rodada
+                for ($jogo = 0; $jogo < $partidasPorRodada; $jogo++) {
+                    $mandante = $equipes[$jogo]; // Pega o mandante
+                    $visitante = $equipes[$quantidadeEquipes - 1 - $jogo]; // Pega o visitante
+                    // Se tiver folga, não cria partida
+                    if ($mandante === null || $visitante === null) {
+                        continue;
+                    }
+                    $numeroRodada = $rodada;// Define qual rodada será
+                    // No segundo turno, soma as rodadas do primeiro
+                    if ($turno == 2) {
+                        $numeroRodada += $numeroRodadas;
+                    }
+                    // No segundo turno inverte o mando
+                    if ($turno == 2) {
+                        $temp = $mandante;
+                        $mandante = $visitante;
+                        $visitante = $temp;
+                    }
+                    // Cria a partida
+                    Partida::create([
+                        'campeonato_id' => $campeonato->id,
+                        'mandante_id' => $mandante->id,
+                        'visitante_id' => $visitante->id,
+                        'gols_mandante' => 0,
+                        'gols_visitante' => 0,
+                        'data_hora' => null,
+                        'status' => 'PENDENTE',
+                        'fase' => 'RODADA_' . $numeroRodada,
+                        'local' => null,
+                    ]);
                 }
-                // Cria a partida
-                Partida::create([
-                    'campeonato_id' => $campeonato->id,
-                    'mandante_id' => $mandante->id,
-                    'visitante_id' => $visitante->id,
-                    'gols_mandante' => 0,
-                    'gols_visitante' => 0,
-                    'data_hora' => null,
-                    'status' => 'PENDENTE',
-                    'fase' => 'RODADA_' . $rodada,
-                    'local' => null,
-                ]);
+                // Rotaciona as equipes para a próxima rodada
+                $primeira = $equipes->shift();
+                $ultimo = $equipes->pop();
+                $equipes->prepend($ultimo);
+                $equipes->prepend($primeira);
             }
-            // Mantém a primeira equipe fixa e gira as outras
-            $primeira = $equipes->shift();
-            $ultimo = $equipes->pop();
-            $equipes->prepend($ultimo);
-            $equipes->prepend($primeira);
         }
+    }
+
+    private function gerarMataMata($campeonato, $equipes){
+        //
+    }
+
+    private function gerarGruposMataMata($campeonato, $equipes){
+        //
+    }
+
+    private function calcularClassificacaoPontosCorridos(Campeonato $campeonato)
+    {
+        $campeonato->load('inscricoes.equipe');
+        $classificacao = [];
+        // Cria a classificação inicial das equipes
+        foreach ($campeonato->inscricoes as $inscricao) {
+            $equipe = $inscricao->equipe;
+            $classificacao[$equipe->id] = [
+                'equipe' => $equipe,
+                'jogos' => 0,
+                'vitorias' => 0,
+                'empates' => 0,
+                'derrotas' => 0,
+                'gols_pro' => 0,
+                'gols_contra' => 0,
+                'saldo' => 0,
+                'pontos' => 0,
+            ];
+        }
+        // Pega as partidas finalizadas
+        $partidas = $campeonato->partidas()->where('status', 'FINALIZADA')->get();
+        // Calcula os resultados
+        foreach ($partidas as $partida) {
+            $mandante = $partida->mandante_id;
+            $visitante = $partida->visitante_id;
+            $classificacao[$mandante]['jogos']++;
+            $classificacao[$visitante]['jogos']++;
+            $classificacao[$mandante]['gols_pro'] += $partida->gols_mandante;
+            $classificacao[$mandante]['gols_contra'] += $partida->gols_visitante;
+            $classificacao[$visitante]['gols_pro'] += $partida->gols_visitante;
+            $classificacao[$visitante]['gols_contra'] += $partida->gols_mandante;
+            // Vitória do mandante
+            if ($partida->gols_mandante > $partida->gols_visitante) {
+                $classificacao[$mandante]['vitorias']++;
+                $classificacao[$mandante]['pontos'] += 3;
+                $classificacao[$visitante]['derrotas']++;
+                // Vitória do visitante
+            } elseif ($partida->gols_mandante < $partida->gols_visitante) {
+                $classificacao[$visitante]['vitorias']++;
+                $classificacao[$visitante]['pontos'] += 3;
+                $classificacao[$mandante]['derrotas']++;
+                // Empate
+            } else {
+                $classificacao[$mandante]['empates']++;
+                $classificacao[$visitante]['empates']++;
+                $classificacao[$mandante]['pontos']++;
+                $classificacao[$visitante]['pontos']++;
+            }
+        }
+        // Calcula saldo de gols
+        foreach ($classificacao as $id => $equipe) {
+            $classificacao[$id]['saldo'] =
+                $equipe['gols_pro'] - $equipe['gols_contra'];
+        }
+        // Ordena
+        usort($classificacao, function ($a, $b) {
+            if ($a['pontos'] != $b['pontos']) {
+                return $b['pontos'] - $a['pontos'];
+            }
+            if ($a['saldo'] != $b['saldo']) {
+                return $b['saldo'] - $a['saldo'];
+            }
+            return $b['gols_pro'] - $a['gols_pro'];
+        });
+        // Coloca a posição
+        $posicao = 1;
+        foreach ($classificacao as &$equipe) {
+            $equipe['posicao'] = $posicao;
+            $posicao++;
+        }
+        return $classificacao;
     }
 }
