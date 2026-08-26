@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('participante_id')->constrained('participantes')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('partida_id')->constrained('partidas')->restrictOnUpdate()->restrictOnDelete();
-            $table->enum('tipo', ['GOL', 'CARTAO_AMARELO', 'CARTAO_VERMELHO', 'ASSISTENCIA', 'GOL_CONTRA', 'GOLS_SOFRIDOS']);
+            $table->enum('tipo', ['GOL', 'CARTAO_AMARELO', 'CARTAO_VERMELHO', 'ASSISTENCIA', 'GOL_CONTRA', 'GOLS_SOFRIDOS', 'PENALTI_CONVERTIDO_DESEMPATE']);
             $table->time('tempo');
             $table->timestamps();
         });
