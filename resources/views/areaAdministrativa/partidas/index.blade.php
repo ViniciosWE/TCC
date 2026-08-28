@@ -38,10 +38,14 @@
                 {{ session('success') }}
             </div>
         @endif
-        {{-- Mensagem de erro --}}
-        @if(session('error'))
-            <div class="alert alert-danger" id="sumirMensagem">
-                {{ session('error') }}
+        
+        @if ($errors->any())
+            <div class="alert alert-danger mb-3" id="sumirMensagem">
+                <ul class="mb-0 list-unstyled">
+                    @foreach ($errors->all() as $erro)
+                        <li>{{ $erro }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
         {{-- Campo de pesquisa --}}
@@ -93,6 +97,10 @@
                                             </span>
                                             {{ $partida->gols_visitante }}
                                         </h2>
+                                        @if ($partida->penaltisMandante > 0 || $partida->penaltisVisitante > 0)
+                                            <small class="text-muted small">{{ $partida->penaltisMandante }} ×
+                                                {{ $partida->penaltisVisitante }}</small>
+                                        @endif
                                         @if ($partida->status == 'AGENDADA')
                                             <span class="badge bg-primary">Agendada</span>
                                         @elseif ($partida->status == 'PENDENTE')
@@ -129,19 +137,16 @@
                                         <i class="bi bi-calendar-event me-1"></i>Editar data/local
                                     </a>
                                 @endif
-                                {{-- Pode cadastrar eventos caso seja com status agendada e pode ver os eventos se
-                                estiver com status Finalizada --}}
-                                @if ($partida->status != 'PENDENTE')
-                                    <a href="{{ $partida->status == 'FINALIZADA' ? route('eventoPartidas.index', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) : route('eventoPartidas.create', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
-                                        class="btn btn-primary btn-sm">
-                                        <i class="bi bi-clipboard2-pulse me-1"></i>
-                                        {{ $partida->status == 'FINALIZADA' ? 'Ver eventos' : 'Cadastrar eventos' }}
+                                {{-- Ver eventos --}}
+                                @if ($partida->status == 'AGENDADA' || $partida->status == 'FINALIZADA')
+                                    <a href="{{ route('eventoPartidas.index', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                        class="btn btn-secondary btn-sm"><i class="bi bi-list-ul me-1"></i>Ver eventos
                                     </a>
                                 @endif
-                                {{-- Pode gerar a sumula quando estiver com status de agendada --}}
+                                {{-- Cadastrar eventos --}}
                                 @if ($partida->status == 'AGENDADA')
-                                    <a href="#" class="btn btn-secondary btn-sm">
-                                        <i class="bi bi-file-earmark-text me-1"></i>Gerar súmula
+                                    <a href="{{ route('eventoPartidas.create', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                        class=" btn btn-primary btn-sm"><i class="bi bi-clipboard2-pulse me-1"></i> Cadastrar eventos
                                     </a>
                                 @endif
                                 {{-- Pode finalizar a partida caso esteja agendada --}}

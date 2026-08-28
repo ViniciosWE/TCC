@@ -25,8 +25,8 @@ class InscricaoController extends Controller
      */
     public function create()
     {
-        $campeonatos = Campeonato::where('status', 'INSCRICOES')->orderBy('nome')->get();
-        $equipes = Equipe::orderBy('nome')->get();
+        $campeonatos = Campeonato::where('status', 'INSCRICOES')->orderBy('nome')->get(); // busca os campeonatos em inscrições 
+        $equipes = Equipe::where('status', 'ATIVA')->orderBy('nome')->get(); // busca apenas equipes ativas
         return view('areaAdministrativa.inscricoes.create', compact('campeonatos', 'equipes'));
     }
 
@@ -37,7 +37,7 @@ class InscricaoController extends Controller
     {
         $dados = $request->validate([
             'campeonato_id' => 'required|exists:campeonatos,id',
-            'equipe_id' => 'required|exists:equipes,id',
+            'equipe_id' => 'required|exists:equipes,id,status,ATIVA',
         ]);
         $campeonato = Campeonato::findOrFail($dados['campeonato_id']); // Busca o campeonato
 
@@ -94,7 +94,7 @@ class InscricaoController extends Controller
     {
         $dados = $request->validate([
             'campeonato_id' => 'required|exists:campeonatos,id',
-            'equipe_id' => 'required|exists:equipes,id',
+            'equipe_id' => 'required|exists:equipes,id,status,ATIVA',
         ]);
         $campeonato = Campeonato::findOrFail($dados['campeonato_id']);// Busca o campeonato
         // Verifica se já existe outra inscrição com a mesma equipe no campeonato

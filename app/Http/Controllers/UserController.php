@@ -43,6 +43,7 @@ class UserController extends Controller
             'email.unique' => 'Este e-mail já está cadastrado.',
             'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
         ]);
+        //cria registro no banco
         User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -70,10 +71,8 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        $user = User::findOrFail($id);
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,

@@ -37,7 +37,7 @@
             {{--Equipe --}}
             <div class="mb-3">
                 <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
-                <input list="lista-equipes" class="form-control" id="equipe_nome" name="equipe_nome"
+                <input list="lista-equipes" class="form-control text-capitalize" id="equipe_nome" name="equipe_nome"
                     placeholder="Digite para pesquisar..." required  value="{{ old('equipe_id') ? $equipes->find(old('equipe_id'))?->nome : $inscricao?->equipe?->nome }}" autocomplete="off">
                 <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id', $inscricao->equipe_id) }}">
                 <datalist id="lista-equipes">

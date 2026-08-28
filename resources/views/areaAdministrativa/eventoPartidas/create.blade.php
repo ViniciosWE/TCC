@@ -70,6 +70,7 @@
                     <option value="ASSISTENCIA" {{ old('tipo') == 'ASSISTENCIA' ? 'selected' : '' }}>Assistência</option>
                     <option value="GOL_CONTRA" {{ old('tipo') == 'GOL_CONTRA' ? 'selected' : '' }}>Gol Contra</option>
                     <option value="GOLS_SOFRIDOS" {{ old('tipo') == 'GOLS_SOFRIDOS' ? 'selected' : '' }}>Gols Sofridos
+                    <option value="PENALTI_CONVERTIDO_DESEMPATE" {{ old('tipo') == 'PENALTI_CONVERTIDO_DESEMPATE' ? 'selected' : '' }}>Pênalti Convertido de Desempate
                     </option>
                 </select>
             </div>

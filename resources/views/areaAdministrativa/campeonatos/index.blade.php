@@ -87,10 +87,10 @@
                                     </form>
                                 @endif
                                 {{-- Ver Partidas --}}
-                                @if ($campeonato->status == 'EM_ANDAMENTO')
+                                @if ($campeonato->status == 'EM_ANDAMENTO' || $campeonato->status == 'FINALIZADO')
                                     {{-- Redireciona para a tela de partidas, enviando o ID e o nome do campeonato --}}
                                     <a href="{{ route('partidas.index', ['campeonato_id' => $campeonato->id, 'campeonato_nome' => $campeonato->nome]) }}"
-                                        class="btn btn-primary w-100"> <i class="bi bi-eye me-1"></i>Ver Partidas
+                                        class="btn btn-primary w-100"><i class="bi bi-list-ul me-1"></i>Listar Partidas
                                     </a>
                                 @endif
                                 {{-- Editar --}}

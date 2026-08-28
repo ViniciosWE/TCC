@@ -35,6 +35,7 @@
             @forelse($eventoPartidas as $eventoPartida)
                 <div class="col-12 col-md-6 col-xl-4 eventoPartida-card">
                     <div class="card shadow-sm border-0 rounded-4 h-100 overflow-hidden">
+                        {{-- informações dos eventos --}}
                         <div class="card-body">
                             <div class="mb-3">
                                 <div class="mb-1">
@@ -65,18 +66,19 @@
                                 <div class="d-flex gap-1">
                                     <small class="text-muted d-block">Evento: </small>
                                     @if ($eventoPartida->tipo === 'GOL')
-                                        <span class="badge bg-success"><i class="bi bi-futbol"></i>Gol</span>
+                                        <span class="badge bg-success"></i>Gol</span>
                                     @elseif ($eventoPartida->tipo === 'GOL_CONTRA')
-                                        <span class="badge bg-danger"><i class="bi bi-futbol "></i>Gol Contra</span>
+                                        <span class="badge bg-danger"></i>Gol Contra</span>
                                     @elseif ($eventoPartida->tipo === 'ASSISTENCIA')
-                                        <span class="badge bg-primary"><i class="bi bi-hand-thumbs-up "></i>Assistência</span>
+                                        <span class="badge bg-primary">Assistência</span>
                                     @elseif ($eventoPartida->tipo === 'CARTAO_AMARELO')
-                                        <span class="badge bg-warning text-dark"><i class="bi bi-square-fill"></i>Cartão
-                                            Amarelo</span>
+                                        <span class="badge bg-warning text-dark">CartãoAmarelo</span>
                                     @elseif ($eventoPartida->tipo === 'CARTAO_VERMELHO')
                                         <span class="badge bg-danger"><i class="bi bi-square-fill"></i>Cartão Vermelho</span>
                                     @elseif ($eventoPartida->tipo === 'GOLS_SOFRIDOS')
                                         <span class="badge bg-secondary">Gols Sofridos</span>
+                                    @elseif ($eventoPartida->tipo === 'PENALTI_CONVERTIDO_DESEMPATE')
+                                        <span class="badge bg-dark"> Pênalti convertido (desempate)</span>
                                     @endif
                                 </div>
                             </div>

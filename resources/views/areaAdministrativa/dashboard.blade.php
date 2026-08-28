@@ -133,6 +133,10 @@
                                                         </span>
                                                         {{ $partida->gols_visitante }}
                                                     </h2>
+                                                    @if ($partida->penaltisMandante > 0 || $partida->penaltisVisitante > 0)
+                                                        <small class="text-muted small">{{ $partida->penaltisMandante }} ×
+                                                            {{ $partida->penaltisVisitante }}</small>
+                                                    @endif
                                                     @if ($partida->status == 'AGENDADA')
                                                         <span class="badge bg-primary">Agendada </span>
                                                     @elseif ($partida->status == 'FINALIZADA')

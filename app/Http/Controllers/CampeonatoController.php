@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campeonato;
 use App\Models\Contrato;
+use App\Models\EventoPartida;
 use App\Models\Partida;
 use Illuminate\Http\Request;
 
@@ -179,7 +180,7 @@ class CampeonatoController extends Controller
 
     private function gerarPontosCorridos($campeonato, $equipes)
     {
-       
+
         $equipes = $equipes->values(); // Organiza os índices começando pelo 0
         // Se a quantidade for ímpar, adiciona uma folga
         if ($equipes->count() % 2 != 0) {
@@ -235,11 +236,30 @@ class CampeonatoController extends Controller
         }
     }
 
-    private function gerarMataMata($campeonato, $equipes){
-        //
+    private function gerarMataMata($campeonato, $equipes)
+    {
+        // Sorteia a ordem das equipes
+        $equipes = $equipes->shuffle()->values();
+
+        // Percorre as equipes de 2 em 2
+        for ($i = 0; $i < $equipes->count() - 1; $i += 2) {
+
+            Partida::create([
+                'campeonato_id' => $campeonato->id,
+                'mandante_id' => $equipes[$i]->id,
+                'visitante_id' => $equipes[$i + 1]->id,
+                'gols_mandante' => 0,
+                'gols_visitante' => 0,
+                'data_hora' => null,
+                'status' => 'PENDENTE',
+                'fase' => 'RODADA_INICIAL',
+                'local' => null,
+            ]);
+        }
     }
 
-    private function gerarGruposMataMata($campeonato, $equipes){
+    private function gerarGruposMataMata($campeonato, $equipes)
+    {
         //
     }
 

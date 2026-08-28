@@ -60,6 +60,9 @@
                         Contra</option>
                     <option value="GOLS_SOFRIDOS" {{ old('tipo', $eventoPartida->tipo) == 'GOLS_SOFRIDOS' ? 'selected' : '' }}>Gols Sofridos
                     </option>
+                    <option value="PENALTI_CONVERTIDO_DESEMPATE" {{ old('tipo', $eventoPartida->tipo) == 'PENALTI_CONVERTIDO_DESEMPATE' ? 'selected' : '' }}>Pênalti Convertido de
+                        Desempate
+                    </option>
                 </select>
             </div>
             {{--Botões--}}

@@ -61,7 +61,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
 
 /* Rotas exclusivas do Super Administrador */
 Route::middleware(['auth', 'tipo:SUPER_ADMINISTRADOR'])->group(function () {
-    Route::resource('user', UserController::class)->except(['edit', 'update']);
+    Route::resource('user', UserController::class);
 });
 
 /* Rotas compartilhadas entre Administrador e Super Administrador */

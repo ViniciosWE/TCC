@@ -1,0 +1,49 @@
+@extends('areaAdministrativa.sidebar')
+
+@section('title', 'Editar Perfil')
+
+@section('content')
+    <div class="container">
+        <h1 class="mb-4">Editar Perfil</h1>
+        @if ($errors->any())
+            <div class="alert alert-danger mb-3" id="sumirMensagem">
+                <ul class="mb-0 list-unstyled">
+                    @foreach ($errors->all() as $erro)
+                        <li>{{ $erro }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        {{-- Mensagem de sucesso --}}
+        @if(session('success'))
+            <div class="alert alert-success" id="sumirMensagem">
+                {{ session('success') }}
+            </div>
+        @endif
+        <form action="{{ route('user.atualizarPerfil') }}" method="POST">
+            @csrf
+            @method('PUT')
+            {{-- Nome --}}
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome do Usuário</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $user->name) }}"
+                    required>
+            </div>
+            {{-- email --}}
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}"
+                    required>
+            </div>
+            {{-- senha --}}
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="password" name="password">
+                <span class="form-text">Deixe em branco se não quiser alterar a senha.</span>
+            </div>
+            {{-- Botões --}}
+            <button type="submit" class="btn btn-primary">Salvar Alterações </button>
+            <a href="{{ route('Dashboard') }}" class="btn btn-secondary">Voltar</a>
+        </form>
+    </div>
+@endsection

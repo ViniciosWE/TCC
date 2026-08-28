@@ -17,18 +17,12 @@ class EventoPartidaController extends Controller
         // Verifica se foi informada uma partida específica
         if ($request->filled('partida_id')) {
             $partida = Partida::findOrFail($request->partida_id);// Busca a partida informada
-            // Garante que somente partidas finalizadas possam ter seus eventos visualizados
-            if ($partida->status !== 'FINALIZADA') {
-                return redirect()->route('partidas.index', ['campeonato_id' => $request->campeonato_id, 'campeonato_nome' => $request->campeonato_nome])->with('error', 'A partida ainda não foi finalizada.');
-            }
             // Busca somente os eventos da partida selecionada
             $eventoPartidas = EventoPartida::where('partida_id', $partida->id)->with(['participante', 'partida'])->orderBy('tempo')->get();
         } else {
-            // então busca os eventos de todas as partidas finalizadas
+            // então busca os eventos de todas as partidas
             $partida = null;
-            $eventoPartidas = EventoPartida::whereHas('partida', function ($query) {
-                $query->where('status', 'FINALIZADA');
-            })->with(['participante', 'partida'])->latest()->get();
+            $eventoPartidas = EventoPartida::with(['participante', 'partida'])->latest()->get();
         }
         return view('areaAdministrativa.eventoPartidas.index', compact('eventoPartidas', 'partida'));
     }
@@ -56,7 +50,7 @@ class EventoPartidaController extends Controller
             'partida_id' => 'required|exists:partidas,id',
             'participante_id' => 'required|exists:participantes,id',
             'tempo' => 'required|date_format:H:i:s',
-            'tipo' => 'required|in:GOL,CARTAO_AMARELO,CARTAO_VERMELHO,ASSISTENCIA,GOL_CONTRA,GOLS_SOFRIDOS',
+            'tipo' => 'required|in:GOL,CARTAO_AMARELO,CARTAO_VERMELHO,ASSISTENCIA,GOL_CONTRA,GOLS_SOFRIDOS,PENALTI_CONVERTIDO_DESEMPATE',
         ]);
         $partida = Partida::findOrFail($request->partida_id);
         // Verifica se o participante pertence a uma das equipes da partida
@@ -125,7 +119,7 @@ class EventoPartidaController extends Controller
     {
         $dados = $request->validate([
             'participante_id' => 'required|exists:participantes,id',
-            'tipo' => 'required|in:GOL,CARTAO_AMARELO,CARTAO_VERMELHO,ASSISTENCIA,GOL_CONTRA,GOLS_SOFRIDOS',
+            'tipo' => 'required|in:GOL,CARTAO_AMARELO,CARTAO_VERMELHO,ASSISTENCIA,GOL_CONTRA,GOLS_SOFRIDOS,PENALTI_CONVERTIDO_DESEMPATE',
             'tempo' => 'required|date_format:H:i:s',
         ]);
         $partida = $eventoPartida->partida;// Busca a partida relacionada ao evento
