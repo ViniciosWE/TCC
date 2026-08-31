@@ -126,6 +126,9 @@
                                             {{-- Placar --}}
                                             <div class="col-4">
                                                 <div class="d-flex flex-column align-items-center">
+                                                    <span class="badge bg-light text-dark border mb-2 small">
+                                                        {{ str_replace('_', ' ', $partida->fase) }}
+                                                    </span>
                                                     <h2 class="fw-bold mb-1 partida-placar">
                                                         {{ $partida->gols_mandante }}
                                                         <span class="mx-1">

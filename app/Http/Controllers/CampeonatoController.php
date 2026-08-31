@@ -59,19 +59,92 @@ class CampeonatoController extends Controller
     public function show(Campeonato $campeonato)
     {
         $classificacao = collect();
-
+        $temTriangular = false;
+        $classificacaoMataMata = collect();
+        $semifinais = collect();
+        $final = null;
+        $terceiroLugar = null;
+        //pontos corridos
         if ($campeonato->tipo === 'PONTOS_CORRIDOS') {
-            $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato);
+            $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato);//calcula a classificação do campeonato
         }
-
-        return view(
-            'areaAdministrativa.campeonatos.show',
-            compact(
-                'campeonato',
-                'classificacao'
-            )
-        );
+        // mata-mata
+        elseif ($campeonato->tipo === 'MATA_MATA') {
+            $temTriangular = $campeonato->partidas()->where('fase', 'TRIANGULAR')->exists();// Verifica se o campeonato possui uma fase triangular
+            // se tiver triangular
+            if ($temTriangular) {
+                $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato, 'TRIANGULAR');//calcula a classificação do triangular
+            }
+            //se não tiver triangular
+            else {
+                $semifinais = $campeonato->partidas()->where('fase', 'SEMIFINAL')->orderBy('id')->get();//busca as semifinais
+                // Calcula os pênaltis das semifinais
+                foreach ($semifinais as $partida) {
+                    $this->calcularPenaltis($partida);
+                }
+                $final = $campeonato->partidas()->where('fase', 'FINAL')->where('status', 'FINALIZADA')->first();//busca a finalizada
+                $terceiroLugar = $campeonato->partidas()->where('fase', 'TERCEIRO_LUGAR')->where('status', 'FINALIZADA')->first();//busca o terceiro lugar finalizado
+                //calcula os pênaltis da final
+                if ($final) {
+                    $this->calcularPenaltis($final);
+                }
+                //calcula os pênaltis do terceiro lugar
+                if ($terceiroLugar) {
+                    $this->calcularPenaltis($terceiroLugar);
+                }
+                //monta a classificação final do mata-mata
+                if ($final) {
+                    $vencedorFinal = null;
+                    $perdedorFinal = null;
+                    // verifica quem venceu no tempo normal
+                    if ($final->gols_mandante > $final->gols_visitante) {
+                        $vencedorFinal = $final->mandante;
+                        $perdedorFinal = $final->visitante;
+                    } elseif ($final->gols_mandante < $final->gols_visitante) {
+                        $vencedorFinal = $final->visitante;
+                        $perdedorFinal = $final->mandante;
+                        //se empatou verifica os pênaltis
+                    } elseif ($final->penaltisMandante > $final->penaltisVisitante) {
+                        $vencedorFinal = $final->mandante;
+                        $perdedorFinal = $final->visitante;
+                    } elseif ($final->penaltisMandante < $final->penaltisVisitante) {
+                        $vencedorFinal = $final->visitante;
+                        $perdedorFinal = $final->mandante;
+                    }
+                    //adiciona o vencedor como 1º lugar
+                    if ($vencedorFinal) {
+                        $classificacaoMataMata->push(['posicao' => 1, 'equipe' => $vencedorFinal,]);
+                    }
+                    //adiciona o perdedor como 2º lugar
+                    if ($perdedorFinal) {
+                        $classificacaoMataMata->push(['posicao' => 2, 'equipe' => $perdedorFinal,]);
+                    }
+                    //verifica o terceiro lugar
+                    if ($terceiroLugar) {
+                        $terceiro = null;
+                        //verifica quem venceu no tempo normal
+                        if ($terceiroLugar->gols_mandante > $terceiroLugar->gols_visitante) {
+                            $terceiro = $terceiroLugar->mandante;
+                        } elseif ($terceiroLugar->gols_mandante < $terceiroLugar->gols_visitante) {
+                            $terceiro = $terceiroLugar->visitante;
+                            // Se empatou verifica os pênaltis
+                        } elseif ($terceiroLugar->penaltisMandante > $terceiroLugar->penaltisVisitante) {
+                            $terceiro = $terceiroLugar->mandante;
+                        } elseif ($terceiroLugar->penaltisMandante < $terceiroLugar->penaltisVisitante) {
+                            $terceiro = $terceiroLugar->visitante;
+                        }
+                        //adiciona o terceiro colocado
+                        if ($terceiro) {
+                            $classificacaoMataMata->push(['posicao' => 3, 'equipe' => $terceiro,]);
+                        }
+                    }
+                }
+            }
+        }
+        //envia todas as informações para a página
+        return view('areaAdministrativa.campeonatos.show', compact('campeonato', 'classificacao', 'temTriangular', 'classificacaoMataMata', 'semifinais', 'final', 'terceiroLugar'));
     }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -240,7 +313,6 @@ class CampeonatoController extends Controller
     {
         // Sorteia a ordem das equipes
         $equipes = $equipes->shuffle()->values();
-
         // Percorre as equipes de 2 em 2
         for ($i = 0; $i < $equipes->count() - 1; $i += 2) {
 
@@ -263,13 +335,31 @@ class CampeonatoController extends Controller
         //
     }
 
-    private function calcularClassificacaoPontosCorridos(Campeonato $campeonato)
+    private function calcularClassificacaoPontosCorridos(Campeonato $campeonato, $fase = null)
     {
         $campeonato->load('inscricoes.equipe');
-        $classificacao = [];
-        // Cria a classificação inicial das equipes
+        $query = $campeonato->partidas()->where('status', 'FINALIZADA');// Busca somente partidas finalizadas
+
+        // Se for uma fase específica filtra pela fase
+        if ($fase) {
+            $query->where('fase', $fase);
+        }
+        $partidas = $query->get();
+        $equipesDaFase = [];// IDs das equipes que participaram da fase
+        if ($fase) {
+            foreach ($partidas as $partida) {
+                $equipesDaFase[] = $partida->mandante_id;
+                $equipesDaFase[] = $partida->visitante_id;
+            }
+            $equipesDaFase = array_unique($equipesDaFase);
+        }
+        $classificacao = [];  // Cria a classificação
         foreach ($campeonato->inscricoes as $inscricao) {
             $equipe = $inscricao->equipe;
+            // Se for triangular só adiciona quem participou dele
+            if ($fase && !in_array($equipe->id, $equipesDaFase)) {
+                continue;
+            }
             $classificacao[$equipe->id] = [
                 'equipe' => $equipe,
                 'jogos' => 0,
@@ -282,29 +372,30 @@ class CampeonatoController extends Controller
                 'pontos' => 0,
             ];
         }
-        // Pega as partidas finalizadas
-        $partidas = $campeonato->partidas()->where('status', 'FINALIZADA')->get();
         // Calcula os resultados
         foreach ($partidas as $partida) {
             $mandante = $partida->mandante_id;
             $visitante = $partida->visitante_id;
+            if (!isset($classificacao[$mandante], $classificacao[$visitante])) {
+                continue;
+            }
+            // Jogos
             $classificacao[$mandante]['jogos']++;
             $classificacao[$visitante]['jogos']++;
+            // Gols
             $classificacao[$mandante]['gols_pro'] += $partida->gols_mandante;
             $classificacao[$mandante]['gols_contra'] += $partida->gols_visitante;
             $classificacao[$visitante]['gols_pro'] += $partida->gols_visitante;
             $classificacao[$visitante]['gols_contra'] += $partida->gols_mandante;
-            // Vitória do mandante
+            // Resultado
             if ($partida->gols_mandante > $partida->gols_visitante) {
                 $classificacao[$mandante]['vitorias']++;
                 $classificacao[$mandante]['pontos'] += 3;
                 $classificacao[$visitante]['derrotas']++;
-                // Vitória do visitante
             } elseif ($partida->gols_mandante < $partida->gols_visitante) {
                 $classificacao[$visitante]['vitorias']++;
                 $classificacao[$visitante]['pontos'] += 3;
                 $classificacao[$mandante]['derrotas']++;
-                // Empate
             } else {
                 $classificacao[$mandante]['empates']++;
                 $classificacao[$visitante]['empates']++;
@@ -312,10 +403,9 @@ class CampeonatoController extends Controller
                 $classificacao[$visitante]['pontos']++;
             }
         }
-        // Calcula saldo de gols
-        foreach ($classificacao as $id => $equipe) {
-            $classificacao[$id]['saldo'] =
-                $equipe['gols_pro'] - $equipe['gols_contra'];
+        // Saldo de gols
+        foreach ($classificacao as &$equipe) {
+            $equipe['saldo'] = $equipe['gols_pro'] - $equipe['gols_contra'];
         }
         // Ordena
         usort($classificacao, function ($a, $b) {
@@ -327,12 +417,38 @@ class CampeonatoController extends Controller
             }
             return $b['gols_pro'] - $a['gols_pro'];
         });
-        // Coloca a posição
-        $posicao = 1;
-        foreach ($classificacao as &$equipe) {
-            $equipe['posicao'] = $posicao;
-            $posicao++;
+        // Posição
+        foreach ($classificacao as $posicao => &$equipe) {
+            $equipe['posicao'] = $posicao + 1;
         }
         return $classificacao;
     }
+
+    private function calcularPenaltis($partida)
+    {
+        // Busca os pênaltis convertidos da partida
+        $penaltis = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'PENALTI_CONVERTIDO_DESEMPATE')->with('participante')->get();
+        $mandante = 0;
+        $visitante = 0;
+        // Percorre todos os pênaltis
+        foreach ($penaltis as $penalti) {
+            if (!$penalti->participante) {
+                continue;
+            }
+            $contrato = $penalti->participante->contratos()->where('status', 'ATIVO')->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->first();
+            if (!$contrato) {
+                continue;
+            }
+            if ($contrato->equipe_id == $partida->mandante_id) {
+                $mandante++;
+            } elseif ($contrato->equipe_id == $partida->visitante_id) {
+                $visitante++;
+            }
+        }
+        $partida->penaltisMandante = $mandante;
+        $partida->penaltisVisitante = $visitante;
+        return $partida;
+    }
+
+
 }
