@@ -55,7 +55,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
     Route::resource('participantes', ParticipanteController::class);
     Route::resource('partidas', PartidaController::class);
     Route::get('inscricoes/{inscricao}/comprovante', [InscricaoController::class, 'comprovante'])->name('inscricoes.comprovante');
-    Route::post('campeonatos/{campeonato}/gerar-confrontos', [CampeonatoController::class, 'gerarConfrontos'])->name('campeonatos.gerarConfrontos');
+    Route::post('campeonatos/{campeonato}/gerar-confrontos', [PartidaController::class, 'gerarConfrontos'])->name('campeonatos.gerarConfrontos');
     Route::patch('/partidas/{partida}/finalizar', [PartidaController::class, 'finalizar'])->name('partidas.finalizar');
 });
 
