@@ -15,6 +15,7 @@ class Inscricao extends Model
         'campeonato_id',
         'user_id',
         'equipe_id',
+        'status',
     ];
 
 
