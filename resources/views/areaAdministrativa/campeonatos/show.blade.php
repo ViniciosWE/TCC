@@ -151,6 +151,8 @@
                                                         <span class="badge bg-secondary small">Pendente</span>
                                                     @elseif ($partida->status == 'FINALIZADA')
                                                         <span class="badge bg-success small">Finalizada</span>
+                                                    @elseif ($partida->status == 'WO')
+                                                        <span class="badge bg-warning small text-black">WO</span>
                                                     @endif
                                                 </div>
                                             </div>
@@ -233,6 +235,8 @@
                                                 <span class="badge bg-secondary small">Pendente</span>
                                             @elseif ($final->status == 'FINALIZADA')
                                                 <span class="badge bg-success small">Finalizada</span>
+                                            @elseif ($final->status == 'WO')
+                                                <span class="badge bg-warning small text-black">WO</span>
                                             @endif
 
                                         </div>
@@ -312,6 +316,8 @@
                                                 <span class="badge bg-secondary small">Pendente</span>
                                             @elseif ($terceiroLugar->status == 'FINALIZADA')
                                                 <span class="badge bg-success small">Finalizada</span>
+                                            @elseif ($terceiroLugar->status == 'WO')
+                                                <span class="badge bg-warning small text-black">WO</span>
                                             @endif
                                         </div>
                                     </div>

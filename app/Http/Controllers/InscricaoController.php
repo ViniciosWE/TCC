@@ -69,6 +69,7 @@ class InscricaoController extends Controller
             return back()->withInput()->withErrors(['equipe_id' => "A equipe precisa ter pelo menos {$campeonato->minimo_jogadores_equipes} jogadores para participar deste campeonato. Atualmente possui {$totalJogadores}."]);
         }
         $dados['user_id'] = auth()->id();
+        $dados['status'] = 'ATIVA';
         $inscricao = Inscricao::create($dados);
         return redirect()->route('inscricoes.index')->with('success', 'Inscrição cadastrada com sucesso!')->with('comprovante', $inscricao->id);
     }
@@ -99,6 +100,7 @@ class InscricaoController extends Controller
         $dados = $request->validate([
             'campeonato_id' => 'required|exists:campeonatos,id',
             'equipe_id' => 'required|exists:equipes,id,status,ATIVA',
+            'status' => 'required|in:ATIVA,SUSPENSA',
         ]);
         $campeonato = Campeonato::findOrFail($dados['campeonato_id']);// Busca o campeonato
         // Verifica se já existe outra inscrição com a mesma equipe no campeonato

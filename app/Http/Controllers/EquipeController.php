@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipe;
+use App\Models\Inscricao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,7 +88,7 @@ class EquipeController extends Controller
                 'nome' => 'required|unique:equipes,nome,' . $equipe->id,
                 'sigla' => 'required|max:3|unique:equipes,sigla,' . $equipe->id,
                 'escudo' => 'nullable|image',
-                'status' => 'required',
+                'status' => 'required|in:ATIVA,ENCERRADA,SUSPENSA',
             ],
             [
                 'nome.unique' => 'Já existe uma equipe cadastrada com esse nome.',
@@ -95,6 +96,13 @@ class EquipeController extends Controller
                 'escudo.image' => 'O arquivo enviado deve ser uma imagem válida.',
             ]
         );
+        if ($dados['status'] === 'ENCERRADA' && $equipe->status !== 'ENCERRADA') {
+            $participandoCampeonato = Inscricao::where('equipe_id', $equipe->id)->whereHas('campeonato', function ($query) {
+                $query->where('status', 'EM_ANDAMENTO'); })->exists();
+            if ($participandoCampeonato) {
+                return back()->withInput()->withErrors(['status' => 'Não é possível encerrar a equipe enquanto ela estiver participando de um campeonato ativo']);
+            }
+        }
         // Verifica se foi enviada uma nova imagem
         if ($request->hasFile('escudo')) {
             // Remove o escudo antigo do storage

@@ -43,6 +43,11 @@
                             <div class="mb-4">
                                 <p class="mb-2 text-break">{{ $inscricao->campeonato->nome }}</p>
                                 <p class="mb-2 text-break text-capitalize">{{ $inscricao->equipe->nome }}</p>
+                                @if($inscricao->status == 'ATIVA')
+                                    <span class="badge bg-success">Ativa</span>
+                                @elseif($inscricao->status == 'SUSPENSA')
+                                    <span class="badge bg-warning text-dark">Suspensa</span>
+                                @endif
                             </div>
                             {{-- Botões --}}
                             <div class="d-flex flex-wrap gap-2">

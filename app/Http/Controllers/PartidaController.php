@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campeonato;
+use App\Models\Contrato;
+use App\Models\Equipe;
 use App\Models\EventoPartida;
 use App\Models\Inscricao;
 use App\Models\Partida;
@@ -15,7 +17,7 @@ class PartidaController extends Controller
      */
     public function index(Request $request)
     {
-        $campeonatos = Campeonato::where('status', 'EM_ANDAMENTO')->latest()->get();
+        $campeonatos = Campeonato::latest()->get();
         $partidas = collect();
         // Busca as partidas somente quando um campeonato foi selecionado
         if ($request->filled('campeonato_id')) {
@@ -25,8 +27,12 @@ class PartidaController extends Controller
                 ->orderByRaw("CASE WHEN status = 'PENDENTE' THEN CAST(REPLACE(fase, 'RODADA_', '') AS UNSIGNED) ELSE NULL END")
                 ->orderBy('data_hora')
                 ->get();
-
-            // Adiciona a quantidade de pênaltis somente para exibição
+            $campeonato = Campeonato::findOrFail($request->campeonato_id);
+            foreach ($partidas as $partida) {
+                $mandantePodeJogar = $this->equipePodeJogar($partida->mandante_id, $campeonato);
+                $visitantePodeJogar = $this->equipePodeJogar($partida->visitante_id, $campeonato);
+                $partida->deveSerWO = !$mandantePodeJogar || !$visitantePodeJogar;
+            }
             $this->adicionarPenaltisNasPartidas($partidas);
         }
         return view('areaAdministrativa.partidas.index', compact('campeonatos', 'partidas'));
@@ -399,7 +405,7 @@ class PartidaController extends Controller
         if ($partidas->isEmpty()) {
             return false;
         }
-        return $partidas->every(fn($partida) => $partida->status === 'FINALIZADA');
+        return $partidas->every(fn($partida) => in_array($partida->status, ['FINALIZADA', 'WO']));
     }
 
     //Busca todas as partidas que pertencem aos grupos
@@ -407,7 +413,7 @@ class PartidaController extends Controller
     {
         $query = Partida::where('campeonato_id', $campeonato->id);
         if ($somenteFinalizadas) {
-            $query->where('status', 'FINALIZADA');
+            $query->whereIn('status', ['FINALIZADA', 'WO']);
         }
         return $query->get()->filter(fn($partida) => str_contains($partida->fase, '_GRUPO_'));
     }
@@ -495,6 +501,9 @@ class PartidaController extends Controller
             $golsSofridos = $ehMandante ? $partida->gols_visitante : $partida->gols_mandante;
             $estatisticas['gols_marcados'] += $golsMarcados;
             $estatisticas['gols_sofridos'] += $golsSofridos;
+            if ($partida->status === 'WO' && $partida->gols_mandante == 0 && $partida->gols_visitante == 0) {
+                continue;
+            }
             if ($golsMarcados > $golsSofridos) {
                 $estatisticas['pontos'] += 3;
                 $estatisticas['vitorias']++;
@@ -639,7 +648,7 @@ class PartidaController extends Controller
     //Busca as partidas finalizadas de uma fase
     private function buscarPartidasFinalizadasDaFase(Campeonato $campeonato, $fase)
     {
-        return Partida::where('campeonato_id', $campeonato->id)->where('fase', $fase)->where('status', 'FINALIZADA')->get();
+        return Partida::where('campeonato_id', $campeonato->id)->where('fase', $fase)->whereIn('status', ['FINALIZADA', 'WO'])->get();
     }
     //Descobre qual é a fase anterior
     private function buscarFaseAnterior($fase)
@@ -712,6 +721,15 @@ class PartidaController extends Controller
     //Finaliza uma partida e avança o campeonato
     public function finalizar(Partida $partida)
     {
+        if ($partida->status !== 'AGENDADA') {
+            return back()->withErrors(['partida' => 'Esta partida não está disponível para finalização.']);
+        }
+        $campeonato = $partida->campeonato;
+        $mandantePodeJogar = $this->equipePodeJogar($partida->mandante_id, $campeonato);
+        $visitantePodeJogar = $this->equipePodeJogar($partida->visitante_id, $campeonato);
+        if (!$mandantePodeJogar || !$visitantePodeJogar) {
+            return back()->withErrors(['partida' => 'Esta partida deve ser finalizada por WO, pois uma das equipes está impedida de jogar']);
+        }
         $campeonato = $partida->campeonato;
         // Pontos corridos e grupos permitem empate
         $permiteEmpate = $campeonato->tipo === 'PONTOS_CORRIDOS' || $partida->fase === 'TRIANGULAR' || str_contains($partida->fase, '_GRUPO_');
@@ -756,7 +774,7 @@ class PartidaController extends Controller
     //Finaliza o campeonato de pontos corridos quando todos os jogos terminam.
     private function finalizarPontosCorridos($campeonato)
     {
-        $existemPendentes = Partida::where('campeonato_id', $campeonato->id)->where('status', '!=', 'FINALIZADA')->exists();
+        $existemPendentes = Partida::where('campeonato_id', $campeonato->id)->whereNotIn('status', ['FINALIZADA', 'WO'])->exists();
         if (!$existemPendentes) {
             $campeonato->update(['status' => 'FINALIZADO']);
         }
@@ -765,7 +783,7 @@ class PartidaController extends Controller
     //Verifica se ainda existem partidas pendentes na fase
     private function existemPartidasPendentesDaFase($partida)
     {
-        return Partida::where('campeonato_id', $partida->campeonato_id)->where('fase', $partida->fase)->where('status', '!=', 'FINALIZADA')->exists();
+        return Partida::where('campeonato_id', $partida->campeonato_id)->where('fase', $partida->fase)->whereNotIn('status', ['FINALIZADA', 'WO'])->exists();
     }
     //Verifica se a fase é uma rodada do mata-mata
     private function ehRodadaDeMataMata($fase)
@@ -777,7 +795,9 @@ class PartidaController extends Controller
     private function processarFimDaRodada($campeonato, $partida)
     {
         $equipes = $this->buscarEquipesQueAvancaramDaFase($campeonato, $partida->fase);
-        if ($equipes->count() === 3) {
+        if ($equipes->count() === 2) {
+            $this->gerarProximaFase($campeonato, $equipes, 'FINAL');
+        } elseif ($equipes->count() === 3) {
             $this->gerarTriangular($campeonato, $equipes);
         } elseif ($equipes->count() === 4) {
             $this->gerarSemifinais($campeonato, $equipes);
@@ -799,10 +819,9 @@ class PartidaController extends Controller
     //Processa o término da final e terceiro lugar
     private function processarFimDaFinal($campeonato)
     {
-        $finalTerminou = Partida::where('campeonato_id', $campeonato->id)->where('fase', 'FINAL')->where('status', 'FINALIZADA')->exists();
+        $finalTerminou = Partida::where('campeonato_id', $campeonato->id)->where('fase', 'FINAL')->whereIn('status', ['FINALIZADA', 'WO'])->exists();
         $terceiroLugarExiste = Partida::where('campeonato_id', $campeonato->id)->where('fase', 'TERCEIRO_LUGAR')->exists();
-        $terceiroLugarTerminou = Partida::where('campeonato_id', $campeonato->id)->where('fase', 'TERCEIRO_LUGAR')->where('status', 'FINALIZADA')->exists();
-        // O campeonato termina quando a final e o terceiro lugar terminarem
+        $terceiroLugarTerminou = Partida::where('campeonato_id', $campeonato->id)->where('fase', 'TERCEIRO_LUGAR')->whereIn('status', ['FINALIZADA', 'WO'])->exists();
         if ($finalTerminou && (!$terceiroLugarExiste || $terceiroLugarTerminou)) {
             $campeonato->update(['status' => 'FINALIZADO']);
         }
@@ -836,6 +855,94 @@ class PartidaController extends Controller
             }
             return;
         }
+    }
+    public function wo(Partida $partida)
+    {
+        if ($partida->status !== 'AGENDADA') {
+            return back()->withErrors(['partida' => 'Esta partida não pode ser finalizada por WO.']);
+        }
+        $campeonato = $partida->campeonato;
+        $mandantePodeJogar = $this->equipePodeJogar($partida->mandante_id, $campeonato);
+        $visitantePodeJogar = $this->equipePodeJogar($partida->visitante_id, $campeonato);
+        if ($mandantePodeJogar && $visitantePodeJogar) {
+            return back()->withErrors(['partida' => 'Esta partida não pode ser finalizada por WO, pois ambas as equipes estão aptas a jogar']);
+        }
+        // WO DUPLO
+        if (!$mandantePodeJogar && !$visitantePodeJogar) {
+            $partida->update(['gols_mandante' => 0, 'gols_visitante' => 0, 'status' => 'WO',]);
+            return $this->processarPartidaFinalizada($partida);
+        }
+        // WO do mandante
+        if (!$mandantePodeJogar) {
+            $partida->update(['gols_mandante' => 0, 'gols_visitante' => 3, 'status' => 'WO',]);
+            return $this->processarPartidaFinalizada($partida);
+        }
+        // WO do visitante
+        $partida->update(['gols_mandante' => 3, 'gols_visitante' => 0, 'status' => 'WO',]);
+        return $this->processarPartidaFinalizada($partida);
+    }
+
+    private function equipePodeJogar($equipeId, $campeonato)
+    {
+        $equipe = Equipe::find($equipeId);
+        // Equipe suspensa não pode jogar
+        if ($equipe->status === 'SUSPENSA') {
+            return false;
+        }
+        // Verifica a inscrição da equipe neste campeonato
+        $inscricao = Inscricao::where('campeonato_id', $campeonato->id)->where('equipe_id', $equipeId)->first();
+        // Inscrição suspensa não pode jogar
+        if (!$inscricao || $inscricao->status === 'SUSPENSA') {
+            return false;
+        }
+        // Conta somente jogadores aptos
+        $totalJogadores = Contrato::where('equipe_id', $equipeId)->where('status', 'ATIVO')
+            ->whereHas('participante', function ($query) {
+                $query->where('status', 'ATIVO')
+                    ->whereNotIn('funcao', [
+                        'TECNICO',
+                        'AUXILIAR_TECNICO',
+                        'PREPARADOR_FISICO',
+                    ]);
+            })->count();
+        // Abaixo do mínimo não pode jogar
+        if ($totalJogadores < $campeonato->minimo_jogadores_equipes) {
+            return false;
+        }
+        return true;
+    }
+
+    private function processarPartidaFinalizada(Partida $partida)
+    {
+        $campeonato = $partida->campeonato;
+        if ($campeonato->tipo === 'PONTOS_CORRIDOS') {
+            return $this->finalizarPontosCorridos($campeonato);
+        }
+        if ($this->existemPartidasPendentesDaFase($partida)) {
+            return $this->redirecionarPartidas();
+        }
+        if ($campeonato->tipo === 'GRUPOS_MATA_MATA' && str_contains($partida->fase, '_GRUPO_')) {
+            if ($this->gruposForamFinalizados($campeonato)) {
+                $this->iniciarMataMataDosGrupos($campeonato);
+            }
+            return $this->redirecionarPartidas();
+        }
+        if (str_contains($partida->fase, '_GRUPO_')) {
+            return $this->redirecionarPartidas();
+        }
+        if ($this->ehRodadaDeMataMata($partida->fase)) {
+            $this->processarFimDaRodada($campeonato, $partida);
+        } elseif ($partida->fase === 'SEMIFINAL') {
+            $this->processarFimDaSemifinal($campeonato);
+        } elseif (
+            $partida->fase === 'FINAL' ||
+            $partida->fase === 'TERCEIRO_LUGAR'
+        ) {
+            $this->processarFimDaFinal($campeonato);
+        } elseif ($partida->fase === 'TRIANGULAR') {
+            $campeonato->update(['status' => 'FINALIZADO']);
+        }
+        return $this->redirecionarPartidas();
     }
 
     //Redireciona para a lista de partidas mantendo o campeonato selecionado

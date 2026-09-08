@@ -25,8 +25,10 @@
                 <label for="campeonato_nome" class="form-label">Selecione um Campaonato</label>
                 <input list="lista-campeonatos" class="form-control" id="campeonato_nome" name="campeonato_nome"
                     placeholder="Digite para pesquisar..." required
-                    value=" {{ old('campeonato_id') ? $campeonatos->firstWhere('id', old('campeonato_id'))?->nome : $inscricao->campeonato->nome }}" autocomplete="off">
-                <input type="hidden" name="campeonato_id" id="campeonato_id" value="{{ old('campeonato_id', $inscricao->campeonato_id) }}">
+                    value=" {{ old('campeonato_id') ? $campeonatos->firstWhere('id', old('campeonato_id'))?->nome : $inscricao->campeonato->nome }}"
+                    autocomplete="off">
+                <input type="hidden" name="campeonato_id" id="campeonato_id"
+                    value="{{ old('campeonato_id', $inscricao->campeonato_id) }}">
                 <datalist id="lista-campeonatos">
                     @foreach ($campeonatos as $campeonato)
                         <option value="{{ $campeonato->nome }}" data-id="{{ $campeonato->id }}">
@@ -38,7 +40,9 @@
             <div class="mb-3">
                 <label for="equipe_nome" class="form-label">Selecione uma Equipe</label>
                 <input list="lista-equipes" class="form-control text-capitalize" id="equipe_nome" name="equipe_nome"
-                    placeholder="Digite para pesquisar..." required  value="{{ old('equipe_id') ? $equipes->find(old('equipe_id'))?->nome : $inscricao?->equipe?->nome }}" autocomplete="off">
+                    placeholder="Digite para pesquisar..." required
+                    value="{{ old('equipe_id') ? $equipes->find(old('equipe_id'))?->nome : $inscricao?->equipe?->nome }}"
+                    autocomplete="off">
                 <input type="hidden" name="equipe_id" id="equipe_id" value="{{ old('equipe_id', $inscricao->equipe_id) }}">
                 <datalist id="lista-equipes">
                     @foreach ($equipes as $equipe)
@@ -46,6 +50,15 @@
                         </option>
                     @endforeach
                 </datalist>
+            </div>
+            {{-- Status --}}
+            <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" name="status" id="status" required>
+                    <option value="ATIVA" {{ old('status', $inscricao->status) == 'ATIVA' ? 'selected' : '' }}>ATIVA</option>
+                    <option value="SUSPENSA" {{ old('status', $inscricao->status) == 'SUSPENSA' ? 'selected' : '' }}>SUSPENSA
+                    </option>
+                </select>
             </div>
             {{--Botões--}}
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>

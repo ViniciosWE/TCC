@@ -57,6 +57,7 @@ Route::middleware(['auth', 'tipo:ADMINISTRADOR'])->group(function () {
     Route::get('inscricoes/{inscricao}/comprovante', [InscricaoController::class, 'comprovante'])->name('inscricoes.comprovante');
     Route::post('campeonatos/{campeonato}/gerar-confrontos', [PartidaController::class, 'gerarConfrontos'])->name('campeonatos.gerarConfrontos');
     Route::patch('/partidas/{partida}/finalizar', [PartidaController::class, 'finalizar'])->name('partidas.finalizar');
+    Route::patch('/partidas/{partida}/wo', [PartidaController::class, 'wo'])->name('partidas.wo');
 });
 
 /* Rotas exclusivas do Super Administrador */

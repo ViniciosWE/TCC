@@ -38,7 +38,7 @@
                 {{ session('success') }}
             </div>
         @endif
-        
+
         @if ($errors->any())
             <div class="alert alert-danger mb-3" id="sumirMensagem">
                 <ul class="mb-0 list-unstyled">
@@ -110,6 +110,8 @@
                                             <span class="badge bg-secondary">Pendente</span>
                                         @elseif ($partida->status == 'FINALIZADA')
                                             <span class="badge bg-success">Finalizada</span>
+                                        @elseif ($partida->status == 'WO')
+                                            <span class="badge bg-warning text-dark">WO</span>
                                         @endif
                                     </div>
                                 </div>
@@ -133,37 +135,47 @@
                                         class="btn btn-primary btn-sm">
                                         <i class="bi bi-calendar-plus me-1"></i>Definir data e hora
                                     </a>
-                                    {{-- Senão aparece Para editar data e hora e local se já foi agendado --}}
                                 @elseif ($partida->status == 'AGENDADA')
+                                    @if ($partida->deveSerWO)
+                                        {{-- A partida deve ser encerrada por WO --}}
+                                        <form
+                                            action="{{ route('partidas.wo', ['partida' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                <i class="bi bi-flag-fill me-1"></i>
+                                                Encerrar por WO </button>
+                                        </form>
+                                    @else
+                                        {{-- Pode finalizar a partida caso esteja agendada --}}
+                                        <form
+                                            action="{{ route('partidas.finalizar', ['partida' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-success btn-sm w-100">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Finalizar partida
+                                            </button>
+                                        </form>
+                                    @endif
+                                    {{-- Senão aparece Para editar data e hora e local se já foi agendado --}}
                                     <a href="{{ route('partidas.edit', ['partida' => $partida, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
                                         class="btn btn-warning btn-sm">
                                         <i class="bi bi-calendar-event me-1"></i>Editar data/local
                                     </a>
+                                    {{-- Cadastrar eventos --}}
+                                    <a href="{{ route('eventoPartidas.create', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                        class=" btn btn-primary btn-sm"><i class="bi bi-clipboard2-pulse me-1"></i> Cadastrar
+                                        eventos
+                                    </a>
                                 @endif
                                 {{-- Ver eventos --}}
-                                @if ($partida->status == 'AGENDADA' || $partida->status == 'FINALIZADA')
+                                @if ($partida->status == 'AGENDADA' || $partida->status == 'FINALIZADA' || $partida->status == 'WO')
                                     <a href="{{ route('eventoPartidas.index', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
                                         class="btn btn-secondary btn-sm"><i class="bi bi-list-ul me-1"></i>Ver eventos
                                     </a>
-                                @endif
-                                {{-- Cadastrar eventos --}}
-                                @if ($partida->status == 'AGENDADA')
-                                    <a href="{{ route('eventoPartidas.create', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
-                                        class=" btn btn-primary btn-sm"><i class="bi bi-clipboard2-pulse me-1"></i> Cadastrar eventos
-                                    </a>
-                                @endif
-                                {{-- Pode finalizar a partida caso esteja agendada --}}
-                                @if ($partida->status == 'AGENDADA')
-                                    <form
-                                        action="{{ route('partidas.finalizar', ['partida' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
-                                        method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-success btn-sm w-100">
-                                            <i class="bi bi-check-circle me-1"></i>
-                                            Finalizar partida
-                                        </button>
-                                    </form>
                                 @endif
                             </div>
                         </div>

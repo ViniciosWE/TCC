@@ -265,9 +265,8 @@ class CampeonatoController extends Controller
                 'pontos' => 0,
             ];
         }
-        // Calcula os resultados das partidas
         foreach ($partidas as $partida) {
-            if ($partida->status !== 'FINALIZADA') {
+            if (!in_array($partida->status, ['FINALIZADA', 'WO'])) {
                 continue;
             }
             $mandante = $partida->mandante_id;
@@ -275,10 +274,29 @@ class CampeonatoController extends Controller
             if (!isset($classificacao[$mandante], $classificacao[$visitante])) {
                 continue;
             }
+            if ($partida->status === 'WO' && $partida->gols_mandante == 0 && $partida->gols_visitante == 0) {
+                $classificacao[$mandante]['jogos']++;
+                $classificacao[$visitante]['jogos']++;
+                continue;
+            }
+            if ($partida->status === 'WO') {
+                $classificacao[$mandante]['jogos']++;
+                $classificacao[$visitante]['jogos']++;
+                if ($partida->gols_mandante > $partida->gols_visitante) {
+                    $classificacao[$mandante]['vitorias']++;
+                    $classificacao[$mandante]['pontos'] += 3;
+                    $classificacao[$visitante]['derrotas']++;
+                } else {
+                    $classificacao[$visitante]['vitorias']++;
+                    $classificacao[$visitante]['pontos'] += 3;
+                    $classificacao[$mandante]['derrotas']++;
+                }
+                continue;
+            }
             // Conta os jogos
             $classificacao[$mandante]['jogos']++;
             $classificacao[$visitante]['jogos']++;
-            // Calcula os gols
+            // Calcula os gols somente de partidas normais
             $classificacao[$mandante]['gols_pro'] += $partida->gols_mandante;
             $classificacao[$mandante]['gols_contra'] += $partida->gols_visitante;
             $classificacao[$visitante]['gols_pro'] += $partida->gols_visitante;
@@ -319,7 +337,6 @@ class CampeonatoController extends Controller
         }
         return $classificacao;
     }
-
     // Calcula os pênaltis da partida
     private function calcularPenaltis($partida)
     {

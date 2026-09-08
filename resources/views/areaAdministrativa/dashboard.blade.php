@@ -144,6 +144,8 @@
                                                         <span class="badge bg-primary">Agendada </span>
                                                     @elseif ($partida->status == 'FINALIZADA')
                                                         <span class="badge bg-success">Finalizada</span>
+                                                    @elseif ($partida->status == 'WO')
+                                                        <span class="badge bg-warning text-black">WO</span>
                                                     @endif
                                                 </div>
                                             </div>
