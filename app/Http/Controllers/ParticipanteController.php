@@ -147,29 +147,19 @@ class ParticipanteController extends Controller
                     'status' => 'ATIVO',
                 ]);
             }
-        }
-        elseif ($dados['status'] === 'SUSPENSO') {
+        } elseif ($dados['status'] === 'APOSENTADO') {
             // Encerra o contrato ativo
             if ($contrato) {
                 $contrato->update(['status' => 'ENCERRADO',]);
             }
-        }
-
-        elseif ($dados['status'] === 'APOSENTADO') {
-            // Encerra o contrato ativo
-            if ($contrato) {
-                $contrato->update(['status' => 'ENCERRADO',]);
-            }
-        }
-
-        elseif ($dados['status'] === 'SEM_EQUIPE') {
+        } elseif ($dados['status'] === 'SEM_EQUIPE') {
             // Garante que não fique com contrato ativo
             if ($contrato) {
                 $contrato->update(['status' => 'ENCERRADO',]);
             }
         }
 
-        return redirect()->route('participantes.index')->with('success', 'Participante atualizado com sucesso!'); 
+        return redirect()->route('participantes.index')->with('success', 'Participante atualizado com sucesso!');
     }
 
     /**

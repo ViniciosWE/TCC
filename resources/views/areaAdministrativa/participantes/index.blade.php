@@ -66,15 +66,15 @@
                             <div class="mb-4">
 
                                 {{-- Verifica se possui contrato ativo --}}
-                                @if($participante->contratos->isNotEmpty())
+                                @if ($participante->status == 'SUSPENSO')
+                                    <span class="badge bg-warning text-dark">Suspenso</span>
+                                @elseif($participante->contratos->isNotEmpty())
                                     <span
                                         class="badge bg-success text-uppercase">{{ $participante->contratos->first()->equipe->nome }}</span>
                                 @elseif($participante->status == 'APOSENTADO')
                                     <span class="badge bg-secondary">Aposentado</span>
                                 @elseif($participante->status == 'SEM_EQUIPE')
                                     <span class="badge bg-info">Sem Equipe</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">Suspenso</span>
                                 @endif
                             </div>
                             {{-- Botões --}}

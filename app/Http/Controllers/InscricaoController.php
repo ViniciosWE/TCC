@@ -53,12 +53,16 @@ class InscricaoController extends Controller
 
         $equipe = Equipe::findOrFail($dados['equipe_id']);
 
-        // Conta somente jogadores
-        $totalJogadores = Contrato::where('equipe_id', $equipe->id)
-            ->where('status', 'ATIVO')
-            ->whereHas('participante', function ($query) {
-                $query->whereNotIn('funcao', ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO',]);
-            })->count();
+        // Conta somente jogadores ativos
+        $totalJogadores = Contrato::where('equipe_id', $equipe->id)->where('status', 'ATIVO')->whereHas('participante', function ($query) {
+            $query
+                ->where('status', 'ATIVO')
+                ->whereNotIn('funcao', [
+                    'TECNICO',
+                    'AUXILIAR_TECNICO',
+                    'PREPARADOR_FISICO',
+                ]);
+        })->count();
 
         // Verifica mínimo de jogadores
         if ($totalJogadores < $campeonato->minimo_jogadores_equipes) {
