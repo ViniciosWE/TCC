@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('campeonato_id')->constrained('campeonatos')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('user_id')->constrained('users')->restrictOnUpdate()->restrictOnDelete();
             $table->foreignId('equipe_id')->constrained('equipes')->restrictOnUpdate()->restrictOnDelete();
+            $table->enum('status', ['ATIVA','SUSPENSA'])->default('ATIVA');
             $table->timestamps();
         });
     }
