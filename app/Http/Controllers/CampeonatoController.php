@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Campeonato;
 use App\Models\EventoPartida;
+use App\Models\Inscricao;
+use App\Models\Participante;
 use Illuminate\Http\Request;
 
 class CampeonatoController extends Controller
@@ -65,6 +67,14 @@ class CampeonatoController extends Controller
         $classificacoesGrupos = collect();
         $partidasGrupos = collect();
         $partidasMataMata = collect();
+
+        // Estatísticas dos jogadores
+        $artilharia = $this->calcularEstatisticaJogadores($campeonato, 'GOL');
+        $assistencias = $this->calcularEstatisticaJogadores($campeonato, 'ASSISTENCIA');
+        $cartoesAmarelos = $this->calcularEstatisticaJogadores($campeonato, 'CARTAO_AMARELO');
+        $cartoesVermelhos = $this->calcularEstatisticaJogadores($campeonato, 'CARTAO_VERMELHO');
+        $golsSofridos = $this->calcularEstatisticaJogadores($campeonato, 'GOLS_SOFRIDOS');
+
         // Pontos corridos
         if ($campeonato->tipo === 'PONTOS_CORRIDOS') {
             $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato);
@@ -136,7 +146,23 @@ class CampeonatoController extends Controller
         // Envia todas as informações para a página
         return view(
             'areaAdministrativa.campeonatos.show',
-            compact('campeonato', 'classificacao', 'temTriangular', 'classificacaoMataMata', 'semifinais', 'final', 'terceiroLugar', 'classificacoesGrupos', 'partidasGrupos', 'partidasMataMata')
+            compact(
+                'campeonato',
+                'classificacao',
+                'temTriangular',
+                'classificacaoMataMata',
+                'semifinais',
+                'final',
+                'terceiroLugar',
+                'classificacoesGrupos',
+                'partidasGrupos',
+                'partidasMataMata',
+                'artilharia',
+                'assistencias',
+                'cartoesAmarelos',
+                'cartoesVermelhos',
+                'golsSofridos'
+            )
         );
     }
 
@@ -465,5 +491,68 @@ class CampeonatoController extends Controller
             return $partida->visitante;
         }
         return $partida->mandante;
+    }
+    // Calcula uma estatística dos participantes com base nos eventos da competição
+    private function calcularEstatisticaJogadores(Campeonato $campeonato, string $tipo)
+    {
+        // Mostra todos os goleiros e goleiros-linha das equipes inscritas no campeonato
+        if ($tipo === 'GOLS_SOFRIDOS') {
+            $equipesIds = Inscricao::where('campeonato_id', $campeonato->id)->pluck('equipe_id')->unique();
+            $participantes = Participante::whereIn('status', ['ATIVO', 'SUSPENSO'])->whereIn('funcao', ['GOLEIRO', 'GOLEIRO_LINHA'])->whereHas('contratos', function ($query) use ($equipesIds) {
+                $query->where('status', 'ATIVO')->whereIn('equipe_id', $equipesIds);
+            })->with([
+                        'contratos' => function ($query) use ($equipesIds) {
+                            $query->where('status', 'ATIVO')->whereIn('equipe_id', $equipesIds)->with('equipe');
+                        }
+                    ])->get();
+            $eventos = EventoPartida::where('tipo', 'GOLS_SOFRIDOS')->whereHas('partida', function ($query) use ($campeonato) {
+                $query->where('campeonato_id', $campeonato->id)->whereIn('status', ['FINALIZADA', 'WO']);
+            })->get();
+            $estatisticas = [];
+            foreach ($participantes as $participante) {
+                $contrato = $participante->contratos->first();
+                $quantidade = $eventos->where('participante_id', $participante->id)->count();
+                $estatisticas[] = ['participante' => $participante, 'equipe' => $contrato?->equipe, 'quantidade' => $quantidade,];
+            }
+        } else {
+            // Demais estatísticas
+            $eventos = EventoPartida::where('tipo', $tipo)->whereHas('partida', function ($query) use ($campeonato) {
+                $query->where('campeonato_id', $campeonato->id)->whereIn('status', ['FINALIZADA', 'WO']);
+            })->with(['participante', 'partida'])->get();
+            $grupos = $eventos->filter(function ($evento) {
+                return $evento->participante !== null;
+            })->groupBy('participante_id');
+            $estatisticas = [];
+            foreach ($grupos as $eventosJogador) {
+                $participante = $eventosJogador->first()->participante;
+                $partida = $eventosJogador->first()->partida;
+                $contrato = $participante->contratos()->where('status', 'ATIVO')->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->with('equipe')->first();
+                $estatisticas[] = ['participante' => $participante, 'equipe' => $contrato?->equipe, 'quantidade' => $eventosJogador->count(),];
+            }
+        }
+        // Gols sofridos menor quantidade é melhor
+        if ($tipo === 'GOLS_SOFRIDOS') {
+            usort($estatisticas, function ($a, $b) {
+                return $a['quantidade'] <=> $b['quantidade'];
+            });
+        } else {
+            // Demais estatísticas: maior quantidade é melhor
+            usort($estatisticas, function ($a, $b) {
+                return $b['quantidade'] <=> $a['quantidade'];
+            });
+        }
+        // Define as posições mantendo empate na mesma posição
+        $posicao = 0;
+        $ultimaQuantidade = null;
+        $posicaoAtual = 0;
+        foreach ($estatisticas as $index => $estatistica) {
+            $posicaoAtual++;
+            if ($ultimaQuantidade === null || $estatistica['quantidade'] !== $ultimaQuantidade) {
+                $posicao = $posicaoAtual;
+                $ultimaQuantidade = $estatistica['quantidade'];
+            }
+            $estatisticas[$index]['posicao'] = $posicao;
+        }
+        return collect($estatisticas);
     }
 }

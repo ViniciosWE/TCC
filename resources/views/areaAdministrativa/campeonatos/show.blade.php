@@ -44,7 +44,8 @@
                                 @forelse ($classificacao as $item)
                                     <tr>
                                         <td class="fw-bold">{{ $item['posicao'] }}º</td>
-                                        <td class="text-start fw-semibold text-break text-capitalize w-50">{{ $item['equipe']->nome }}
+                                        <td class="text-start fw-semibold text-break text-capitalize w-50">
+                                            {{ $item['equipe']->nome }}
                                         </td>
                                         <td>{{ $item['jogos'] }}</td>
                                         <td>{{ $item['vitorias'] }}</td>
@@ -392,5 +393,185 @@
                 </div>
             </div>
         @endif
+        {{-- Estatísticas dos participantes --}}
+        <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card-body p-3">
+                <h4 class="fw-bold mb-3">Estatísticas dos participantes</h4>
+                <div class="row g-2">
+                    {{-- Artilharia --}}
+                    <div class="col-12">
+                        <div class="card border shadow-sm rounded-4">
+                            <div class="card-body p-2">
+                                <h6 class="fw-bold mb-2">Artilharia</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle text-center table-sm mb-0 small">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-start">Jogador</th>
+                                                <th class="text-start">Equipe</th>
+                                                <th>Gols</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($artilharia as $item)
+                                                <tr>
+                                                    <td class="fw-bold">{{ $item['posicao'] }}º</td>
+                                                    <td class="text-start fw-semibold">{{ $item['participante']->nome }}</td>
+                                                    <td class="text-start">{{ $item['equipe']->nome ?? '-' }}</td>
+                                                    <td class="fw-bold">{{ $item['quantidade'] }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-muted py-2">Nenhum gol registrado</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Assistências --}}
+                    <div class="col-12">
+                        <div class="card border shadow-sm rounded-4">
+                            <div class="card-body p-2">
+                                <h6 class="fw-bold mb-2">Assistências</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle text-center table-sm mb-0 small">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-start">Jogador</th>
+                                                <th class="text-start">Equipe</th>
+                                                <th>Assist.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($assistencias as $item)
+                                                <tr>
+                                                    <td class="fw-bold">{{ $item['posicao'] }}º</td>
+                                                    <td class="text-start fw-semibold">{{ $item['participante']->nome }}</td>
+                                                    <td class="text-start">{{ $item['equipe']->nome ?? '-' }}</td>
+                                                    <td class="fw-bold">{{ $item['quantidade'] }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-muted py-2">Nenhuma assistência registrada</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Cartões amarelos --}}
+                    <div class="col-12">
+                        <div class="card border shadow-sm rounded-4">
+                            <div class="card-body p-2">
+                                <h6 class="fw-bold mb-2">Cartões Amarelos</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle text-center table-sm mb-0 small">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-start">participante</th>
+                                                <th class="text-start">Equipe</th>
+                                                <th>Amarelos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($cartoesAmarelos as $item)
+                                                <tr>
+                                                    <td class="fw-bold">{{ $item['posicao'] }}º</td>
+                                                    <td class="text-start fw-semibold">{{ $item['participante']->nome }}</td>
+                                                    <td class="text-start">{{ $item['equipe']->nome ?? '-' }}</td>
+                                                    <td class="fw-bold">{{ $item['quantidade'] }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-muted py-2">Nenhum cartão amarelo registrado
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Cartões vermelhos --}}
+                    <div class="col-12">
+                        <div class="card border shadow-sm rounded-4">
+                            <div class="card-body p-2">
+                                <h6 class="fw-bold mb-2">Cartões Vermelhos</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle text-center table-sm mb-0 small">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-start">participante</th>
+                                                <th class="text-start">Equipe</th>
+                                                <th>Vermelhos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($cartoesVermelhos as $item)
+                                                <tr>
+                                                    <td class="fw-bold">{{ $item['posicao'] }}º</td>
+                                                    <td class="text-start fw-semibold">{{ $item['participante']->nome }}</td>
+                                                    <td class="text-start">{{ $item['equipe']->nome ?? '-' }}</td>
+                                                    <td class="fw-bold">{{ $item['quantidade'] }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-muted py-2">Nenhum cartão vermelho registrado
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Gols sofridos --}}
+                    <div class="col-12">
+                        <div class="card border shadow-sm rounded-4">
+                            <div class="card-body p-2">
+                                <h6 class="fw-bold mb-2">Gols Sofridos</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle text-center table-sm mb-0 small">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-start">Goleiro</th>
+                                                <th class="text-start">Equipe</th>
+                                                <th>Sofridos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($golsSofridos as $item)
+                                                <tr>
+                                                    <td class="fw-bold">{{ $item['posicao'] }}º</td>
+                                                    <td class="text-start fw-semibold">{{ $item['participante']->nome }}</td>
+                                                    <td class="text-start">{{ $item['equipe']->nome ?? '-' }}</td>
+                                                    <td class="fw-bold">{{ $item['quantidade'] }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-muted py-2">Nenhum gol sofrido registrado</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
