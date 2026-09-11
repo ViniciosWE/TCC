@@ -9,6 +9,7 @@ use App\Models\EventoPartida;
 use App\Models\Inscricao;
 use App\Models\Partida;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PartidaController extends Controller
 {
@@ -949,5 +950,55 @@ class PartidaController extends Controller
     private function redirecionarPartidas()
     {
         return redirect()->route('partidas.index', ['campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')])->with('success', 'Partida finalizada com sucesso.');
+    }
+
+
+    public function sumula(Partida $partida)
+    {
+        $partida->load(['campeonato', 'mandante.contratos.participante', 'visitante.contratos.participante',]);
+        $funcoesComissao = ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO'];// Funções da comissão técnica
+        // Jogadores do mandante
+        $jogadoresMandante = $partida->mandante->contratos->where('status', 'ATIVO')->filter(function ($contrato) use ($funcoesComissao) {
+            if (!$contrato->participante) {
+                return false;
+            }
+            if (in_array($contrato->participante->funcao, $funcoesComissao)) {
+                return false;
+            }
+            return true;
+        })->values();
+        // Jogadores do visitante
+        $jogadoresVisitante = $partida->visitante->contratos->where('status', 'ATIVO')->filter(function ($contrato) use ($funcoesComissao) {
+            if (!$contrato->participante) {
+                return false;
+            }
+            if (in_array($contrato->participante->funcao, $funcoesComissao)) {
+                return false;
+            }
+            return true;
+        })->values();
+        // Comissão técnica do mandante
+        $comissaoMandante = $partida->mandante->contratos->where('status', 'ATIVO')->filter(function ($contrato) use ($funcoesComissao) {
+            if (!$contrato->participante) {
+                return false;
+            }
+            if (!in_array($contrato->participante->funcao, $funcoesComissao)) {
+                return false;
+            }
+            return true;
+        })->values();
+        // Comissão técnica do visitante
+        $comissaoVisitante = $partida->visitante->contratos->where('status', 'ATIVO')->filter(function ($contrato) use ($funcoesComissao) {
+            if (!$contrato->participante) {
+                return false;
+            }
+            if (!in_array($contrato->participante->funcao, $funcoesComissao)) {
+                return false;
+            }
+            return true;
+        })->values();
+        $pdf = Pdf::loadView('areaAdministrativa.partidas.sumula', compact('partida', 'jogadoresMandante', 'jogadoresVisitante', 'comissaoMandante', 'comissaoVisitante'));
+        $pdf->setPaper('A4', 'portrait');
+        return $pdf->stream('sumula-partida-' . $partida->id . '.pdf');
     }
 }

@@ -176,6 +176,11 @@
                                     <a href="{{ route('eventoPartidas.index', ['partida_id' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
                                         class="btn btn-secondary btn-sm"><i class="bi bi-list-ul me-1"></i>Ver eventos
                                     </a>
+                                    {{-- Gerar súmula --}}
+                                    <a href="{{ route('partidas.sumula', ['partida' => $partida->id, 'campeonato_id' => request('campeonato_id'), 'campeonato_nome' => request('campeonato_nome')]) }}"
+                                        class="btn btn-dark btn-sm" target="_blank"><i
+                                            class="bi bi-file-earmark-text me-1"></i>Gerar súmula
+                                    </a>
                                 @endif
                             </div>
                         </div>

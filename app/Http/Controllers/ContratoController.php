@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contrato;
 use App\Models\Equipe;
+use App\Models\Inscricao;
 use App\Models\Participante;
 use Illuminate\Http\Request;
 
@@ -69,10 +70,23 @@ class ContratoController extends Controller
      */
     public function update(Request $request, Contrato $contrato)
     {
+        // Não permite reativar um contrato que já foi encerrado
+        if ($contrato->status === 'ENCERRADO') {
+            return back()->withInput()->withErrors(['status' => 'Este contrato já foi encerrado e não pode ser reativado.']);
+        }
         $dados = $request->validate([
             'equipe_id' => 'required|exists:equipes,id',
             'status' => 'required|in:ATIVO,ENCERRADO',
         ]);
+        // Se estiver encerrando o contrato, verifica se a equipe está participando de algum campeonato em andamento
+        if ($dados['status'] === 'ENCERRADO') {
+
+            $participandoCampeonato = Inscricao::where('equipe_id', $contrato->equipe_id)->whereHas('campeonato', function ($query) {
+                $query->where('status', 'EM_ANDAMENTO'); })->exists();
+            if ($participandoCampeonato) {
+                return back()->withInput()->withErrors(['status' => 'Não é possível encerrar o contrato enquanto a equipe estiver participando de um campeonato em andamento.']);
+            }
+        }
         // Atualiza o contrato
         $contrato->update([
             'equipe_id' => $dados['equipe_id'],

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Contrato;
 use App\Models\Equipe;
+use App\Models\Inscricao;
 use App\Models\Participante;
 use Illuminate\Http\Request;
 
@@ -117,12 +118,27 @@ class ParticipanteController extends Controller
                 'equipe_id.required_if' => 'Um participante ativo precisa estar vinculado a uma equipe.',
             ]
         );
-
+        $contrato = $participante->contratos()->where('status', 'ATIVO')->first(); // Busca o contrato ativo do participante
         // Se o participante estiver ATIVO, verifica se a equipe está ativa
         if ($dados['status'] === 'ATIVO') {
             $equipe = Equipe::find($dados['equipe_id']);
             if (!$equipe || $equipe->status !== 'ATIVA') {
                 return back()->withErrors(['equipe_id' => 'A equipe selecionada não está ativa e não pode receber jogadores.'])->withInput();
+            }
+        }
+        // Se estiver tentando deixar SEM_EQUIPE ou APOSENTADO, verifica se a equipe está participando de campeonato em andamento
+        if (in_array($dados['status'], ['SEM_EQUIPE', 'APOSENTADO']) && $contrato) {
+            $participandoCampeonato = Inscricao::where('equipe_id', $contrato->equipe_id)
+                ->whereHas('campeonato', function ($query) {
+                    $query->where('status', 'EM_ANDAMENTO');
+                })->exists();
+            if ($participandoCampeonato) {
+                if ($dados['status'] === 'APOSENTADO') {
+                    $mensagem = 'Não é possível aposentar o participante enquanto ele estiver vinculado a uma equipe que participa de um campeonato em andamento.';
+                } else {
+                    $mensagem = 'Não é possível deixar o participante sem equipe enquanto ele estiver vinculado a uma equipe que participa de um campeonato em andamento.';
+                }
+                return back()->withInput()->withErrors(['status' => $mensagem]);
             }
         }
         // Atualiza os dados do participante
@@ -133,35 +149,28 @@ class ParticipanteController extends Controller
             'numero' => $dados['numero'] ?? null,
             'funcao' => $dados['funcao'] ?? null,
         ]);
-
-        $contrato = $participante->contratos()->where('status', 'ATIVO')->first();// Busca o contrato ativo do participante
-
+        // Participante ativo
         if ($dados['status'] === 'ATIVO') {
-            // Se já possui contrato, atualiza a equipe
+            // Se já possui contrato ativo, atualiza a equipe
             if ($contrato) {
                 $contrato->update(['equipe_id' => $dados['equipe_id'],]);
             } else {
-                // Se não possui contrato, cria um novo
-                $participante->contratos()->create([
-                    'equipe_id' => $dados['equipe_id'],
-                    'status' => 'ATIVO',
-                ]);
+                // Se não possui contrato ativo, cria um novo
+                $participante->contratos()->create(['equipe_id' => $dados['equipe_id'], 'status' => 'ATIVO',]);
             }
+            // Participante aposentado
         } elseif ($dados['status'] === 'APOSENTADO') {
-            // Encerra o contrato ativo
             if ($contrato) {
                 $contrato->update(['status' => 'ENCERRADO',]);
             }
+            // Participante sem equipe
         } elseif ($dados['status'] === 'SEM_EQUIPE') {
-            // Garante que não fique com contrato ativo
             if ($contrato) {
                 $contrato->update(['status' => 'ENCERRADO',]);
             }
         }
-
         return redirect()->route('participantes.index')->with('success', 'Participante atualizado com sucesso!');
     }
-
     /**
      * Remove the specified resource from storage.
      */
