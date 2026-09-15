@@ -65,20 +65,26 @@
                                 </div>
                                 <div class="d-flex gap-1">
                                     <small class="text-muted d-block">Evento: </small>
-                                    @if ($eventoPartida->tipo === 'GOL')
+                                    @if ($eventoPartida->tipo == 'GOL')
                                         <span class="badge bg-success"></i>Gol</span>
-                                    @elseif ($eventoPartida->tipo === 'GOL_CONTRA')
+                                    @elseif ($eventoPartida->tipo == 'GOL_CONTRA')
                                         <span class="badge bg-danger"></i>Gol Contra</span>
-                                    @elseif ($eventoPartida->tipo === 'ASSISTENCIA')
+                                    @elseif ($eventoPartida->tipo == 'ASSISTENCIA')
                                         <span class="badge bg-primary">Assistência</span>
-                                    @elseif ($eventoPartida->tipo === 'CARTAO_AMARELO')
+                                    @elseif ($eventoPartida->tipo == 'CARTAO_AMARELO')
                                         <span class="badge bg-warning text-dark">CartãoAmarelo</span>
-                                    @elseif ($eventoPartida->tipo === 'CARTAO_VERMELHO')
+                                    @elseif ($eventoPartida->tipo == 'CARTAO_VERMELHO')
                                         <span class="badge bg-danger"><i class="bi bi-square-fill"></i>Cartão Vermelho</span>
-                                    @elseif ($eventoPartida->tipo === 'GOLS_SOFRIDOS')
+                                    @elseif ($eventoPartida->tipo == 'GOLS_SOFRIDOS')
                                         <span class="badge bg-secondary">Gols Sofridos</span>
-                                    @elseif ($eventoPartida->tipo === 'PENALTI_CONVERTIDO_DESEMPATE')
+                                    @elseif ($eventoPartida->tipo == 'PENALTI_CONVERTIDO_DESEMPATE')
                                         <span class="badge bg-dark"> Pênalti convertido (desempate)</span>
+                                    @elseif ($eventoPartida->tipo == 'TITULAR')
+                                        <span class="badge bg-info">Titular</span>
+                                    @elseif ($eventoPartida->tipo == 'ENTRADA_GOLEIRO')
+                                        <span class="badge bg-primary">Entrada do Goleiro</span>
+                                    @elseif ($eventoPartida->tipo == 'SAIDA_GOLEIRO')
+                                        <span class="badge bg-secondary">Saída do Goleiro</span>
                                     @endif
                                 </div>
                             </div>
