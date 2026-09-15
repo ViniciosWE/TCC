@@ -6,6 +6,7 @@ use App\Models\Campeonato;
 use App\Models\EventoPartida;
 use App\Models\Inscricao;
 use App\Models\Participante;
+use App\Models\Partida;
 use Illuminate\Http\Request;
 
 class CampeonatoController extends Controller
@@ -532,27 +533,89 @@ class CampeonatoController extends Controller
         }
         // Gols sofridos menor quantidade é melhor
         if ($tipo === 'GOLS_SOFRIDOS') {
+            $partidas = Partida::where('campeonato_id', $campeonato->id)->whereIn('status', ['FINALIZADA', 'WO'])->get();
+            $estatisticas = [];
+            foreach ($partidas as $partida) {
+                $eventos = EventoPartida::where('partida_id', $partida->id)->whereIn('tipo', ['TITULAR', 'ENTRADA_GOLEIRO', 'SAIDA_GOLEIRO',])->with('participante')->orderBy('tempo')->orderBy('id')->get();
+                $goleiros = [];
+                foreach ($eventos as $evento) {
+                    if (!$evento->participante) {
+                        continue;
+                    }
+                    if (!in_array($evento->participante->funcao, ['GOLEIRO', 'GOLEIRO_LINHA'])) {
+                        continue;
+                    }
+                    $id = $evento->participante_id;
+                    if (!isset($goleiros[$id])) {
+                        $goleiros[$id] = ['participante' => $evento->participante, 'inicio' => null, 'fim' => null,];
+                    }
+                    if (in_array($evento->tipo, ['TITULAR', 'ENTRADA_GOLEIRO'])) {
+                        $goleiros[$id]['inicio'] = $evento->tempo;
+                    }
+                    if ($evento->tipo === 'SAIDA_GOLEIRO') {
+                        $goleiros[$id]['fim'] = $evento->tempo;
+                    }
+                }
+                foreach ($goleiros as $goleiro) {
+                    if (!$goleiro['inicio']) {
+                        continue;
+                    }
+                    $inicio = strtotime($goleiro['inicio']);
+                    if ($goleiro['fim']) {
+                        $fim = strtotime($goleiro['fim']);
+                    } else {
+                        $fim = strtotime('00:40:00');
+                    }
+                    $tempoJogado = max(0, $fim - $inicio);
+                    $golsSofridos = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'GOLS_SOFRIDOS')->where('participante_id', $goleiro['participante']->id)->count();
+                    if (!isset($estatisticas[$goleiro['participante']->id])) {
+                        $estatisticas[$goleiro['participante']->id] = ['participante' => $goleiro['participante'], 'equipe' => null, 'tempo_segundos' => 0, 'gols_sofridos' => 0,];
+                    }
+                    $estatisticas[$goleiro['participante']->id]['tempo_segundos'] += $tempoJogado;
+                    $estatisticas[$goleiro['participante']->id]['gols_sofridos'] += $golsSofridos;
+                    $contrato = $goleiro['participante']->contratos()->where('status', 'ATIVO')->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->with('equipe')->first();
+                    if ($contrato) {
+                        $estatisticas[$goleiro['participante']->id]['equipe'] = $contrato->equipe;
+                    }
+                }
+            }
+            $estatisticas = array_values($estatisticas);
+            foreach ($estatisticas as &$estatistica) {
+                $minutos = $estatistica['tempo_segundos'] / 60;
+                $estatistica['tempo_jogado'] = $this->formatarTempo(
+                    $estatistica['tempo_segundos']
+                );
+                $estatistica['quantidade'] = $estatistica['gols_sofridos'];
+                $estatistica['gols_por_40_minutos'] = $minutos > 0 ? ($estatistica['gols_sofridos'] / $minutos) * 40 : 0;
+            }
+            unset($estatistica);
             usort($estatisticas, function ($a, $b) {
-                return $a['quantidade'] <=> $b['quantidade'];
-            });
-        } else {
-            // Demais estatísticas: maior quantidade é melhor
-            usort($estatisticas, function ($a, $b) {
-                return $b['quantidade'] <=> $a['quantidade'];
-            });
+                return $a['gols_por_40_minutos'] <=> $b['gols_por_40_minutos']; });
         }
-        // Define as posições mantendo empate na mesma posição
         $posicao = 0;
-        $ultimaQuantidade = null;
+        $ultimoValor = null;
         $posicaoAtual = 0;
         foreach ($estatisticas as $index => $estatistica) {
             $posicaoAtual++;
-            if ($ultimaQuantidade === null || $estatistica['quantidade'] !== $ultimaQuantidade) {
+            if ($tipo === 'GOLS_SOFRIDOS') {
+                $valor = $estatistica['gols_por_40_minutos'];
+            } else {
+                $valor = $estatistica['quantidade'];
+            }
+            if ($ultimoValor === null || $valor != $ultimoValor) {
                 $posicao = $posicaoAtual;
-                $ultimaQuantidade = $estatistica['quantidade'];
+                $ultimoValor = $valor;
             }
             $estatisticas[$index]['posicao'] = $posicao;
         }
         return collect($estatisticas);
+    }
+
+    private function formatarTempo($segundos)
+    {
+        $horas = floor($segundos / 3600);
+        $minutos = floor(($segundos % 3600) / 60);
+        $segundos = $segundos % 60;
+        return sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
     }
 }

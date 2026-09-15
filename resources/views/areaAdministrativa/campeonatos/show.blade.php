@@ -540,7 +540,7 @@
                     <div class="col-12">
                         <div class="card border shadow-sm rounded-4">
                             <div class="card-body p-2">
-                                <h6 class="fw-bold mb-2">Gols Sofridos</h6>
+                                <h6 class="fw-bold mb-2">Goleiro menos vazado</h6>
                                 <div class="table-responsive">
                                     <table class="table table-hover align-middle text-center table-sm mb-0 small">
                                         <thead class="table-light">
