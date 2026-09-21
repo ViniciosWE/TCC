@@ -623,4 +623,120 @@ class CampeonatoController extends Controller
         $segundos = $segundos % 60;
         return sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
     }
+
+    public function paginaPublica(Request $request)
+    {
+        $status = $request->get('status', 'EM_ANDAMENTO');
+        $campeonatos = Campeonato::withCount('inscricoes')->where('status', $status)->latest()->get();
+        return view('PaginaCampeonatos', compact('campeonatos', 'status'));
+    }
+    public function paginaClassificacao(Campeonato $campeonato)
+    {
+        $classificacao = collect();
+        $temTriangular = false;
+        $classificacaoMataMata = collect();
+        $semifinais = collect();
+        $final = null;
+        $terceiroLugar = null;
+        $classificacoesGrupos = collect();
+        $partidasGrupos = collect();
+        $partidasMataMata = collect();
+
+        // Estatísticas dos jogadores
+        $artilharia = $this->calcularEstatisticaJogadores($campeonato, 'GOL');
+        $assistencias = $this->calcularEstatisticaJogadores($campeonato, 'ASSISTENCIA');
+        $cartoesAmarelos = $this->calcularEstatisticaJogadores($campeonato, 'CARTAO_AMARELO');
+        $cartoesVermelhos = $this->calcularEstatisticaJogadores($campeonato, 'CARTAO_VERMELHO');
+        $golsSofridos = $this->calcularEstatisticaJogadores($campeonato, 'GOLS_SOFRIDOS');
+
+        // Pontos corridos
+        if ($campeonato->tipo === 'PONTOS_CORRIDOS') {
+            $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato);
+        }
+        // Mata-mata
+        elseif ($campeonato->tipo === 'MATA_MATA') {
+            $temTriangular = $campeonato->partidas()->where('fase', 'TRIANGULAR')->exists();
+            // Se tiver triangular
+            if ($temTriangular) {
+                $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato, 'TRIANGULAR');
+            }
+            // Se não tiver triangular
+            else {
+                $semifinais = $campeonato->partidas()->where('fase', 'SEMIFINAL')->orderBy('id')->get();
+                // Calcula os pênaltis das semifinais
+                foreach ($semifinais as $partida) {
+                    $this->calcularPenaltis($partida);
+                }
+                $final = $campeonato->partidas()->where('fase', 'FINAL')->first();
+                $terceiroLugar = $campeonato->partidas()->where('fase', 'TERCEIRO_LUGAR')->first();
+                // Calcula os pênaltis da final
+                if ($final) {
+                    $this->calcularPenaltis($final);
+                }
+                // Calcula os pênaltis do terceiro lugar
+                if ($terceiroLugar) {
+                    $this->calcularPenaltis($terceiroLugar);
+                }
+                // Monta a classificação final do mata-mata
+                $this->montarClassificacaoFinal($classificacaoMataMata, $final, $terceiroLugar);
+            }
+        }
+        // Grupos e mata-mata
+        elseif ($campeonato->tipo === 'GRUPOS_MATA_MATA') {
+            $classificacoesGrupos = $this->calcularClassificacoesDosGrupos($campeonato);
+            $partidasGrupos = $campeonato->partidas()->where('fase', 'like', '%_GRUPO_%')->with(['mandante', 'visitante'])->orderBy('fase')->orderBy('id')->get();
+            $partidasMataMata = $campeonato->partidas()
+                ->where(function ($query) {
+                    $query->whereIn('fase', [
+                        'RODADA_INICIAL',
+                        'SEMIFINAL',
+                        'FINAL',
+                        'TERCEIRO_LUGAR',
+                        'TRIANGULAR'
+                    ])->orWhere('fase', 'like', 'RODADA_%');
+                })->where('fase', 'not like', '%_GRUPO_%')->with(['mandante', 'visitante'])->orderBy('id')->get();
+            // Verifica se existe triangular
+            $temTriangular = $partidasMataMata->where('fase', 'TRIANGULAR')->isNotEmpty();
+            if ($temTriangular) {
+                $classificacao = $this->calcularClassificacaoPontosCorridos($campeonato, 'TRIANGULAR');
+            }
+            $semifinais = $partidasMataMata->where('fase', 'SEMIFINAL')->values();
+            // Calcula os pênaltis das semifinais
+            foreach ($semifinais as $partida) {
+                $this->calcularPenaltis($partida);
+            }
+            $final = $partidasMataMata->where('fase', 'FINAL')->first();
+            $terceiroLugar = $partidasMataMata->where('fase', 'TERCEIRO_LUGAR')->first();
+            // Calcula os pênaltis da final
+            if ($final) {
+                $this->calcularPenaltis($final);
+            }
+            // Calcula os pênaltis do terceiro lugar
+            if ($terceiroLugar) {
+                $this->calcularPenaltis($terceiroLugar);
+            }
+            $this->montarClassificacaoFinal($classificacaoMataMata, $final, $terceiroLugar); // Monta a classificação final do mata-mata
+        }
+        // Envia todas as informações para a página
+        return view(
+            'paginaClassificacao',
+            compact(
+                'campeonato',
+                'classificacao',
+                'temTriangular',
+                'classificacaoMataMata',
+                'semifinais',
+                'final',
+                'terceiroLugar',
+                'classificacoesGrupos',
+                'partidasGrupos',
+                'partidasMataMata',
+                'artilharia',
+                'assistencias',
+                'cartoesAmarelos',
+                'cartoesVermelhos',
+                'golsSofridos'
+            )
+        );
+    }
 }

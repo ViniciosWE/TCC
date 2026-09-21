@@ -29,13 +29,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaCampeonatos') ? 'textos-navegacao-inicial' : 'text-white' }}"
+                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaCampeonatos', 'PaginaClassificacao', 'PaginaPartidas') ? 'textos-navegacao-inicial' : 'text-white' }}"
                                 href="{{ route('PaginaCampeonatos') }}">
                                 Campeonatos
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaNoticias') ? 'textos-navegacao-inicial' : 'text-white' }}"
+                            <a class="nav-link menu-header-link {{ request()->routeIs('PaginaNoticias', 'noticiasDetalhes') ? 'textos-navegacao-inicial' : 'text-white' }}"
                                 href="{{ route('PaginaNoticias') }}">
                                 Notícias
                             </a>
@@ -78,13 +78,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-header-link {{ request()->routeIs('PaginaCampeonatos') ? 'textos-navegacao-inicial' : 'text-white' }}"
+                    <a class="nav-link menu-header-link {{ request()->routeIs('PaginaCampeonatos', 'PaginaClassificacao', 'PaginaPartidas') ? 'textos-navegacao-inicial' : 'text-white' }}"
                         href="{{ route('PaginaCampeonatos') }}">
                         Campeonatos
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-header-link {{ request()->routeIs('PaginaNoticias') ? 'textos-navegacao-inicial' : 'text-white' }}"
+                    <a class="nav-link menu-header-link {{ request()->routeIs('PaginaNoticias', 'noticiasDetalhes') ? 'textos-navegacao-inicial' : 'text-white' }}"
                         href="{{ route('PaginaNoticias') }}">
                         Notícias
                     </a>
@@ -105,7 +105,7 @@
     </div>
 
     {{--conteúdo da página--}}
-    <main class="flex-grow-1">
+    <main class="flex-grow-1 bg-secondary-subtle">
         @yield('content')
     </main>
 

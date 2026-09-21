@@ -28,12 +28,10 @@ Route::get('/', function () {
     return view('PaginaInicial');
 })->name('PaginaInicial');
 
-Route::get('/PaginaCampeonatos', function () {
-    return view('PaginaCampeonatos');
-})->name('PaginaCampeonatos');
-
+Route::get('/PaginaCampeonatos', [CampeonatoController::class, 'paginaPublica'])->name('PaginaCampeonatos');
+Route::get('/PaginaCalssificao/{campeonato}',[CampeonatoController::class, 'paginaClassificacao'])->name('PaginaClassificacao');
+Route::get('/PaginaPartidas/{campeonato}',[PartidaController::class, 'paginaPartidas'])->name('PaginaPartidas');
 Route::get('/PaginaNoticias', [NoticiaController::class, 'paginaPublica'])->name('PaginaNoticias');
-
 Route::get('/noticiasDetalhes/{noticia}', [NoticiaController::class, 'detalhes'])->name('noticiasDetalhes');
 
 //rota de login ele verifica se o usuário esta logado, se ele esta logado entra no dashboard direto.

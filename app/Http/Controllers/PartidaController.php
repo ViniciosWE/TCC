@@ -1001,4 +1001,23 @@ class PartidaController extends Controller
         $pdf->setPaper('A4', 'portrait');
         return $pdf->stream('sumula-partida-' . $partida->id . '.pdf');
     }
+
+    public function paginaPartidas(Request $request, $campeonato)
+    {
+        $campeonatos = Campeonato::latest()->get();
+        $partidas = Partida::with(['mandante', 'visitante'])
+            ->where('campeonato_id', $campeonato)
+            ->orderByRaw("CASE WHEN status = 'PENDENTE' THEN 0 ELSE 1 END")
+            ->orderByRaw("CASE WHEN status = 'PENDENTE' THEN CAST(REPLACE(fase, 'RODADA_', '') AS UNSIGNED) ELSE NULL END")
+            ->orderBy('data_hora')
+            ->get();
+        $campeonato = Campeonato::findOrFail($campeonato);
+        foreach ($partidas as $partida) {
+            $mandantePodeJogar = $this->equipePodeJogar($partida->mandante_id, $campeonato);
+            $visitantePodeJogar = $this->equipePodeJogar($partida->visitante_id, $campeonato);
+            $partida->deveSerWO = !$mandantePodeJogar || !$visitantePodeJogar;
+        }
+        $this->adicionarPenaltisNasPartidas($partidas);
+        return view('paginaPartidas', compact('campeonatos', 'partidas', 'campeonato'));
+    }
 }

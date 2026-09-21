@@ -1,0 +1,21 @@
+.filtro-hover {
+    transition: 0.2s;
+}
+
+.filtro-hover:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 576px) {
+
+    .filtro-campeonato {
+        font-size: 0.7rem !important;
+        padding: 0.35rem 0.5rem !important;
+        white-space: nowrap;
+    }
+
+    .bg-body.py-2.px-4 .d-flex {
+        gap: 0.3rem !important;
+        flex-wrap: nowrap !important;
+    }
+}

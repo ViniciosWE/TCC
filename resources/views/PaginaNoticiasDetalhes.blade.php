@@ -1,12 +1,12 @@
 @extends('LayoutInicial')
 
-@section('title', 'Página de Notícias')
+@section('title', 'Notícias completa')
 
 @section('content')
     <div class="p-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div>
-                <h2 class="fw-bold mb-1 text-break">Notícia completa</h2>
+            <div class="border-start border-primary border-5 ps-2 mb-3">
+                <h4 class="fw-bold mb-1 text-uppercase">Notícia Completa</h4>
             </div>
             <a href="{{ route('PaginaNoticias') }}" class="btn btn-secondary"></i>Voltar</a>
         </div>

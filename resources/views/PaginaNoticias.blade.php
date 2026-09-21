@@ -4,6 +4,9 @@
 
 @section('content')
     <div class="p-4">
+        <div class="border-start border-primary border-5 ps-2 mb-3">
+            <h4 class="fw-bold mb-1 text-uppercase">Notícias</h4>
+        </div>
         <div class="row g-4">
             @forelse($noticias as $noticia)
                 <div class="col-12 col-md-6 col-xl-4 noticia-card">
@@ -14,7 +17,7 @@
                                 <div class="text-center text-break mx-auto">
                                     <div class="ratio ratio-1x1">
                                         @if ($noticia->imagem)
-                                            <img src="{{ asset('storage/' . $noticia->imagem) }}"
+                                            <img src=" {{ asset('storage/' . $noticia->imagem) }}"
                                                 alt="Imagem Notícia {{ $noticia->titulo }}"
                                                 class="img-fluid rounded object-fit-cover">
                                         @else
