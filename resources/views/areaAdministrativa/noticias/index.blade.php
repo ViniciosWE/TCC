@@ -33,13 +33,13 @@
                 <input type="text" class="form-control" id="pesquisaNoticia" placeholder="Pesquisar notícia...">
             </div>
         </div>
-        {{-- Cards das equipes --}}
+        {{-- Cards das notícias--}}
         <div class="row g-4">
             @forelse($noticias as $noticia)
                 <div class="col-12 col-md-6 col-xl-4 noticia-card">
                     <div class="card shadow-sm border-0 rounded-4 h-100">
                         <div class="card-body">
-                            {{-- Informações da equipe --}}
+                            {{-- Informações da notícia --}}
                             <div class="mb-3">
                                 <div class="text-center text-break mx-auto">
                                     <div class="ratio ratio-1x1">
@@ -80,7 +80,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger w-100"
-                                        onclick="return confirm('Deseja realmente excluir esta equipe?')">
+                                        onclick="return confirm('Deseja realmente excluir esta notícia?')">
                                         <i class="bi bi-trash me-1"></i>Excluir
                                     </button>
                                 </form>

@@ -75,7 +75,7 @@ class NoticiaController extends Controller
      */
     public function update(Request $request, Noticia $noticia)
     {
-         $dados = $request->validate([
+        $dados = $request->validate([
             'titulo' => 'required',
             'descricao' => 'required',
             'imagem' => 'nullable|image',
@@ -84,7 +84,7 @@ class NoticiaController extends Controller
             'imagem.image' => 'O arquivo enviado deve ser uma imagem válida.',
         ]);
 
-         // Verifica se foi enviada uma nova imagem
+        // Verifica se foi enviada uma nova imagem
         if ($request->hasFile('imagem')) {
             // Remove a imagem antiga do storage
             if ($noticia->imagem && Storage::disk('public')->exists($noticia->imagem)) {
@@ -109,5 +109,14 @@ class NoticiaController extends Controller
         }
         $noticia->delete(); // Remove a noticia do banco
         return redirect()->route('noticias.index')->with('success', 'Notícia excluída com sucesso!');
+    }
+    public function paginaPublica()
+    {
+        $noticias = Noticia::with('campeonato')->latest()->get();
+        return view('paginaNoticias', compact('noticias'));
+    }
+
+    public function detalhes(Noticia $noticia){
+         return view('paginaNoticiasDetalhes', compact('noticia'));
     }
 }

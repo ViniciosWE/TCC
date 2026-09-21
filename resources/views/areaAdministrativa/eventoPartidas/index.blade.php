@@ -30,7 +30,7 @@
                     placeholder="Pesquisar evento nas partidas...">
             </div>
         </div>
-        {{-- Cards dos contratos --}}
+        {{-- Cards dos eventos das partidas --}}
         <div class="row g-4">
             @forelse($eventoPartidas as $eventoPartida)
                 <div class="col-12 col-md-6 col-xl-4 eventoPartida-card">
@@ -112,7 +112,7 @@
                 {{-- Mensagem exibida quando não houver contratos --}}
                 <div class="col-12">
                     <div class="alert alert-info text-center">
-                        Nenhum contrato cadastrado.
+                        Nenhum Evento de partida cadastrado.
                     </div>
                 </div>
             @endforelse

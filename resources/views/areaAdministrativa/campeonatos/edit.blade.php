@@ -84,8 +84,8 @@
                 </select>
             </div>
 
+            {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-
             <a href="{{ route('campeonatos.index') }}" class="btn btn-secondary">
                 Voltar
             </a>

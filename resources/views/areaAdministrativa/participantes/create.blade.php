@@ -78,9 +78,8 @@
                     @endforeach
                 </datalist>
             </div>
-
+            {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Cadastrar Equipe</button>
-
             <a href="{{ route('participantes.index') }}" class="btn btn-secondary">
                 Voltar
             </a>

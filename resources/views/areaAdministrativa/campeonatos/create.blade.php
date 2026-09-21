@@ -76,8 +76,8 @@
                 </select>
             </div>
 
+            {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Cadastrar Campeonato</button>
-
             <a href="{{ route('campeonatos.index') }}" class="btn btn-secondary">
                 Voltar
             </a>

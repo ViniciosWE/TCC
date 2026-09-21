@@ -45,7 +45,7 @@
 
                 </select>
             </div>
-            {{--Botões de cadastrar e de voltar --}}
+            {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Cadastrar Usuário</button>
             <a href="{{ route('user.index') }}" class="btn btn-secondary">
                 Voltar

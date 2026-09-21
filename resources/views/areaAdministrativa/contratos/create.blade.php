@@ -53,7 +53,7 @@
                     <option value="ENCERRADO" {{ old('status') == 'ENCERRADO' ? 'selected' : '' }}>ENCERRADO</option>
                 </select>
             </div>
-            {{--Botões de cadastrar e de voltar --}}
+            {{--Botões --}}
             <button type="submit" class="btn btn-primary">Cadastrar Equipe</button>
             <a href="{{ route('contratos.index') }}" class="btn btn-secondary">
                 Voltar

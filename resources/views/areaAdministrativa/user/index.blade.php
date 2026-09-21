@@ -33,7 +33,7 @@
                 <input type="text" class="form-control" id="pesquisaUser" placeholder="Pesquisar Usuário...">
             </div>
         </div>
-        {{-- Cards das equipes --}}
+        {{-- Cards dos usuários --}}
         <div class="row g-4">
             @forelse($users as $user)
                 <div class="col-12 col-md-6 col-xl-4 user-card">
@@ -57,7 +57,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger w-100"
-                                        onclick="return confirm('Deseja realmente excluir esta equipe?')">
+                                        onclick="return confirm('Deseja realmente excluir este usuário?')">
                                         <i class="bi bi-trash me-1"></i>Excluir
                                     </button>
                                 </form>
