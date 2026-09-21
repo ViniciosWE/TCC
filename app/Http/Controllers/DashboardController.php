@@ -19,14 +19,14 @@ class DashboardController extends Controller
         $campeonatosEmAndamentoIds = $campeonatosEmAndamento->pluck('id'); // pega os IDs dos campeonatos em andamento
         $equipesCadastradas = Equipe::count(); // total de equipes cadastradas
         $participantesCadastrados = Participante::count(); // total de participantes cadastrados
-        $partidasHoje = Partida::whereIn('campeonato_id', $campeonatosEmAndamentoIds)->whereDate('data_hora', today())->get(); // Busca as partidas de hoje dos campeonatos em andamento
+        $partidasHoje = Partida::with(['mandante', 'visitante', 'campeonato'])->whereDate('data_hora', today())->orderBy('data_hora')->get();//busca as partidas de hoje
         // Calcula os pênaltis de desempate de cada partida
         foreach ($partidasHoje as $partida) {
             $penaltis = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'PENALTI_CONVERTIDO_DESEMPATE')->with('participante')->get();
             $penaltisMandante = 0;
             $penaltisVisitante = 0;
             foreach ($penaltis as $penalti) {
-                $contrato = $penalti->participante->contratos()->where('status', 'ATIVO')->whereIn('equipe_id', [$partida->mandante_id,$partida->visitante_id])->first();
+                $contrato = $penalti->participante->contratos()->where('status', 'ATIVO')->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->first();
                 if (!$contrato) {
                     continue;
                 }
