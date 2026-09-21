@@ -594,12 +594,23 @@ class CampeonatoController extends Controller
             usort($estatisticas, function ($a, $b) {
                 return $a['gols_por_40_minutos'] <=> $b['gols_por_40_minutos'];
             });
+        } else {
+
+            usort($estatisticas, function ($a, $b) {
+                return $b['quantidade'] <=> $a['quantidade'];
+            });
         }
         $posicao = 0;
-
+        $ultimaQuantidade = null;
         foreach ($estatisticas as $index => $estatistica) {
-            $posicao++;
-
+            if ($tipo === 'GOLS_SOFRIDOS') {
+                $posicao = $index + 1;
+            } else {
+                if ($index === 0 || $estatistica['quantidade'] != $ultimaQuantidade) {
+                    $posicao++;
+                }
+                $ultimaQuantidade = $estatistica['quantidade'];
+            }
             $estatisticas[$index]['posicao'] = $posicao;
         }
         return collect($estatisticas);
