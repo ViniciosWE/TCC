@@ -82,7 +82,8 @@ class ContratoController extends Controller
         if ($dados['status'] === 'ENCERRADO') {
 
             $participandoCampeonato = Inscricao::where('equipe_id', $contrato->equipe_id)->whereHas('campeonato', function ($query) {
-                $query->where('status', 'EM_ANDAMENTO'); })->exists();
+                $query->where('status', 'EM_ANDAMENTO');
+            })->exists();
             if ($participandoCampeonato) {
                 return back()->withInput()->withErrors(['status' => 'Não é possível encerrar o contrato enquanto a equipe estiver participando de um campeonato em andamento.']);
             }
@@ -109,10 +110,9 @@ class ContratoController extends Controller
     public function destroy(Contrato $contrato)
     {
         $participante = $contrato->participante;
-
         // Verifica se o participante já possui eventos em partidas
-        if ($participante->eventos()->exists()) {
-            return back()->withErrors(['error' => 'Não é possível excluir este contrato, pois o participante já possui eventos registrados em partidas.']);
+        if ($participante->eventosPartidas()->exists()) {
+            return back()->with('error', 'Não é possível excluir este contrato, pois o participante já possui eventos registrados em partidas.');
         }
         $participante->update([
             'status' => 'SEM_EQUIPE',
