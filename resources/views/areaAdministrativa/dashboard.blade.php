@@ -166,7 +166,7 @@
                         @empty
                             <div class="col-12">
                                 <div class="alert alert-info text-center">
-                                    Nenhuma partida de campeonatos em andamento para hoje.
+                                    Nenhuma partida para hoje.
                                 </div>
                             </div>
                         @endforelse
