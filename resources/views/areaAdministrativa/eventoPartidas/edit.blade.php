@@ -35,7 +35,7 @@
                     value="{{ old('participante_id', $eventoPartida->participante_id) }}">
                 <datalist id="lista-participantes">
                     @foreach ($participantes as $participante)
-                        <option value="{{ $participante->nome }} - {{ $participante->cpf }} - {{ $participante->funcao }}"
+                        <option value="{{ $participante->equipe_nome }} - {{ $participante->nome }} - {{ $participante->cpf }}"
                             data-id="{{ $participante->id }}"></option>
                     @endforeach
                 </datalist>

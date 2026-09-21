@@ -40,13 +40,14 @@ class CampeonatoController extends Controller
             'maximo_equipes' => 'required|integer|min:2',
             'tipo' => 'required|in:MATA_MATA,GRUPOS_MATA_MATA,PONTOS_CORRIDOS',
             'categoria' => 'required|string|max:255',
-            'data_inicio' => 'required|date',
+            'data_inicio' => 'required|date|after_or_equal:today',
             'data_fim' => 'required|date|after_or_equal:data_inicio',
             'status' => 'required|in:INSCRICOES,EM_ANDAMENTO,FINALIZADO',
         ], [
             'minimo_jogadores_equipes.min' => 'O número mínimo de jogadores por equipe deve ser de pelo menos 5.',
             'maximo_equipes.min' => 'A quantidade máxima de equipes deve ser de pelo menos 2.',
             'data_fim.after_or_equal' => 'A data de término não pode ser anterior à data de início.',
+            'data_inicio.after_or_equal' => 'A data de início não pode ser anterior à data atual.',
         ]);
 
         $dados['user_id'] = auth()->id();// Pega o id de quem criou
@@ -187,12 +188,13 @@ class CampeonatoController extends Controller
             'maximo_equipes' => 'required|integer|min:2',
             'tipo' => 'required|in:MATA_MATA,GRUPOS_MATA_MATA,PONTOS_CORRIDOS',
             'categoria' => 'required|string|max:255',
-            'data_inicio' => 'required|date',
+            'data_inicio' => 'required|date|after_or_equal:today',
             'data_fim' => 'required|date|after_or_equal:data_inicio',
             'status' => 'required|in:INSCRICOES,EM_ANDAMENTO,FINALIZADO',
         ], [
             'minimo_jogadores_equipes.min' => 'O número mínimo de jogadores por equipe deve ser de pelo menos 5.',
             'maximo_equipes.min' => 'A quantidade máxima de equipes deve ser de pelo menos 2.',
+            'data_inicio.after_or_equal' => 'A data de início não pode ser anterior à data atual.',
             'data_fim.after_or_equal' => 'A data de término não pode ser anterior à data de início.',
         ]);
         // Conta quantas equipes já estão inscritas
@@ -590,22 +592,14 @@ class CampeonatoController extends Controller
             }
             unset($estatistica);
             usort($estatisticas, function ($a, $b) {
-                return $a['gols_por_40_minutos'] <=> $b['gols_por_40_minutos']; });
+                return $a['gols_por_40_minutos'] <=> $b['gols_por_40_minutos'];
+            });
         }
         $posicao = 0;
-        $ultimoValor = null;
-        $posicaoAtual = 0;
+
         foreach ($estatisticas as $index => $estatistica) {
-            $posicaoAtual++;
-            if ($tipo === 'GOLS_SOFRIDOS') {
-                $valor = $estatistica['gols_por_40_minutos'];
-            } else {
-                $valor = $estatistica['quantidade'];
-            }
-            if ($ultimoValor === null || $valor != $ultimoValor) {
-                $posicao = $posicaoAtual;
-                $ultimoValor = $valor;
-            }
+            $posicao++;
+
             $estatisticas[$index]['posicao'] = $posicao;
         }
         return collect($estatisticas);

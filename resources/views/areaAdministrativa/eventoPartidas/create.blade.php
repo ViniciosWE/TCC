@@ -57,7 +57,7 @@
                 <input type="hidden" name="participante_id" id="participante_id" value="{{ old('participante_id') }}">
                 <datalist id="lista-participantes">
                     @foreach ($participantes as $participante)
-                        <option value="{{ $participante->nome }} - {{ $participante->cpf }} - {{ $participante->funcao }}"
+                        <option value="{{ $participante->equipe_nome }} - {{ $participante->nome }} - {{ $participante->cpf }}"
                             data-id="{{ $participante->id }}"></option>
                     @endforeach
                 </datalist>
@@ -79,17 +79,20 @@
                     @endif
                     {{-- depois do 5x5 --}}
                     @if ($titularesCompletos)
+                        @if (!$disputaPenaltisIniciada)
+                            <option value="GOL" {{ old('tipo') == 'GOL' ? 'selected' : '' }}>Gol</option>
+                            <option value="ASSISTENCIA" {{ old('tipo') == 'ASSISTENCIA' ? 'selected' : '' }}>Assistência</option>
+                            <option value="GOL_CONTRA" {{ old('tipo') == 'GOL_CONTRA' ? 'selected' : '' }}>Gol Contra</option>
+                        @endif
                         <option value="ENTRADA_GOLEIRO" {{ old('tipo') == 'ENTRADA_GOLEIRO' ? 'selected' : '' }}>Entrada de
                             Goleiro</option>
-                        <option value="GOL" {{ old('tipo') == 'GOL' ? 'selected' : '' }}>Gol</option>
                         <option value="CARTAO_AMARELO" {{ old('tipo') == 'CARTAO_AMARELO' ? 'selected' : '' }}>Cartão Amarelo
                         </option>
-
                         <option value="CARTAO_VERMELHO" {{ old('tipo') == 'CARTAO_VERMELHO' ? 'selected' : '' }}>Cartão Vermelho
                         </option>
-                        <option value="ASSISTENCIA" {{ old('tipo') == 'ASSISTENCIA' ? 'selected' : '' }}>Assistência</option>
-                        <option value="GOL_CONTRA" {{ old('tipo') == 'GOL_CONTRA' ? 'selected' : '' }}>Gol Contra</option>
-                        <option value="PENALTI_CONVERTIDO_DESEMPATE" {{ old('tipo') == 'PENALTI_CONVERTIDO_DESEMPATE' ? 'selected' : '' }}>Pênalti Convertido de Desempate</option>
+                        @if ($penaltiDesempateDisponivel)
+                            <option value="PENALTI_CONVERTIDO_DESEMPATE" {{ old('tipo') == 'PENALTI_CONVERTIDO_DESEMPATE' ? 'selected' : '' }}>Pênalti Convertido de Desempate</option>
+                        @endif
                     @endif
                 </select>
             </div>

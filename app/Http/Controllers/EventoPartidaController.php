@@ -30,18 +30,29 @@ class EventoPartidaController extends Controller
      */
     public function create(Request $request)
     {
-        $partida = Partida::with(['mandante', 'visitante'])->findOrFail($request->partida_id);//busca a partida e também carrega as duas equipes
-        // Conta quantos titulares já foram cadastrados para cada equipe
+        $partida = Partida::with(['mandante', 'visitante'])->findOrFail($request->partida_id);
         $titularesMandante = $this->contarTitulares($partida, $partida->mandante_id);
         $titularesVisitante = $this->contarTitulares($partida, $partida->visitante_id);
-        $titularesCompletos = $titularesMandante === 5 && $titularesVisitante === 5;//verifica se as duas equipes já possuem exatamente 5 titulares
-        // Busca os participantes que podem participar da partida
-        $participantes = Participante::where('participantes.status', 'ATIVO')->whereHas('contratos', function ($query) use ($partida) {
+        $titularesCompletos = $titularesMandante === 5 && $titularesVisitante === 5;
+        $participantes = Participante::with([
+            'contratos' => function ($query) {
+                $query->where('status', 'ATIVO');
+            }
+        ])->where('participantes.status', 'ATIVO')->whereHas('contratos', function ($query) use ($partida) {
             $query->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->where('status', 'ATIVO');
-        })->when(!$titularesCompletos, function ($query) {
+        })->when(!$titularesCompletos, function ($query) use ($partida) {
             $query->whereNotIn('funcao', ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO',]);
+            $titulares = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'TITULAR')->pluck('participante_id');
+            $query->whereNotIn('participantes.id', $titulares);
         })->orderBy('nome')->get();
-        return view('areaAdministrativa.eventoPartidas.create', compact('participantes', 'partida', 'titularesMandante', 'titularesVisitante', 'titularesCompletos'));
+        foreach ($participantes as $participante) {
+            $contrato = $participante->contratos->first();
+            $participante->equipe_nome = $contrato->equipe_id == $partida->mandante_id ? $partida->mandante->nome : $partida->visitante->nome;
+        }
+        $participantes = $participantes->sortBy([['equipe_nome', 'asc'], ['nome', 'asc'],])->values();
+        $penaltiDesempateDisponivel = $this->podeCadastrarPenaltiDesempate($partida);
+        $disputaPenaltisIniciada = $this->existePenaltiDesempate($partida);
+        return view('areaAdministrativa.eventoPartidas.create', compact('participantes', 'partida', 'titularesMandante', 'titularesVisitante', 'titularesCompletos', 'penaltiDesempateDisponivel', 'disputaPenaltisIniciada'));
     }
 
     /**
@@ -57,7 +68,21 @@ class EventoPartidaController extends Controller
             'tipo' => ['required', 'in:TITULAR,ENTRADA_GOLEIRO,GOL,CARTAO_AMARELO,CARTAO_VERMELHO,ASSISTENCIA,GOL_CONTRA,PENALTI_CONVERTIDO_DESEMPATE'],
         ]);
         $partida = Partida::findOrFail($request->partida_id);//busca a partida pelo ID enviado
-        // Busca o participante ele precisa estar ativo e possuir contrato ativo com uma das equipes da partida
+        //verifica as regras da disputa de pênaltis
+        if ($request->tipo === 'PENALTI_CONVERTIDO_DESEMPATE') {
+            if (!$this->permiteDesempate($partida)) {
+                return back()->withInput()->withErrors(['tipo' => 'Esta partida permite empate e não possui disputa de pênaltis.']);
+            }
+            //só pode iniciar a disputa quando o placar normal estiver empatado
+            if (!$this->existePenaltiDesempate($partida) && $partida->gols_mandante != $partida->gols_visitante) {
+                return back()->withInput()->withErrors(['tipo' => 'A disputa de pênaltis só pode começar quando a partida estiver empatada.']);
+            }
+        }
+        //depois que a disputa de pênaltis começou, não podem mais ser cadastrados gols, gols contra ou assistências
+        if ($this->existePenaltiDesempate($partida) && in_array($request->tipo, ['GOL', 'GOL_CONTRA', 'ASSISTENCIA'])) {
+            return back()->withInput()->withErrors(['tipo' => 'Após o início da disputa de pênaltis, não é mais possível cadastrar gols, gols contra ou assistências.']);
+        }
+        //busca o participante ele precisa estar ativo e possuir contrato ativo com uma das equipes da partida
         $participante = Participante::where('id', $request->participante_id)->where('status', 'ATIVO')->whereHas('contratos', function ($query) use ($partida) {
             $query->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->where('status', 'ATIVO');
         })->first();
@@ -87,15 +112,32 @@ class EventoPartidaController extends Controller
             return back()->withInput()->withErrors(['participante_id' => 'Somente jogadores podem ser titulares.',]);
         }
         if ($request->tipo === 'TITULAR') {
+            //somente jogadores podem ser titulares
+            if (in_array($participante->funcao, ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO',])) {
+                return back()->withInput()->withErrors(['participante_id' => 'Somente jogadores podem ser titulares.',]);
+            }
+            //não permite dois goleiros titulares na mesma equipe
+            if (in_array($participante->funcao, ['GOLEIRO', 'GOLEIRO_LINHA'])) {
+                $jaExisteGoleiro = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'TITULAR')->whereHas('participante', function ($query) {
+                    $query->whereIn('funcao', ['GOLEIRO', 'GOLEIRO_LINHA']);
+                })->whereHas('participante.contratos', function ($query) use ($contrato) {
+                    $query->where('equipe_id', $contrato->equipe_id)->where('status', 'ATIVO');
+                })->exists();
+                if ($jaExisteGoleiro) {
+                    return back()->withInput()->withErrors(['participante_id' => 'Esta equipe já possui um goleiro titular.',]);
+                }
+            }
             //procura se o jogador já foi cadastrado como titular nessa partida
             $jaTitular = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'TITULAR')->where('participante_id', $participante->id)->exists();
             if ($jaTitular) {
                 return back()->withInput()->withErrors(['participante_id' => 'Este jogador já foi definido como titular nesta partida.',]);
             }
+            //verifica limite de 5 titulares por equipe
             if ($contrato->equipe_id == $partida->mandante_id) {
                 if ($titularesMandante >= 5) {
                     return back()->withInput()->withErrors(['participante_id' => 'O mandante já possui 5 titulares cadastrados.',]);
                 }
+
             } else {
                 if ($titularesVisitante >= 5) {
                     return back()->withInput()->withErrors(['participante_id' => 'O visitante já possui 5 titulares cadastrados.',]);
@@ -156,11 +198,22 @@ class EventoPartidaController extends Controller
         $titularesMandante = $this->contarTitulares($partida, $partida->mandante_id);
         $titularesVisitante = $this->contarTitulares($partida, $partida->visitante_id);
         $titularesCompletos = $titularesMandante === 5 && $titularesVisitante === 5; //verifica se as duas equipes já possuem 5 titulares
-        $participantes = Participante::where('participantes.status', 'ATIVO')->whereHas('contratos', function ($query) use ($partida) {
+        $participantes = Participante::with([
+            'contratos' => function ($query) {
+                $query->where('status', 'ATIVO');
+            }
+        ])->where('participantes.status', 'ATIVO')->whereHas('contratos', function ($query) use ($partida) {
             $query->whereIn('equipe_id', [$partida->mandante_id, $partida->visitante_id])->where('status', 'ATIVO');
         })->when(!$titularesCompletos, function ($query) {
             $query->whereNotIn('funcao', ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO',]);
-        })->orderBy('nome')->get();
+        })->get();
+        //identifica a equipe de cada participante
+        foreach ($participantes as $participante) {
+            $contrato = $participante->contratos->first();
+            $participante->equipe_nome = $contrato->equipe_id == $partida->mandante_id ? $partida->mandante->nome : $partida->visitante->nome;
+        }
+        //ordena primeiro pela equipe e depois pelo nome
+        $participantes = $participantes->sortBy([['equipe_nome', 'asc'], ['nome', 'asc'],])->values();
         return view('areaAdministrativa.eventoPartidas.edit', compact('participantes', 'eventoPartida', 'titularesCompletos', 'partida'));
     }
 
@@ -180,6 +233,20 @@ class EventoPartidaController extends Controller
             'tempo' => ['required', 'date_format:H:i:s'],
         ]);
         $partida = $eventoPartida->partida;//busca a partida relacionada ao evento
+        //verifica as regras da disputa de pênaltis
+        if ($dados['tipo'] === 'PENALTI_CONVERTIDO_DESEMPATE') {
+            if (!$this->permiteDesempate($partida)) {
+                return back()->withInput()->withErrors(['tipo' => 'Esta partida permite empate e não possui disputa de pênaltis.']);
+            }
+            //se ainda não havia disputa, ela só pode começar com o placar empatado
+            if ($eventoPartida->tipo !== 'PENALTI_CONVERTIDO_DESEMPATE' &&!$this->existePenaltiDesempate($partida) &&$partida->gols_mandante != $partida->gols_visitante) {
+                return back()->withInput()->withErrors(['tipo' => 'A disputa de pênaltis só pode começar quando a partida estiver empatada.']);
+            }
+        }
+        //depois que a disputa começou, não permite transformar um evento em gol, gol contra ou assistência.
+        if ($this->existePenaltiDesempate($partida) &&$eventoPartida->tipo !== 'PENALTI_CONVERTIDO_DESEMPATE' &&in_array($dados['tipo'], ['GOL', 'GOL_CONTRA', 'ASSISTENCIA'])) {
+            return back()->withInput()->withErrors(['tipo' => 'Após o início da disputa de pênaltis, não é mais possível cadastrar gols, gols contra ou assistências.']);
+        }
         if (in_array($eventoPartida->tipo, ['GOL', 'GOL_CONTRA']) && !in_array($dados['tipo'], ['GOL', 'GOL_CONTRA'])) {
             return back()->withInput()->withErrors(['tipo' => 'Um evento de gol só pode continuar sendo um evento de gol.',]);
         }
@@ -210,6 +277,17 @@ class EventoPartidaController extends Controller
         if ($dados['tipo'] === 'TITULAR') {
             if (in_array($participante->funcao, ['TECNICO', 'AUXILIAR_TECNICO', 'PREPARADOR_FISICO',])) {
                 return back()->withInput()->withErrors(['participante_id' => 'Somente jogadores podem ser titulares.',]);
+            }
+            // Não permite dois goleiros titulares na mesma equipe
+            if (in_array($participante->funcao, ['GOLEIRO', 'GOLEIRO_LINHA'])) {
+                $jaExisteGoleiro = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'TITULAR')->where('id', '!=', $eventoPartida->id)->whereHas('participante', function ($query) {
+                    $query->whereIn('funcao', ['GOLEIRO', 'GOLEIRO_LINHA']);
+                })->whereHas('participante.contratos', function ($query) use ($contrato) {
+                    $query->where('equipe_id', $contrato->equipe_id)->where('status', 'ATIVO');
+                })->exists();
+                if ($jaExisteGoleiro) {
+                    return back()->withInput()->withErrors(['participante_id' => 'Esta equipe já possui um goleiro titular.',]);
+                }
             }
             //busca os outros titulares, ignorando o evento que está sendo editado
             $titulares = EventoPartida::where('partida_id', $partida->id)->where('tipo', 'TITULAR')->where('id', '!=', $eventoPartida->id)->get();
@@ -466,5 +544,45 @@ class EventoPartidaController extends Controller
         $this->reconstruirSaidasGoleiro($partida);//recria as saídas dos goleiros com base nas entradas
         $this->recalcularGolsSofridos($partida);//recalcula qual goleiro sofreu cada gol
         $this->recalcularPlacar($partida);//recalcula o placar da partida
+    }
+
+    private function permiteDesempate(Partida $partida)
+    {
+        $campeonato = $partida->campeonato;
+
+        // Estas fases permitem empate, portanto não possuem disputa de pênaltis
+        if (
+            $campeonato->tipo === 'PONTOS_CORRIDOS' ||
+            $partida->fase === 'TRIANGULAR' ||
+            str_contains($partida->fase, '_GRUPO_')
+        ) {
+            return false;
+        }
+
+        // Demais fases são mata-mata e precisam de vencedor
+        return true;
+    }
+
+    private function existePenaltiDesempate(Partida $partida)
+    {
+        return EventoPartida::where('partida_id', $partida->id)
+            ->where('tipo', 'PENALTI_CONVERTIDO_DESEMPATE')
+            ->exists();
+    }
+
+    private function podeCadastrarPenaltiDesempate(Partida $partida)
+    {
+        // A partida precisa ser de uma fase que não permite empate
+        if (!$this->permiteDesempate($partida)) {
+            return false;
+        }
+
+        // Para iniciar a disputa, o placar normal precisa estar empatado
+        if ($partida->gols_mandante != $partida->gols_visitante) {
+            return false;
+        }
+
+        // Se já começou a disputa de pênaltis, continua podendo cadastrar
+        return true;
     }
 }
