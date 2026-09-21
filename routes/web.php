@@ -8,6 +8,7 @@ use App\Http\Controllers\EquipeController;
 use App\Http\Controllers\EventoPartidaController;
 use App\Http\Controllers\InscricaoController;
 use App\Http\Controllers\NoticiaController;
+use App\Http\Controllers\PaginaInicialController;
 use App\Http\Controllers\ParticipanteController;
 use App\Http\Controllers\PartidaController;
 use App\Http\Controllers\UserController;
@@ -24,10 +25,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 /*Rotas públicas*/
-Route::get('/', function () {
-    return view('PaginaInicial');
-})->name('PaginaInicial');
-
+Route::get('/', [PaginaInicialController::class, 'index'])->name('PaginaInicial');
 Route::get('/PaginaCampeonatos', [CampeonatoController::class, 'paginaPublica'])->name('PaginaCampeonatos');
 Route::get('/PaginaCalssificao/{campeonato}',[CampeonatoController::class, 'paginaClassificacao'])->name('PaginaClassificacao');
 Route::get('/PaginaPartidas/{campeonato}',[PartidaController::class, 'paginaPartidas'])->name('PaginaPartidas');

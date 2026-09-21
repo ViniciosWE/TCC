@@ -7,15 +7,15 @@
     <div class="bg-body py-2 px-4">
         <div class="d-flex flex-wrap gap-3 text-uppercase">
             <a href="{{ route('PaginaCampeonatos', ['status' => 'EM_ANDAMENTO']) }}"
-                class="btn rounded-pill px-4 py-2 shadow-sm fw-bold filtro-campeonato
+                class="btn rounded-pill px-4 py-2 shadow-sm fw-bold filtro
                             {{ $status === 'EM_ANDAMENTO' ? 'btn-primary' : 'bg-secondary-subtle text-dark border-0 filtro-hover' }}">Em andamento
             </a>
             <a href="{{ route('PaginaCampeonatos', ['status' => 'INSCRICOES']) }}"
-                class="btn rounded-pill px-4 py-2 shadow-sm fw-bold filtro-campeonato
+                class="btn rounded-pill px-4 py-2 shadow-sm fw-bold filtro
                             {{ $status === 'INSCRICOES' ? 'btn-primary' : 'bg-secondary-subtle text-dark border-0 filtro-hover' }}">Inscrições
             </a>
             <a href="{{ route('PaginaCampeonatos', ['status' => 'FINALIZADO']) }}"
-                class="btn rounded-pill px-4 py-2 shadow-sm fw-bold filtro-campeonato
+                class="btn rounded-pill px-4 py-2 shadow-sm fw-bold filtro
                             {{ $status === 'FINALIZADO' ? 'btn-primary' : 'bg-secondary-subtle text-dark border-0 filtro-hover' }}">Finalizados
             </a>
         </div>

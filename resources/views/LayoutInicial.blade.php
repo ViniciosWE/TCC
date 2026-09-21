@@ -105,7 +105,7 @@
     </div>
 
     {{--conteúdo da página--}}
-    <main class="flex-grow-1 bg-secondary-subtle">
+    <main class="flex-grow-1 cor-fundo-sidebar">
         @yield('content')
     </main>
 
