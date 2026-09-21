@@ -30,11 +30,11 @@
             <p class="text-break mb-2">{{ $noticia->descricao }}</p>
             {{-- relação --}}
             @if ($noticia->campeonato)
-                <span class="text-break descricao-noticia">
+                <span class="text-break">
                     Esta notícia está relacionada ao <b>{{ $noticia->campeonato->nome }}</b>.
                 </span>
             @else
-                <span class="text-break descricao-noticia">Esta notícia não está relacionada a um
+                <span class="text-break">Esta notícia não está relacionada a um
                     campeonato.</span>
             @endif
         </div>
