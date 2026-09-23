@@ -113,10 +113,10 @@ class NoticiaController extends Controller
     public function paginaPublica()
     {
         $noticias = Noticia::with('campeonato')->latest()->get();
-        return view('paginaNoticias', compact('noticias'));
+        return view('PaginaNoticias', compact('noticias'));
     }
 
     public function detalhes(Noticia $noticia){
-         return view('paginaNoticiasDetalhes', compact('noticia'));
+         return view('PaginaNoticiasDetalhes', compact('noticia'));
     }
 }
