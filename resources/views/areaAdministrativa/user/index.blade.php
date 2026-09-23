@@ -50,7 +50,7 @@
                             </div>
                             {{-- Botões --}}
                             <div class="d-flex gap-2">
-                                <a href="{{ route('user.ed', $user) }}" class="btn btn-warning flex-fill">
+                                <a href="{{ route('user.edit', $user) }}" class="btn btn-warning flex-fill">
                                     <i class="bi bi-pencil-square me-1"></i>Editar
                                 </a>
                                 <form action="{{ route('user.destroy', $user) }}" method="POST" class="flex-fill">
