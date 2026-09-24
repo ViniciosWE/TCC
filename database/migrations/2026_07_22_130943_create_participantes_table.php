@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedTinyInteger('numero')->nullable();
             $table->enum('funcao', ['GOLEIRO','FIXO','ALA_DIREITO','ALA_ESQUERDO','PIVO','GOLEIRO_LINHA',
-                'TECNICO','AUXILIAR_TECNICO','PREPARADOR_FISICO'])->nullable();
+                'TECNICO','AUXILIAR_TECNICO','PREPARADOR_FISICO']);
             $table->string('nome');
             $table->string('cpf', 11)->unique();
             $table->enum('status', ['ATIVO', 'SEM_EQUIPE', 'APOSENTADO', 'SUSPENSO']);
