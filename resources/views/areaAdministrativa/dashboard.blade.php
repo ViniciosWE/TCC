@@ -117,9 +117,16 @@
                                             <div class="col-4">
                                                 <div
                                                     class="d-flex align-items-center justify-content-start partida-equipe partida-mandante">
-                                                    <img src="{{ asset('storage/' . $partida->mandante->escudo) }}"
-                                                        alt="Escudo {{ $partida->mandante->nome }}"
-                                                        class="rounded-circle border partida-escudo flex-shrink-0">
+                                                    @if ($partida->mandante->escudo)
+                                                        <img src="{{ asset('storage/' . $partida->mandante->escudo) }}"
+                                                            alt="Escudo {{ $partida->mandante->nome }}"
+                                                            class="rounded-circle border partida-escudo flex-shrink-0">
+                                                    @else
+                                                        <div class="text-muted d-flex justify-content-center align-items-center text-center border rounded-circle partida-escudo"
+                                                            style="font-size: 0.8rem;"> <span>Sem Escudo</span>
+                                                        </div>
+                                                    @endif
+
                                                     <strong class="partida-nome text-truncate"> {{ $partida->mandante->nome }}</strong>
                                                 </div>
                                             </div>
@@ -154,9 +161,16 @@
                                                 <div
                                                     class="d-flex align-items-center justify-content-end partida-equipe partida-visitante">
                                                     <strong class="partida-nome text-truncate">{{ $partida->visitante->nome }}</strong>
-                                                    <img src="{{ asset('storage/' . $partida->visitante->escudo) }}"
-                                                        alt="Escudo {{ $partida->visitante->nome }}"
-                                                        class="rounded-circle border partida-escudo flex-shrink-0">
+                                                    @if ($partida->visitante->escudo)
+                                                        <img src="{{ asset('storage/' . $partida->visitante->escudo) }}"
+                                                            alt="Escudo {{ $partida->visitante->nome }}"
+                                                            class="rounded-circle border partida-escudo flex-shrink-0">
+                                                    @else
+                                                        <div class="text-muted d-flex justify-content-center align-items-center text-center border rounded-circle partida-escudo"
+                                                            style="font-size: 0.8rem;"> <span>Sem Escudo</span>
+                                                        </div>
+                                                    @endif
+
                                                 </div>
                                             </div>
                                         </div>
