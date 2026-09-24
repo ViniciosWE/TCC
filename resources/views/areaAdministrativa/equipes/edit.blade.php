@@ -35,8 +35,13 @@
                     Escudo atual
                 </label>
                 <br>
-                <img src="{{ asset('storage/' . $equipe->escudo) }}" alt="Escudo {{ $equipe->nome }}" width="80" height="80"
-                    class="rounded-circle border mb-3">
+                @if ($equipe->escudo)
+                    <img src="{{ asset('storage/' . $equipe->escudo) }}" alt="Escudo {{ $equipe->nome }}" width="80" height="80"
+                        class="rounded-circle border mb-3">
+                @else
+                    <div class="text-muted d-flex justify-content-center align-items-center text-center border rounded-circle"
+                        style="width: 80px; height: 80px; font-size: 0.8rem;"> <span>Sem Escudo</span> </div>
+                @endif
             </div>
             {{-- Novo escudo --}}
             <div class="mb-3">

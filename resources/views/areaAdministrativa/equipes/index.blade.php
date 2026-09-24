@@ -41,8 +41,14 @@
                         <div class="card-body">
                             {{-- Informações da equipe --}}
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <img src="{{ asset('storage/' . $equipe->escudo) }}" alt="Escudo {{ $equipe->nome }}"
-                                    width="70" height="70" class="rounded-circle border p-1">
+                                @if ($equipe->escudo)
+                                    <img src="{{ asset('storage/' . $equipe->escudo) }}" alt="Escudo {{ $equipe->nome }}" width="70"
+                                        height="70" class="rounded-circle border p-1">
+                                @else
+                                    <div class="text-muted d-flex justify-content-center align-items-center text-center border rounded-circle"
+                                        style="width: 70px; height: 70px; font-size: 0.8rem;"> <span>Sem Escudo</span> </div>
+                                @endif
+
                                 <div>
                                     <h6 class="fw-bold mb-1 text-uppercase text-break">{{ $equipe->nome }}</h6>
                                     <span class="text-muted text-uppercase">{{ $equipe->sigla }}</span>
@@ -67,7 +73,7 @@
                             </div>
                             {{-- Botões --}}
                             <div class="d-flex gap-2">
-                                <a href="{{ route('equipes.edit', $equipe) }}" class="btn btn-warning flex-fill">
+                                <a href=" {{ route('equipes.edit', $equipe) }}" class="btn btn-warning flex-fill">
                                     <i class="bi bi-pencil-square me-1"></i>Editar
                                 </a>
                                 <form action="{{ route('equipes.destroy', $equipe) }}" method="POST" class="flex-fill">

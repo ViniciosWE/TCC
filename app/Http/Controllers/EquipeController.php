@@ -41,7 +41,7 @@ class EquipeController extends Controller
             [
                 'nome' => 'required|unique:equipes,nome',
                 'sigla' => 'required|max:3|unique:equipes,sigla',
-                'escudo' => 'required|image',
+                'escudo' => 'nullable|image',
                 'status' => 'required',
             ],
             [
