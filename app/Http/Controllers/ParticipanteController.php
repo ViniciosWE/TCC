@@ -53,6 +53,9 @@ class ParticipanteController extends Controller
                 'equipe_id.required_if' => 'Um participante ativo precisa estar vinculado a uma equipe.',
             ]
         );
+        if (!$this->cpfValido($dados['cpf'])) {
+            return back()->withErrors(['cpf' => 'O CPF informado é inválido.'])->withInput();
+        }
         // Verifica se a equipe escolhida pode receber jogadores
         if ($dados['status'] === 'ATIVO') {
             $equipe = Equipe::find($dados['equipe_id']);
@@ -118,6 +121,10 @@ class ParticipanteController extends Controller
                 'equipe_id.required_if' => 'Um participante ativo precisa estar vinculado a uma equipe.',
             ]
         );
+
+        if (!$this->cpfValido($dados['cpf'])) {
+            return back()->withErrors(['cpf' => 'O CPF informado é inválido.'])->withInput();
+        }
         $contrato = $participante->contratos()->where('status', 'ATIVO')->first(); // Busca o contrato ativo do participante
         // Se o participante estiver ATIVO, verifica se a equipe está ativa
         if ($dados['status'] === 'ATIVO') {
@@ -185,5 +192,29 @@ class ParticipanteController extends Controller
         // Se nunca teve contrato, permite a exclusão
         $participante->delete();
         return redirect()->route('participantes.index')->with('success', 'Participante excluído com sucesso!');
+    }
+
+    private function cpfValido($cpf)
+    {
+        //verifica se possui 11 dígitos
+        if (strlen($cpf) != 11) {
+            return false;
+        }
+        //verifica se todos os dígitos são iguais
+        if (preg_match('/(\d)\1{10}/', $cpf)) {
+            return false;
+        }
+        //calcula os dígitos verificadores
+        for ($t = 9; $t < 11; $t++) {
+            for ($d = 0, $c = 0; $c < $t; $c++) {
+                $d += $cpf[$c] * (($t + 1) - $c);
+            }
+            $d = ((10 * $d) % 11) % 10;
+
+            if ($cpf[$c] != $d) {
+                return false;
+            }
+        }
+        return true;
     }
 }
