@@ -38,7 +38,7 @@
             {{-- Função --}}
             <div class="mb-3">
                 <label for="funcao" class="form-label">Função</label>
-                <select class="form-select" name="funcao" id="funcao">
+                <select class="form-select" name="funcao" id="funcao" required>
                     <option value="">Selecione</option>
                     <option value="GOLEIRO" {{ old('funcao') == 'GOLEIRO' ? 'selected' : '' }}>Goleiro</option>
                     <option value="FIXO" {{ old('funcao') == 'FIXO' ? 'selected' : '' }}>Fixo</option>

@@ -45,7 +45,7 @@ class ParticipanteController extends Controller
                 'cpf' => 'required|max:11|unique:participantes,cpf',
                 'status' => 'required',
                 'numero' => 'nullable|between:0,99',
-                'funcao' => 'nullable',
+                'funcao' => 'required',
                 'equipe_id' => 'required_if:status,ATIVO|nullable|exists:equipes,id',
             ],
             [
@@ -110,7 +110,7 @@ class ParticipanteController extends Controller
                 'cpf' => 'required|max:11|unique:participantes,cpf,' . $participante->id,
                 'status' => 'required',
                 'numero' => 'nullable|between:0,99',
-                'funcao' => 'nullable',
+                'funcao' => 'required',
                 'equipe_id' => 'required_if:status,ATIVO|nullable|exists:equipes,id',
             ],
             [
