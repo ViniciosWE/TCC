@@ -53,7 +53,7 @@
             @empty
                 {{-- Mensagem exibida quando não houver nenhuma notícia cadastrada --}}
                 <div class="col-12">
-                    <div class="alert alert-info text-center">
+                    <div class="text-center text-muted py-5">
                         Nenhuma Notícia cadastrada.
                     </div>
                 </div>

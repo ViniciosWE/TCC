@@ -79,7 +79,7 @@
             @empty
                 {{-- Mensagem exibida quando não houver nenhuma equipe cadastrada --}}
                 <div class="col-12">
-                    <div class="alert alert-info text-center">
+                    <div class="text-center text-muted py-5">
                         @if ($status === 'INSCRICOES')
                             Nenhum campeonato com inscrições abertas.
 
