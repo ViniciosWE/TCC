@@ -6,6 +6,7 @@ import { EquipesSumir } from './EquipesSumir';
 import { configurarDatalist } from './PesquisaDataList';
 import { apenasNumeros } from './ApenasNumeros';
 import { pesquisar } from './Pesquisa';
+import { iconeSenha } from './IconeSenha';  
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -37,4 +38,5 @@ document.addEventListener('DOMContentLoaded', function () {
     pesquisar('pesquisaPartida', 'partida-card');
     pesquisar('pesquisaEventosPartidas', 'eventoPartida-card');
     pesquisar('pesquisaUser', 'user-card');
+    iconeSenha('password', 'passwordIcon');
 });

@@ -38,7 +38,12 @@
             {{-- senha --}}
             <div class="mb-3">
                 <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password">
+                <div class="position-relative">
+                    <input type="password" class="form-control" id="password" name="password">
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0">
+                        <i class="bi bi-eye" id="passwordIcon"></i>
+                    </button>
+                </div>
                 <span class="form-text">Deixe em branco se não quiser alterar a senha.</span>
             </div>
             {{-- Botões --}}

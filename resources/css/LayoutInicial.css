@@ -8,6 +8,12 @@
     --fundo-claro: #F3F4F6;
 }
 
+/*seleciona o botão nativo de mostrar e limpar senha do edge e esconde*/
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
 /*definição da cor de fundo do header*/
 .cor-fundo-header-inicial {
     background-color: var(--cor-primaria);
@@ -70,7 +76,7 @@
 }
 
 /*define a cor do texto em amarelo do rodapé*/
-.cor-texto-rodape-amarelo-inicial{
+.cor-texto-rodape-amarelo-inicial {
     color: var(--cor-destaque);
 }
 
@@ -96,5 +102,5 @@
     .rodape-sub {
         font-size: 0.8rem;
     }
-    
+
 }

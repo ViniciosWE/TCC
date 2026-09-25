@@ -32,20 +32,24 @@
             {{-- senha --}}
             <div class="mb-3">
                 <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password">
+                <div class="position-relative">
+                    <input type="password" class="form-control" id="password" name="password">
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0">
+                        <i class="bi bi-eye" id="passwordIcon"></i>
+                    </button>
+                </div>
                 <span class="form-text">Deixe em branco se não quiser alterar a senha.</span>
             </div>
             {{-- tipo --}}
             <div class="mb-3">
                 <label for="tipo" class="form-label">Tipo</label>
-                <select class="form-select" name="tipo" id="tipo" required>
-                    <option value="ADMINISTRADOR" {{ old('tipo', $user->tipo) == 'ADMINISTRADOR' ? 'selected' : '' }}>
-                        ADMINISTRADOR
-                    </option>
-                    <option value="SUPER_ADMINISTRADOR" {{ old('tipo', $user->tipo) == 'SUPER_ADMINISTRADOR' ? 'selected' : '' }}>SUPER
-                        ADMINISTRADOR</option>
-
-                </select>
+                    <select class="form-select" name="tipo" id="tipo" required>
+                        <option value="ADMINISTRADOR" {{ old('tipo', $user->tipo) == 'ADMINISTRADOR' ? 'selected' : '' }}>
+                            ADMINISTRADOR
+                        </option>
+                        <option value="SUPER_ADMINISTRADOR" {{ old('tipo', $user->tipo) == 'SUPER_ADMINISTRADOR' ? 'selected' : '' }}>SUPER
+                            ADMINISTRADOR</option>
+                    </select>
             </div>
             {{-- Botões --}}
             <button type="submit" class="btn btn-primary">Salvar Alterações </button>

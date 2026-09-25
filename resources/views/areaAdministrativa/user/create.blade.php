@@ -32,7 +32,12 @@
             {{-- senha --}}
             <div class="mb-3">
                 <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="position-relative">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0">
+                        <i class="bi bi-eye" id="passwordIcon"></i>
+                    </button>
+                </div>
             </div>
             {{-- tipo --}}
             <div class="mb-3">
@@ -42,7 +47,6 @@
                     </option>
                     <option value="SUPER_ADMINISTRADOR" {{ old('tipo') == 'SUPER_ADMINISTRADOR' ? 'selected' : '' }}>SUPER
                         ADMINISTRADOR</option>
-
                 </select>
             </div>
             {{-- Botões --}}

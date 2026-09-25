@@ -181,14 +181,14 @@ class CampeonatoController extends Controller
      */
     public function update(Request $request, Campeonato $campeonato)
     {
-        // Valida os dados enviados pelo formulário
+        //valida os dados enviados pelo formulário
         $dados = $request->validate([
             'nome' => 'required|string|max:255',
             'minimo_jogadores_equipes' => 'required|integer|min:5',
             'maximo_equipes' => 'required|integer|min:2',
             'tipo' => 'required|in:MATA_MATA,GRUPOS_MATA_MATA,PONTOS_CORRIDOS',
             'categoria' => 'required|string|max:255',
-            'data_inicio' => 'required|date|after_or_equal:today',
+            'data_inicio' => 'required|date',
             'data_fim' => 'required|date|after_or_equal:data_inicio',
             'status' => 'required|in:INSCRICOES,EM_ANDAMENTO,FINALIZADO',
         ], [
@@ -197,22 +197,26 @@ class CampeonatoController extends Controller
             'data_inicio.after_or_equal' => 'A data de início não pode ser anterior à data atual.',
             'data_fim.after_or_equal' => 'A data de término não pode ser anterior à data de início.',
         ]);
-        // Conta quantas equipes já estão inscritas
+        //impede alterar a data de início para antes da data atual do campeonato
+        if ($dados['data_inicio'] < $campeonato->data_inicio) {
+            return back()->withInput()->withErrors(['data_inicio' => 'A data de início não pode ser anterior à data de início atual do campeonato.']);
+        }
+        //conta quantas equipes já estão inscritas
         $totalInscricoes = $campeonato->inscricoes()->count();
-        // Impede diminuir o limite abaixo do número de inscrições existentes
+        //impede diminuir o limite abaixo do número de inscrições existentes
         if ($dados['maximo_equipes'] < $totalInscricoes) {
             return back()->withInput()->withErrors(['maximo_equipes' => "Não é possível definir menos de {$totalInscricoes} equipes, pois já existem {$totalInscricoes} inscrições neste campeonato"]);
         }
-        // Verifica se o campeonato pode voltar para inscrições
+        //verifica se o campeonato pode voltar para inscrições
         if ($campeonato->status === 'EM_ANDAMENTO' && $dados['status'] === 'INSCRICOES') {
             $partidaComEvento = $campeonato->partidas()->whereHas('eventos')->exists();
             if ($partidaComEvento) {
                 return back()->withInput()->withErrors(['status' => 'Não é possível voltar o campeonato para inscrições, pois já existem eventos cadastrados em uma ou mais partidas']);
             }
-            // Se não existem eventos, pode apagar as partidas
+            //se não existem eventos, pode apagar as partidas
             $campeonato->partidas()->delete();
         }
-        // Verifica se o campeonato pode ser finalizado
+        //verifica se o campeonato pode ser finalizado
         if ($dados['status'] === 'FINALIZADO' && $campeonato->status !== 'FINALIZADO') {
             $totalPartidas = $campeonato->partidas()->count();
             $partidasFinalizadas = $campeonato->partidas()->where('status', 'FINALIZADA')->count();
@@ -223,9 +227,9 @@ class CampeonatoController extends Controller
                 return back()->withInput()->withErrors(['status' => 'Não é possível finalizar o campeonato enquanto existirem partidas não finalizadas']);
             }
         }
-        // Pega o id de quem atualizou
+        //pega o id de quem atualizou
         $dados['user_id'] = auth()->id();
-        // Atualiza o campeonato
+        //atualiza o campeonato
         $campeonato->update($dados);
         return redirect()->route('campeonatos.index')->with('success', 'Campeonato atualizado com sucesso!');
     }

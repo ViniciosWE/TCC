@@ -40,8 +40,14 @@
                     {{-- Senha --}}
                     <div class="mb-3 text-start">
                         <label for="password" class="fw-semibold">Senha</label>
-                        <input type="password" class="form-control" id="password" name="password"
-                            placeholder="Digite sua senha" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control pe-5" id="password" name="password"
+                                placeholder="Digite sua senha" required>
+                            <button type="button"
+                                class="btn position-absolute top-50 end-0 translate-middle-y border-0">
+                                <i class="bi bi-eye" id="passwordIcon"></i>
+                            </button>
+                        </div>
                     </div>
                     {{-- Botão Entrar --}}
                     <button type="submit" class="btn botoes-login mb-3 fw-bold py-2 px-4">Entrar</button>
