@@ -40,7 +40,7 @@ class EquipeController extends Controller
         $dados = $request->validate(
             [
                 'nome' => 'required|unique:equipes,nome',
-                'sigla' => 'required|max:3|unique:equipes,sigla',
+                'sigla' => 'required|max:3|min:3|unique:equipes,sigla',
                 'escudo' => 'nullable|image',
                 'status' => 'required',
             ],
@@ -48,6 +48,7 @@ class EquipeController extends Controller
                 'nome.unique' => 'Já existe uma equipe cadastrada com esse nome.',
                 'sigla.unique' => 'Já existe uma equipe cadastrada com essa sigla.',
                 'escudo.image' => 'O arquivo enviado deve ser uma imagem válida.',
+                'sigla.min' => 'A sigla deve ter 3 caracteres.',
             ]
         );
 
@@ -86,7 +87,7 @@ class EquipeController extends Controller
         $dados = $request->validate(
             [
                 'nome' => 'required|unique:equipes,nome,' . $equipe->id,
-                'sigla' => 'required|max:3|unique:equipes,sigla,' . $equipe->id,
+                'sigla' => 'required|max:3|min:3|unique:equipes,sigla,' . $equipe->id,
                 'escudo' => 'nullable|image',
                 'status' => 'required|in:ATIVA,ENCERRADA,SUSPENSA',
             ],
@@ -94,6 +95,7 @@ class EquipeController extends Controller
                 'nome.unique' => 'Já existe uma equipe cadastrada com esse nome.',
                 'sigla.unique' => 'Já existe uma equipe cadastrada com essa sigla.',
                 'escudo.image' => 'O arquivo enviado deve ser uma imagem válida.',
+                'sigla.min' => 'A sigla deve ter 3 caracteres.',
             ]
         );
         if ($dados['status'] === 'ENCERRADA' && $equipe->status !== 'ENCERRADA') {
